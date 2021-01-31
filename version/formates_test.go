@@ -1,4 +1,4 @@
-package version
+package version_test
 
 import (
 	"fmt"
@@ -7,12 +7,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tprasadtp/pkg/apollo"
+	"github.com/tprasadtp/pkg/version"
 )
 
 func TestJSON(t *testing.T) {
 	a := apollo.New(t, apollo.WithDiffEngine(apollo.ColoredDiff))
 
-	v := Describe()
+	v := version.Describe()
 	expected, err := v.AsJSON()
 	assert.Nil(t, err)
 	a.Assert(t, "json", []byte(expected))
@@ -20,7 +21,7 @@ func TestJSON(t *testing.T) {
 
 func TestYAML(t *testing.T) {
 	a := apollo.New(t, apollo.WithDiffEngine(apollo.ColoredDiff))
-	v := Describe()
+	v := version.Describe()
 	expected, err := v.AsYAML()
 	assert.Nil(t, err)
 	a.Assert(t, "yaml", []byte(expected))
@@ -37,7 +38,7 @@ func TestVersionFormats(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			v := Describe()
+			v := version.Describe()
 			expected, err := v.AsText(tc.short)
 			assert.Nil(t, err)
 			a.Assert(t, tc.name, []byte(expected))
@@ -46,7 +47,7 @@ func TestVersionFormats(t *testing.T) {
 }
 
 func ExampleInfo_json() {
-	v := Describe()
+	v := version.Describe()
 	j, err := v.AsJSON()
 	if err != nil {
 		log.Fatal(err)
@@ -55,7 +56,7 @@ func ExampleInfo_json() {
 }
 
 func ExampleInfo_yaml() {
-	v := Describe()
+	v := version.Describe()
 	j, err := v.AsYAML()
 	if err != nil {
 		log.Fatal(err)
@@ -64,7 +65,7 @@ func ExampleInfo_yaml() {
 }
 
 func ExampleInfo_pretty() {
-	v := Describe()
+	v := version.Describe()
 	j, err := v.AsText(false)
 	if err != nil {
 		log.Fatal(err)
