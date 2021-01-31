@@ -11,7 +11,6 @@ package apollo
 import (
 	"flag"
 	"fmt"
-	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -171,17 +170,15 @@ func (a *Apollo) Update(t *testing.T, name string, actualData []byte) error {
 
 // ensureDir will create the fixture folder if it does not already exist.
 func (a *Apollo) ensureDir(loc string) error {
-	var err error
-	var s fs.FileInfo
-	s, err = os.Stat(loc)
+	s, err := os.Stat(loc)
 	switch {
 	case err != nil && os.IsNotExist(err):
 		// the location does not exist, so make directories to there
 		return os.MkdirAll(loc, a.dirPerms)
 
 	case err == nil && s.IsDir() && *clean && s.ModTime().UnixNano() != ts.UnixNano():
-		if err := os.RemoveAll(loc); err != nil {
-			return err
+		if e2 := os.RemoveAll(loc); e2 != nil {
+			return e2
 		}
 		return os.MkdirAll(loc, a.dirPerms)
 
