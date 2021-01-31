@@ -1,5 +1,5 @@
-//Package require helps with cobra argument requiremets.
-//this is best used in CLI apps.
+// Package require helps with cobra argument requiremets.
+// this is best used in CLI apps.
 package require
 
 import (

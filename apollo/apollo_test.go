@@ -87,7 +87,7 @@ func TestEnsureDir(t *testing.T) {
 			dir:         "this/will/not",
 			shouldExist: false,
 			fileExist:   true,
-			err:         newErrFixtureDirectoryIsFile(filepath.Join(os.TempDir(), "this/will/not")),
+			err:         newErrFixtureDirectoryIsFile(filepath.Join(os.TempDir(), "this", "will", "not")),
 		},
 	}
 
@@ -205,7 +205,6 @@ Got: Lorem ipsum dolor.`},
 			)
 		})
 	}
-
 }
 
 func TestCleanFunction(t *testing.T) {

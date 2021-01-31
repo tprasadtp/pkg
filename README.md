@@ -7,6 +7,7 @@
 ![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/pkg)
 
 
-- This repository for common go pakcages used by other tols including internal apps.
+- This repository for common go packages used by other tools
+including some internal apps.
 - There is no API compatibility guarantees or any version
 compatibility guarantees. Use this at your own risk!

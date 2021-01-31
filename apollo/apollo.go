@@ -11,6 +11,7 @@ package apollo
 import (
 	"flag"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -118,7 +119,7 @@ func New(t *testing.T, options ...Option) *Apollo {
 // Diff generates a string that shows the difference between the actual and the
 // expected. This method could be called in your own DiffFn in case you want
 // to leverage any of the engines defined.
-func Diff(engine DiffEngine, actual string, expected string) (diff string) {
+func Diff(engine DiffEngine, actual, expected string) (diff string) {
 	switch engine {
 	case Simple:
 		diff = fmt.Sprintf("Expected: %s\nGot: %s", expected, actual)
@@ -138,6 +139,8 @@ func Diff(engine DiffEngine, actual string, expected string) (diff string) {
 		dmp := diffmatchpatch.New()
 		diffs := dmp.DiffMain(actual, expected, false)
 		diff = dmp.DiffPrettyText(diffs)
+	default:
+		diff = fmt.Sprintf("Expected: %s\nGot: %s", expected, actual)
 	}
 
 	return diff
@@ -168,8 +171,9 @@ func (a *Apollo) Update(t *testing.T, name string, actualData []byte) error {
 
 // ensureDir will create the fixture folder if it does not already exist.
 func (a *Apollo) ensureDir(loc string) error {
-	s, err := os.Stat(loc)
-
+	var err error
+	var s fs.FileInfo
+	s, err = os.Stat(loc)
 	switch {
 	case err != nil && os.IsNotExist(err):
 		// the location does not exist, so make directories to there
