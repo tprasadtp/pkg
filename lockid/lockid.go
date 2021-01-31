@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// GenerateLockID Generates a UUID from the identifier
+// GenerateLockID Generates a UUID from the identifier.
 func GenerateLockID(identifier string) (string, error) {
 	if strings.TrimSpace(identifier) == "" {
 		return "", errors.New("invalid identifier")

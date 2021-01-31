@@ -5,8 +5,8 @@ linters-settings:
     lines: 100
     statements: 50
   goconst:
-    min-len: 2
-    min-occurrences: 2
+    min-len: 3
+    min-occurrences: 3
   gocritic:
     enabled-tags:
       - diagnostic
@@ -79,16 +79,16 @@ linters:
     - unused
     - varcheck
     - whitespace
-
+    - gocognit
+    - maligned
+    - nestif
+    - prealloc
   # don't enable:
   # - gochecknoglobals
-  # - gocognit
-  # - godot
   # - godox
   # - goerr113
-  # - maligned
-  # - nestif
-  # - prealloc
+  # - godot
+
   # - testpackage
   # - wsl
 issues:
@@ -101,7 +101,11 @@ issues:
       - Using the variable on range scope `test` in function literal
       - Using the variable on range scope `tt` in function literal
       - "missing cases in switch of type DiffEngine: UndefinedDiff, defaultDiffEngine"
-
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gomnd
+        - funlen
 run:
   skip-dirs:
     - hack

@@ -1,0 +1,21 @@
+{
+  "kind": "VersionInfo",
+  "apiVersion": 2,
+  "version": "0.0.0+dev",
+  "go": {
+    "Version": "go1.xx",
+    "platform": "linux/amd64",
+    "compiler": "gc"
+  },
+  "git": {
+    "commit": "",
+    "branch": "",
+    "treeState": "unknown"
+  },
+  "build": {
+    "number": 0,
+    "system": "GO-GO",
+    "host": "localhost",
+    "date": "1970-01-01T00:00+00:00"
+  }
+}

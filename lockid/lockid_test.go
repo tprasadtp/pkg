@@ -7,7 +7,6 @@ import (
 )
 
 func TestLockID(t *testing.T) {
-	t.Parallel()
 	tests := []struct {
 		name       string
 		identifier string
@@ -26,7 +25,6 @@ func TestLockID(t *testing.T) {
 }
 
 func TestLockIDErrors(t *testing.T) {
-	t.Parallel()
 	tests := []struct {
 		name       string
 		identifier string
