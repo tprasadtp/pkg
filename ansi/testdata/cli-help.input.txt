@@ -1,0 +1,27 @@
+Usage: [38;5;42mforklift.sh [38;5;159m  [options][0m
+
+- Keeps minimally modified forks in sync.
+- Please do not use this for forks with extensive
+  modifications.
+[38;5;208m
+-------------- Required Arguments ------------------------[0m
+[-u --upstream-url]     Upstream URL to set (Required)
+[38;5;192m
+-------------- Optional Arguments ------------------------[0m
+[-m --method]           Method to use (Defaults is merge-ff)
+[-b --branch]           Branch to merge/rebase
+[-x --upstream-branch]  Upstream Branch to merge/rebase
+                        (Defaults is master)
+[38;5;246m
+---------------- Other Arguments -------------------------
+[--no-push]             Skip Git Push
+[-s skip-git-config]    Skip configuring git committer
+[-v --verbose]          Enable verbose logging
+[-h --help]             Display this help message
+[0m[38;5;212m
+-------------- About & Version Info -----------------------[0m
+- Action Version - 0.2.0
+- This is best used as Github Action.
+- Defaults are only populated when running as GitHub action.
+
+See [38;5;159mhttps://git.io/JtV8L[0m for more info.

@@ -1,9 +1,8 @@
 {
-  "kind": "VersionInfo",
-  "apiVersion": 2,
+  "api": 2,
   "version": "0.0.0+dev",
   "go": {
-    "Version": "go1.xx",
+    "version": "go1.xx",
     "platform": "linux/amd64",
     "compiler": "gc"
   },
@@ -14,7 +13,7 @@
   },
   "build": {
     "number": 0,
-    "system": "GO-GO",
+    "system": "go",
     "host": "localhost",
     "date": "1970-01-01T00:00+00:00"
   }

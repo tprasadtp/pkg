@@ -1,0 +1,3 @@
+[1mbold[0m [2mfaint[0m [3mitalic[0m [4munderline[0m [9mcrossout[0m
+red green yellow blue magenta cyan gray
+[;mred[0m [;mgreen[0m [;myellow[0m [;mblue[0m [;mmagenta[0m [;mcyan[0m [;mgray[0m`

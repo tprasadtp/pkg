@@ -13,13 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: determine latest golang-ci-lint version
-        id: gciv
-        run: |
-          ./hack/ghlatest.py -u golangci -r golangci-lint | tee GOLANGCI_LINT_VERSION.txt
-          GOLANGCI_LINT_VERSION="$(cat GOLANGCI_LINT_VERSION.txt)"
-          echo "::set-output name=VERSION::${GOLANGCI_LINT_VERSION}"
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
-          version: ${{ steps.gciv.outputs.VERSION }}
+          version: latest

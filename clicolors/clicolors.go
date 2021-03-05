@@ -5,42 +5,70 @@ import (
 	"os"
 )
 
-// EnableColors detect whether to coloring based env variables, cli-flag and if output is a tty.
+// EnvColorDisabled detect whether to coloring is disabled based env variables.
+// Returns true if one of the conditions is true.
 //
-// Environment Variables
+// 1. env variale CLICOLOR == 0
 //
-// If env variale CLICOLOR != 0 then, ANSI colors are supported and should be used when the program isn’t piped.
-// If env variale CLICOLOR == 0 then, Don’t output ANSI color escape codes.
-// If env variale CLICOLOR_FORCE != 0 then, ANSI colors should be enabled no matter what.
-// If both CLICOLOR_FORCE and disableColorsFlag is are true, disableColorsFlag takes precedence.
+// 2. env variable NO_COLOR is set and not empty
+func EnvColorDisabled() bool {
+	return os.Getenv("NO_COLOR") != "" || os.Getenv("CLICOLOR") == "0"
+}
+
+// EnvColorForced detect whether to coloring is forced based env variables
+// If env variale CLICOLOR_FORCE is not empty and is not set to 0
+func EnvColorForced() bool {
+	force, forceEnvExists := os.LookupEnv("CLICOLOR_FORCE")
+	return forceEnvExists && force != "0"
+}
+
+// IsDumbTerm returns true if env variable TERM="dumb".
+func IsDumbTerm() bool {
+	return os.Getenv("TERM") == "dumb"
+}
+
+// EnableColors detect whether to coloring is disabled based env variables, cli-flags
+// and if output is a Terminal. This supports both https://bixense.com/clicolors/
+// and https://no-color.org/ standards.
 //
-// Interactive terminal
+// Flag will ALWAYS take priority. If disableColorsFlag is true, this function
+// will always return false and  will ignore all environment and terminal settings.
+// You should probably map this variable to your cli's --no-color/--disable-colors flag.
 //
-// Please be advised that this function makes no effort to detemine if output is a TTY or
-// supports ANSI colors. It is responsiblility of the user to approriately set isTerminal.
+// Environment Variables (Forced)
+//
+// 1. If env variale CLICOLOR_FORCE != 0 function returns true if disableColorsFlag != true.
+// All other environment variables and conditions are ignored.
+//
+// Environment Variables (Disable)
+// Returns false if ANY of the following conditions are met and color is not forced.
+//
+// 1. If env variale CLICOLOR == 0.
+//
+// 2. If env variable NO_COLOR is set and is not empty (regardless of its value)
+//
+// 3. If env TERM is set to dumb.
+//
+// 4. If isTerminal is false. There is not TTY detection included in this package.
+// Use IsTerminal() from package term
+//
+//
+// Environment Variables (Enable)
+//
+// Returns true following conditions are met AND none of the disable conditions are true.
+//
+// 1. If env variale CLICOLOR != 0 and isTerminal is true.
 func EnableColors(disableColorsFlag, isTerminal bool) bool {
-	// Flag always takes priority
 	if disableColorsFlag {
 		return false
 	}
-	force, forceEnvExists := os.LookupEnv("CLICOLOR_FORCE")
-	color, colorEnvExists := os.LookupEnv("CLICOLOR")
 
 	switch {
-	case forceEnvExists && force != "0":
+	case EnvColorForced():
 		return true
-	case forceEnvExists && force == "0", colorEnvExists && color == "0":
-		return false
-	case colorEnvExists && color != "0":
-		if isTerminal {
-			return true
-		}
+	case EnvColorDisabled() || IsDumbTerm():
 		return false
 	default:
-		if isTerminal {
-			return true
-		}
+		return isTerminal
 	}
-
-	return false
 }

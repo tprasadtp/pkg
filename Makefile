@@ -29,6 +29,10 @@ help: ## Show this message (Default)
 test: ## Run go test on all packages
 	go test $(REPO_ROOT)/...
 
+.PHONY: lint
+lint: ## Run golangci-lit
+	docker run --rm --userns=host -v $(REPO_ROOT):/app -w /app -it golangci/golangci-lint:latest golangci-lint run -v
+
 .PHONY: test-verbose
 test-verbose: ## Run go test on all packages with -v
 	go test -v -count=1 $(REPO_ROOT)/...

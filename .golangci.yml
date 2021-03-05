@@ -62,7 +62,6 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    - interfacer
     - lll
     - misspell
     - nakedret
@@ -80,7 +79,6 @@ linters:
     - varcheck
     - whitespace
     - gocognit
-    - maligned
     - nestif
     - prealloc
   # don't enable:
@@ -101,6 +99,8 @@ issues:
       - Using the variable on range scope `test` in function literal
       - Using the variable on range scope `tt` in function literal
       - "missing cases in switch of type DiffEngine: UndefinedDiff, defaultDiffEngine"
+      # Regex for ansi
+      - line is 143 characters
   exclude-rules:
     - path: _test\.go
       linters:

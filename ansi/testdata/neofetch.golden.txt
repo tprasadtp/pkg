@@ -1,0 +1,42 @@
+            .-/+oossssoo+/-.
+        `:+ssssssssssssssssss+:`
+      -+ssssssssssssssssssyyssss+-
+    .ossssssssssssssssssdMMMNysssso.
+   /ssssssssssshdmmNNmmyNMMMMhssssss/
+  +ssssssssshmydMMMMMMMNddddyssssssss+
+ /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.
++sssshhhyNMMNyssssssssssssyNMMMysssssss+
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso
++sssshhhyNMMNyssssssssssssyNMMMysssssss+
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.
+ /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/
+  +sssssssssdmydMMMMMMMMddddyssssssss+
+   /ssssssssssshdmNNNNmyNMMMMhssssss/
+    .ossssssssssssssssssdMMMNysssso.
+      -+sssssssssssssssssyyyssss+-
+        `:+ssssssssssssssssss+:`
+            .-/+oossssoo+/-.
+user@emp-lappy
+----------------
+OS: Ubuntu 18.04.5 LTS x86_64
+Host: A Laptop
+Kernel: 5.4.0-64-generic
+Uptime: 14 days, 6 hours, 20 mins
+Packages: 3036
+Shell: bash 4.4.20
+Resolution: 1920x1080
+DE: GNOME 3.28.4
+WM: GNOME Shell
+WM Theme: Adwaita
+Theme: Yaru-dark [GTK2/3]
+Icons: Adwaita++-Dark [GTK2/3]
+Terminal: tilix
+CPU: Intel i5-4300U (4) @ 2.900GHz
+GPU: Intel Haswell-ULT
+Memory: 3864MiB / 7841MiB
+
+                        
+
+

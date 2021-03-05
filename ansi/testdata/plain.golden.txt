@@ -1,0 +1,228 @@
+# Title
+
+This is a plain text file
+This file has no ANSI escape codes.
+But this does has some
+  - __Bold Text__
+  - _Italic Text_
+  - **Another Bold Text**
+  - *Anotehr Italic Text*
+  - ~~Strike Throgh~~
+  - `Inline code`
+  - [Hyperlinks](https://github.com)
+  - Markdown content
+  - Code
+  - Indented codes
+  - Codeblocks
+
+> This is a Quoted Text.
+
+<!-- markdownlint-disable MD033 MD041 -->
+
+<h1 align="center">Project</h1>
+
+<p align="center">
+  <img src="https://static.prasadt.com/logos/128/sysadmin.png" alt="logo"/>
+  <br><small> I am the captain ☸️ of my nodes</small><br>
+</p>
+
+# A Golang Sample
+
+```go
+package ansi
+
+import "regexp"
+
+// const reg = "[\u001B\u009B]\\[.*?m"
+const reg = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,9}(?:;\\d{0,9})*)?[\\dA-PRZcf-ntqry=><~]))"
+
+var re = regexp.MustCompile(reg)
+
+// Strip strip all ANSI escape sequences.
+// given a string, this will strip all ANSI escape codes.
+func Strip(str string) string {
+	return re.ReplaceAllString(str, "")
+}
+```
+
+# A Python Sample
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#  Copyright (c) 2019-2021 Prasad Tengse
+#
+
+import argparse
+import json
+import sys
+from urllib.request import urlopen
+
+
+def main(user, repo):
+    url = f"https://api.github.com/repos/{user}/{repo}/releases/latest"
+    with urlopen(url=url) as response:
+        if response.status is not 200:
+            sys.exit(1)
+        r = json.load(response)
+        print(f"{r['tag_name']}")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Get tagname of latest GitHub release for a repository",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        add_help=True,
+    )
+    parser.add_argument(
+        "-r", "--repo", required=True, type=str, help="GitHub Repository"
+    )
+    parser.add_argument(
+        "-user", "--user", required=True, type=str, help="GitHub Username"
+    )
+
+    args = parser.parse_args()
+    main(repo=args.repo, user=args.user)
+```
+
+## A Rust Sample
+
+```rust
+use process_control::{ChildExt, Timeout};
+use std::fs::File;
+use std::io::{Read, Result};
+use std::path::Path;
+use std::process::{Command, Stdio};
+use std::time::{Duration, Instant};
+
+use crate::context::Shell;
+
+/// Return the string contents of a file
+pub fn read_file<P: AsRef<Path>>(file_name: P) -> Result<String> {
+    let mut file = File::open(file_name)?;
+    let mut data = String::new();
+
+    file.read_to_string(&mut data)?;
+    Ok(data)
+}
+
+#[derive(Debug)]
+pub struct CommandOutput {
+    pub stdout: String,
+    pub stderr: String,
+}
+```
+
+## A Markdown Sample
+
+```md
+
+# Title
+
+Contents
+
+- List 1
+- List 2
+- List 3
+
+![Image](https://image.local/image)
+```
+
+
+## Text Sample
+
+```text
+Hello Text
+```
+
+## A YAML file
+
+```yaml
+---
+- name: Install unzip if not installed already (cachable)
+  apt:
+    name: unzip
+    state: present
+  become: yes
+  when: unzip not in ansible_facts.packages
+  tags:
+    - apt
+    - ensure
+```
+
+## A K8s Manifest
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-svc
+  labels:
+    app: nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
+
+## A TOML File
+
+```toml
+# This is a TOML document.
+
+title = "TOML Example"
+
+[owner]
+name = "Tom Preston-Werner"
+dob = 1979-05-27T07:32:00-08:00 # First class dates
+
+[database]
+server = "192.168.1.1"
+ports = [ 8001, 8001, 8002 ]
+connection_max = 5000
+enabled = true
+
+[servers]
+
+  # Indentation (tabs and/or spaces) is allowed but not required
+  [servers.alpha]
+  ip = "10.0.0.1"
+  dc = "eqdc10"
+
+  [servers.beta]
+  ip = "10.0.0.2"
+  dc = "eqdc10"
+
+[clients]
+data = [ ["gamma", "delta"], [1, 2] ]
+
+# Line breaks are OK when inside arrays
+hosts = [
+  "alpha",
+  "omega"
+]
+```

@@ -23,10 +23,7 @@ var buildHost string = "localhost"
 
 var buildNumber string = "0"
 
-var buildSystem string = "GO-GO"
-
-// API Version of the API.
-const API = 2
+var buildSystem string = "go"
 
 // Kind kind Identifier.
 const Kind = "VersionInfo"
@@ -38,7 +35,7 @@ type BuildInfo struct {
 	Number uint64 `json:"number" yaml:"number"`
 	// Build-system which built the binary.
 	// Useful to identify if binary was built locally or by a CI/CD pipeline
-	// convention is to follow {CI_SYSTEM_NAME}-{PIPELINE_NAME}. Default("GO-GO") is set to
+	// convention is to follow {CI_SYSTEM_NAME}-{PIPELINE_NAME}. Default("GO") is set to
 	// represent that go run or go test being used.
 	System string `json:"system" yaml:"system"`
 	// Hostname of the system which built the binary.
@@ -53,7 +50,7 @@ type BuildInfo struct {
 // GoInfo Go version, platform and compiler
 type GoInfo struct {
 	// Runtime version of Go runtime.
-	Runtime string `json:"Version" yaml:"Version"`
+	Runtime string `json:"version" yaml:"version"`
 	// Platform this is of format GOOS/GORCH
 	Platform string `json:"platform" yaml:"platform"`
 	// Compiler Go compiler user. This is useful in determining if binary
@@ -76,9 +73,8 @@ type GitInfo struct {
 
 // Info describes the build, revision and version information.
 type Info struct {
-	Kind string `json:"kind" yaml:"kind"`
 	// VersionInfo API version. This is used by autopackager
-	API uint8 `json:"apiVersion" yaml:"apiVersion"`
+	API uint8 `json:"api" yaml:"api"`
 	// Version indicates which version of the binary is running.
 	// semver compatible version string, of format
 	// [MAJOR].[MINOR].[PATCH]-{OPTIONAL-SUFFIX}
@@ -94,7 +90,7 @@ type Info struct {
 // it is removed. If you want to get detailed version/build info,
 // see version.Describe()
 func GetShortVersion() string {
-	return fmt.Sprintf("%s+%s-%d", strings.TrimPrefix(version, "v"), buildSystem, getBuildNumber())
+	return strings.TrimPrefix(version, "v")
 }
 
 // GetUserAgent Returns user agent with version string.
@@ -115,8 +111,7 @@ func getBuildNumber() uint64 {
 // a structured format
 func Describe() Info {
 	info := Info{
-		Kind:    Kind,
-		API:     API,
+		API:     2,
 		Version: version,
 		Go: GoInfo{
 			Runtime:  runtime.Version(),

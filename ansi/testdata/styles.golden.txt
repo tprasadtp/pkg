@@ -1,0 +1,3 @@
+bold faint italic underline crossout
+red green yellow blue magenta cyan gray
+red green yellow blue magenta cyan gray`
