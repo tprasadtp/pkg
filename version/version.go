@@ -25,9 +25,6 @@ var buildNumber string = "0"
 
 var buildSystem string = "go"
 
-// Kind kind Identifier.
-const Kind = "VersionInfo"
-
 // BuildInfo Build Information.
 type BuildInfo struct {
 	// CI/CD Build Number. For local systems,
