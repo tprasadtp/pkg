@@ -1,74 +1,79 @@
-//go:build unix
+//go:build linux || darwin
 
 package color
 
 import (
-	"os"
+	"fmt"
 	"testing"
+
+	"github.com/tprasadtp/pkg/assert"
 )
 
-func TestConditions(t *testing.T) {
-	t.Parallel()
-	origNoColor, origNoColorSet := os.LookupEnv("NO_COLOR")
-	origClicolor, origClicolorSet := os.LookupEnv("CLICOLOR")
-	origClicolorForce, origClicolorForceSet := os.LookupEnv("CLICOLOR_FORCE")
-	origTerm, origTermSet := os.LookupEnv("TERM")
+func TestUnixTERM(t *testing.T) {
+	// This test MUST not be parallel
+	type testCase struct {
+		TERM   string
+		tty    bool
+		expect bool
+	}
 
-	t.Cleanup(func() {
-		if origNoColorSet {
-			os.Setenv("NO_COLOR", origNoColor)
-		} else {
-			os.Unsetenv("NO_COLOR")
-		}
+	var tt = []testCase{
+		{
+			TERM:   "",
+			tty:    false,
+			expect: false,
+		},
+		{
+			TERM:   "",
+			tty:    true,
+			expect: true,
+		},
+		{
+			TERM:   "linux",
+			tty:    false,
+			expect: false,
+		},
+		{
+			TERM:   "linux",
+			tty:    false,
+			expect: false,
+		},
+		// dumb
+		{
+			TERM:   "dumb",
+			tty:    false,
+			expect: false,
+		},
+		{
+			TERM:   "dumb",
+			tty:    false,
+			expect: false,
+		},
+	}
 
-		if origClicolorSet {
-			os.Setenv("CLICOLOR", origClicolor)
-		} else {
-			os.Unsetenv("CLICOLOR")
-		}
+	for _, tc := range tt {
+		tn := fmt.Sprintf(
+			"TERM=%s,tty=%t",
+			tc.TERM,
+			tc.tty,
+		)
+		t.Run(tn, func(t *testing.T) {
+			t.Setenv("CLICOLOR_FORCE", "")
+			t.Setenv("CLICOLOR", "")
+			t.Setenv("NO_COLOR", "")
+			t.Setenv("CI", "")
 
-		if origClicolorForceSet {
-			os.Setenv("TERM", origTerm)
-		} else {
-			os.Unsetenv("TERM")
-		}
-
-		if origTermSet {
-			os.Setenv("CLICOLOR_FORCE", origClicolorForce)
-		} else {
-			os.Unsetenv("CLICOLOR_FORCE")
-		}
-	})
-
-	for _, tc := range colorableTestCases {
-		t.Run(tc.Name, func(t *testing.T) {
-			if tc.CLICOLOR_FORCE == "empty" {
-				os.Unsetenv("CLICOLOR_FORCE")
+			if tc.TERM != "" {
+				t.Setenv("TERM", tc.TERM)
 			} else {
-				os.Setenv("CLICOLOR_FORCE", tc.CLICOLOR_FORCE)
+				t.Setenv("TERM", "")
 			}
 
-			if tc.CLICOLOR == "empty" {
-				os.Unsetenv("CLICOLOR")
-			} else {
-				os.Setenv("CLICOLOR", tc.CLICOLOR)
-			}
-
-			if tc.NO_COLOR == "empty" {
-				os.Unsetenv("NO_COLOR")
-			} else {
-				os.Setenv("NO_COLOR", tc.NO_COLOR)
-			}
-
-			if tc.TERM == "empty" {
-				os.Unsetenv("TERM")
-			} else {
-				os.Setenv("TERM", tc.TERM)
-			}
-			val := isColorable(tc.ColorMode, tc.Terminal)
-			if tc.Expect != val {
-				t.Errorf("%s => got=%v, want=%v", tc.Name, val, tc.Expect)
-			}
+			got := isColorable("auto", tc.tty)
+			// if tc.expect != val {
+			// 	t.Errorf("%s => got=%v, want=%v", tn, val, tc.expect)
+			// }
+			assert.Equal(t, got, tc.expect)
 		})
 	}
 }

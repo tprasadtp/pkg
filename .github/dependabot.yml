@@ -1,0 +1,34 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    labels:
+      - "dependabot"
+      - "dependencies"
+      - "dep/actions"
+      - "luna/autoupdate"
+    commit-message:
+      prefix: "chore(deps):"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-patch
+          - version-update:semver-minor
+    pull-request-branch-name:
+      separator: "-"
+
+  - package-ecosystem: gomod
+    labels:
+      - "dependabot"
+      - "dependencies"
+      - "dep/go"
+      - "luna/autoupdate"
+    commit-message:
+      prefix: "chore(deps):"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+    pull-request-branch-name:
+      separator: "-"

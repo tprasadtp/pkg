@@ -6,7 +6,6 @@ import (
 )
 
 func TestJSON(t *testing.T) {
-	t.Parallel()
 	v := Get()
 	out, err := json.MarshalIndent(v, "", "\t")
 	if err != nil {
@@ -18,8 +17,7 @@ func TestJSON(t *testing.T) {
 }
 
 func TestGetshort(t *testing.T) {
-	t.Parallel()
-	want := "0.0.0+undefined"
+	want := "v0.0.0+undefined"
 	version = "v0.0.0+undefined"
 	got := GetShort()
 	if got != want {
@@ -27,17 +25,7 @@ func TestGetshort(t *testing.T) {
 	}
 }
 
-func TestGetUA(t *testing.T) {
-	t.Parallel()
-	got := GetUserAgent()
-	if got == "" {
-		t.Error("got empty string for user agent")
-	}
-}
-
-func TestGetShortOverride(t *testing.T) {
-	t.Parallel()
-
+func TestGetShortWithOverride(t *testing.T) {
 	tests := []struct {
 		name    string
 		version string
@@ -46,7 +34,7 @@ func TestGetShortOverride(t *testing.T) {
 		{
 			name:    "with-prefix",
 			version: "v1.22.333+dev",
-			expect:  "1.22.333+dev",
+			expect:  "v1.22.333+dev",
 		},
 		{
 			name:    "without-prefix",
@@ -66,7 +54,7 @@ func TestGetShortOverride(t *testing.T) {
 		{
 			name:    "non-semver-with-prefix",
 			version: "v2022-01-31.2",
-			expect:  "2022-01-31.2",
+			expect:  "v2022-01-31.2",
 		},
 	}
 	for _, tc := range tests {
