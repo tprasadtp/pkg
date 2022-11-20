@@ -1,9 +1,6 @@
 //go:build js
-package color
 
-import (
-	"golang.org/x/term"
-)
+package color
 
 func isColorable(colorMode string, isTerminal bool) bool {
 	return false

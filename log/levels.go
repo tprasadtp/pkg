@@ -1,64 +1,25 @@
 package log
 
 import (
-	"errors"
-	"strings"
+	"math"
 )
 
-// ErrInvalidLevel is returned if the severity level is invalid.
-var ErrInvalidLevel = errors.New("invalid level")
+type Level uint16
 
-// Level of severity.
-type Level int
-
-// Log levels.
 const (
-	InvalidLevel Level = iota - 1
-	DebugLevel
-	InfoLevel
-	WarnLevel
-	ErrorLevel
-	FatalLevel
+	DEBUG   Level = 10
+	VERBOSE Level = 15
+	INFO    Level = 20
+	SUCCESS Level = 21
+	NOTICE  Level = 25
+	WARNING Level = 30
+	ERROR   Level = 40
+	FATAL   Level = 50
+	PANIC   Level = FATAL
 )
 
-var levelNames = [...]string{
-	DebugLevel: "debug",
-	InfoLevel:  "info",
-	WarnLevel:  "warn",
-	ErrorLevel: "error",
-	FatalLevel: "fatal",
-}
-
-var levelStrings = map[string]Level{
-	"debug":   DebugLevel,
-	"info":    InfoLevel,
-	"warn":    WarnLevel,
-	"warning": WarnLevel,
-	"error":   ErrorLevel,
-	"fatal":   FatalLevel,
-}
-
-// String implementation.
-func (l Level) String() string {
-	return levelNames[l]
-}
-
-// ParseLevel parses level string.
-func ParseLevel(s string) (Level, error) {
-	l, ok := levelStrings[strings.ToLower(s)]
-	if !ok {
-		return InvalidLevel, ErrInvalidLevel
-	}
-
-	return l, nil
-}
-
-// MustParseLevel parses level string or panics.
-func MustParseLevel(s string) Level {
-	l, err := ParseLevel(s)
-	if err != nil {
-		panic("invalid log level")
-	}
-
-	return l
-}
+const (
+	ALL     Level = 0
+	NONE    Level = math.MaxUint16
+	UNKNOWN Level = math.MaxUint16 - 1
+)
