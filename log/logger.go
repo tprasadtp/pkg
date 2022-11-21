@@ -1,66 +1,122 @@
 package log
 
 import (
-	"time"
+	"fmt"
+	"sync"
+
+	"go.uber.org/multierr"
 )
 
-type Event struct {
-	Level     Level
-	Timestamp time.Time
-	Message   string
-	Fields    []Field
+// Logger
+type Logger struct {
+	handlers []Handler
+	mu       sync.Mutex
+
+	names  []string
+	fileds []Field
+	err    error
+
+	traceID string
+	spanID  string
 }
 
-func (e *Event) Write() error {
+// Returns a new logger
+func New() *Logger {
+	return &Logger{}
+}
+
+// Remove all existing handlers and set a new handler.
+// This will flush and close all existing handlers
+// before setting the new handler as the only handler.
+func (l *Logger) SetHandler(handler Handler) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	var err error
+	for _, h := range l.handlers {
+		multierr.Append(err, h.Flush())
+		multierr.Append(err, h.Close())
+	}
+	if err == nil {
+		l.handlers = []Handler{handler}
+	}
+	return err
+}
+
+// Add a handler to logger. Handler must be unique.
+func (l *Logger) AddHandler(handler Handler) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	for _, h := range l.handlers {
+		if h.Id() == handler.Id() {
+			return fmt.Errorf("log: handler with name %s already exits", handler.Id())
+		}
+	}
+	l.handlers = append(l.handlers, handler)
 	return nil
 }
 
-type Handler interface {
-	Id() string
-	Level() Level
-	Enabled(Level) bool
+// Remove existing handler with id specified.
+// It is an error to remove a non existant handler.
+func (l *Logger) RemoveHandler(id string) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
 
-	WriteEvent(e *Event) error
+	var err error
+	var oldHandlersCount = len(l.handlers)
 
-	Close() error
-	Flush() error
+	for i, h := range l.handlers {
+		if h.Id() == id {
+			multierr.Append(err, h.Flush())
+			multierr.Append(err, h.Close())
+		}
+		if err == nil {
+			// Preserves order of handlers
+			l.handlers = append(l.handlers[:i], l.handlers[i+1:]...)
+		}
+	}
+	if err == nil {
+		if oldHandlersCount == len(l.handlers) {
+			return fmt.Errorf("log: handler with id %s is not present", id)
+		}
+	}
+	return err
 }
 
-type Logger interface {
-	SetHandler(handler *Handler) error
-
-	AddHandler(handler *Handler) error
-	RemoveHandler(id string) error
-
-	WithError(err error) Logger
-
-	WithFields(fields []Field) Logger
-	WithField(field Field) Logger
-
-	Log(level Level, message string)
-	Logf(level Level, format string, args ...any)
-
-	Debug(message string)
-	Debugf(format string, args ...any)
-
-	Verbose(message string)
-	Verbosef(format string, args ...any)
-
-	Info(message string)
-	Infof(format string, args ...any)
-
-	Success(message string)
-	Successf(format string, args ...any)
-
-	Warn(message string)
-	Warnf(format string, args ...any)
-
-	Error(message string)
-	Errorf(format string, args ...any)
-
-	Panic(message string)
-	Panicf(format string, args ...any)
-
-	Exit(code int, message string)
-	Exitf(code int, format string, args ...any)
+// Returns a namespaced logger. By default this is empty
+// This is propagated to Fields. Useful to isolate components
+func (l *Logger) WithName(name string) *Logger {
+	l.names = append(l.names)
 }
+
+// 	WithError(err error) Logger
+// 	WithTraceID(id string) Logger
+// 	WithFields(fields ...Field) Logger
+
+// 	Log(level Level, message string)
+// 	Logf(level Level, format string, args ...any)
+
+// 	Debug(message string)
+// 	Debugf(format string, args ...any)
+
+// 	Verbose(message string)
+// 	Verbosef(format string, args ...any)
+
+// 	Info(message string)
+// 	Infof(format string, args ...any)
+
+// 	Success(message string)
+// 	Successf(format string, args ...any)
+
+// 	Warn(message string)
+// 	Warnf(format string, args ...any)
+
+// 	Error(message string)
+// 	Errorf(format string, args ...any)
+
+// 	Panic(message string)
+// 	Panicf(format string, args ...any)
+
+// 	Exit(code int, message string)
+// 	Exitf(code int, format string, args ...any)
+// }
