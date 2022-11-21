@@ -2,9 +2,14 @@ package log
 
 type Handler interface {
 	Id() string
+
 	Level() Level
 	Enabled(Level) bool
-	Write(e *Event) error
+
+	IncludeCallerInfo() bool
+
+	Write(e *Entry) error
+
 	Close() error
 	Flush() error
 }

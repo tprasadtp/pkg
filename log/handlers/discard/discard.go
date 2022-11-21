@@ -8,15 +8,16 @@ import (
 
 // Discard handler. Used for testing
 type Handler struct {
-	mu  sync.RWMutex
-	id  string
-	lvl log.Level
+	mu     sync.Mutex
+	closed bool
+	id     string
+	level  log.Level
 }
 
-func New(id string, l log.Level) *Handler {
+func New(id string, level log.Level) *Handler {
 	return &Handler{
-		id:  id,
-		lvl: l,
+		id:    id,
+		level: level,
 	}
 }
 
@@ -25,14 +26,12 @@ func (h *Handler) Id() string {
 }
 
 func (h *Handler) Level() log.Level {
-	return h.lvl
-}
-
-func (h *Handler) Enabled(l log.Level) bool {
-	return l >= h.lvl
+	return h.level
 }
 
 func (h *Handler) Close() error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	return nil
 }
 
@@ -40,6 +39,11 @@ func (h *Handler) Flush() error {
 	return nil
 }
 
-func (h *Handler) WriteEvent(e *log.Event) error {
+func (h *Handler) Write(e *log.Entry) error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if h.closed {
+		return nil
+	}
 	return nil
 }

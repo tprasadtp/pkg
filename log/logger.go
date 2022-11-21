@@ -7,22 +7,28 @@ import (
 	"go.uber.org/multierr"
 )
 
+// var (
+// 	_ Interface = Logger{}
+// )
+
+// Returns a new logger
+func New() *Logger {
+	return &Logger{}
+}
+
 // Logger
 type Logger struct {
 	handlers []Handler
 	mu       sync.Mutex
 
 	names  []string
-	fileds []Field
+	fields []Field
 	err    error
+
+	callerInfo bool
 
 	traceID string
 	spanID  string
-}
-
-// Returns a new logger
-func New() *Logger {
-	return &Logger{}
 }
 
 // Remove all existing handlers and set a new handler.
@@ -33,7 +39,6 @@ func (l *Logger) SetHandler(handler Handler) error {
 	defer l.mu.Unlock()
 	var err error
 	for _, h := range l.handlers {
-		multierr.Append(err, h.Flush())
 		multierr.Append(err, h.Close())
 	}
 	if err == nil {
@@ -57,7 +62,7 @@ func (l *Logger) AddHandler(handler Handler) error {
 }
 
 // Remove existing handler with id specified.
-// It is an error to remove a non existant handler.
+// It is an error to remove a non existent handler.
 func (l *Logger) RemoveHandler(id string) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -67,7 +72,6 @@ func (l *Logger) RemoveHandler(id string) error {
 
 	for i, h := range l.handlers {
 		if h.Id() == id {
-			multierr.Append(err, h.Flush())
 			multierr.Append(err, h.Close())
 		}
 		if err == nil {
@@ -85,13 +89,18 @@ func (l *Logger) RemoveHandler(id string) error {
 
 // Returns a namespaced logger. By default this is empty
 // This is propagated to Fields. Useful to isolate components
-func (l *Logger) WithName(name string) *Logger {
-	l.names = append(l.names)
+func (l *Logger) WithName(name string) *Entry {
+	return &Entry{
+		Logger: l,
+	}
 }
 
-// 	WithError(err error) Logger
-// 	WithTraceID(id string) Logger
-// 	WithFields(fields ...Field) Logger
+// 	WithError(err error) *Entry
+// 	WithTraceID(id TraceID) *Entry
+// 	WithSpanID(id SpanID) *Entry
+// 	WithFields(fields ...Field) *Entry
+// 	WithNamespacedFields(name string, fields ...Field) *Entry
+// 	WithName(name string) *Entry
 
 // 	Log(level Level, message string)
 // 	Logf(level Level, format string, args ...any)
@@ -119,4 +128,5 @@ func (l *Logger) WithName(name string) *Logger {
 
 // 	Exit(code int, message string)
 // 	Exitf(code int, format string, args ...any)
-// }
+
+// 	Flush(timeout time.Duration) error
