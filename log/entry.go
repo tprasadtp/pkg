@@ -11,8 +11,8 @@ type Entry struct {
 	Logger     *Logger
 	Level      Level
 	Timestamp  time.Time
-	SpanID     string
-	TraceID    string
+	SpanID     SpanID
+	TraceID    TraceID
 	Message    string
 	Error      error
 	Namespaces []string
