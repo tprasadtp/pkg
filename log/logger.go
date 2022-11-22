@@ -2,131 +2,114 @@ package log
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"go.uber.org/multierr"
 )
 
-// var (
-// 	_ Interface = Logger{}
-// )
-
-// Returns a new logger
-func New() *Logger {
-	return &Logger{}
-}
-
-// Logger
-type Logger struct {
+// core holds core stateful elements of Logger
+// like handlers, mutexes and other data. Once initialized,
+// it MUST ALWAYS be passed as by reference(pointer)
+// and NEVER copied.
+type core struct {
 	handlers []Handler
 	mu       sync.Mutex
+}
 
-	names  []string
-	fields []Field
-	err    error
+// Logger Logger includes handlers
+type Logger struct {
+	namespace string
+	core      *core
+	fields    []Field
+	err       error
+}
 
-	callerInfo bool
+func (l *Logger) clone() Logger {
+	l.core.mu.Lock()
+	defer l.core.mu.Unlock()
 
-	traceID string
-	spanID  string
+	return Logger{
+		core:      l.core,
+		fields:    l.fields,
+		err:       l.err,
+		namespace: l.namespace,
+	}
 }
 
 // Remove all existing handlers and set a new handler.
 // This will flush and close all existing handlers
 // before setting the new handler as the only handler.
 func (l *Logger) SetHandler(handler Handler) error {
-	l.mu.Lock()
-	defer l.mu.Unlock()
+	l.core.mu.Lock()
+	defer l.core.mu.Unlock()
 	var err error
-	for _, h := range l.handlers {
+	for _, h := range l.core.handlers {
 		multierr.Append(err, h.Close())
 	}
 	if err == nil {
-		l.handlers = []Handler{handler}
+		l.core.handlers = []Handler{handler}
 	}
 	return err
 }
 
 // Add a handler to logger. Handler must be unique.
 func (l *Logger) AddHandler(handler Handler) error {
-	l.mu.Lock()
-	defer l.mu.Unlock()
+	l.core.mu.Lock()
+	defer l.core.mu.Unlock()
 
-	for _, h := range l.handlers {
+	var err error
+	for _, h := range l.core.handlers {
 		if h.Id() == handler.Id() {
-			return fmt.Errorf("log: handler with name %s already exits", handler.Id())
+			multierr.Append(err, fmt.Errorf("log: handler with name %s already exits", handler.Id()))
 		}
 	}
-	l.handlers = append(l.handlers, handler)
+
+	l.core.handlers = append(l.core.handlers, handler)
 	return nil
 }
 
 // Remove existing handler with id specified.
 // It is an error to remove a non existent handler.
 func (l *Logger) RemoveHandler(id string) error {
-	l.mu.Lock()
-	defer l.mu.Unlock()
+	l.core.mu.Lock()
+	defer l.core.mu.Unlock()
 
 	var err error
-	var oldHandlersCount = len(l.handlers)
+	var oldHandlersCount = len(l.core.handlers)
 
-	for i, h := range l.handlers {
+	for i, h := range l.core.handlers {
 		if h.Id() == id {
 			multierr.Append(err, h.Close())
 		}
 		if err == nil {
 			// Preserves order of handlers
-			l.handlers = append(l.handlers[:i], l.handlers[i+1:]...)
+			l.core.handlers = append(l.core.handlers[:i], l.core.handlers[i+1:]...)
 		}
 	}
 	if err == nil {
-		if oldHandlersCount == len(l.handlers) {
+		if oldHandlersCount == len(l.core.handlers) {
 			return fmt.Errorf("log: handler with id %s is not present", id)
 		}
 	}
 	return err
 }
 
-// Returns a namespaced logger. By default this is empty
-// This is propagated to Fields. Useful to isolate components
-func (l *Logger) WithName(name string) *Entry {
-	return &Entry{
-		Logger: l,
+// WithNamespace returns copy of the logger with added namespace
+func (l *Logger) WithNamespace(name string) Logger {
+	l.core.mu.Lock()
+	defer l.core.mu.Unlock()
+	rv := l.clone()
+
+	// If no namespace is provides, we create a random namespace
+	if strings.TrimSpace(strings.ToLower(name)) == "" {
+		name = "ns_invalid"
 	}
+
+	if len(rv.namespace) > 0 {
+		rv.namespace = rv.namespace + "." + name
+	} else {
+		rv.namespace = name
+	}
+	return rv
 }
-
-// 	WithError(err error) *Entry
-// 	WithTraceID(id TraceID) *Entry
-// 	WithSpanID(id SpanID) *Entry
-// 	WithFields(fields ...Field) *Entry
-// 	WithNamespacedFields(name string, fields ...Field) *Entry
-// 	WithName(name string) *Entry
-
-// 	Log(level Level, message string)
-// 	Logf(level Level, format string, args ...any)
-
-// 	Debug(message string)
-// 	Debugf(format string, args ...any)
-
-// 	Verbose(message string)
-// 	Verbosef(format string, args ...any)
-
-// 	Info(message string)
-// 	Infof(format string, args ...any)
-
-// 	Success(message string)
-// 	Successf(format string, args ...any)
-
-// 	Warn(message string)
-// 	Warnf(format string, args ...any)
-
-// 	Error(message string)
-// 	Errorf(format string, args ...any)
-
-// 	Panic(message string)
-// 	Panicf(format string, args ...any)
-
-// 	Exit(code int, message string)
-// 	Exitf(code int, format string, args ...any)
-
-// 	Flush(timeout time.Duration) error

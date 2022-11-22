@@ -1,14 +1,18 @@
 package log
 
+// Handler implements a log handler.
+// Its up to the handler to be thread-safe.
 type Handler interface {
+	Init() error
+
 	Id() string
 
 	Level() Level
-	Enabled(Level) bool
+	Enabled(level Level) bool
 
-	IncludeCallerInfo() bool
+	WithCallerInfo() bool
 
-	Write(e *Entry) error
+	Write(e Entry) error
 
 	Close() error
 	Flush() error
