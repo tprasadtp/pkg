@@ -1,4 +1,4 @@
-//go:build linux || darwin
+//go:build linux || darwin || dragonfly || freebsd || netbsd || openbsd
 
 package color
 
@@ -11,7 +11,7 @@ import (
 
 // isTerminal returns true if given file descriptor is a terminal
 func isTerminal(fd uintptr) bool {
-	_, err := unix.IoctlGetTermios(int(fd), unix.TCGETS)
+	_, err := unix.IoctlGetTermios(int(fd), ioctlReadTermios)
 	return err == nil
 }
 

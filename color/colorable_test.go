@@ -3,8 +3,6 @@ package color
 import (
 	"fmt"
 	"testing"
-
-	"github.com/tprasadtp/pkg/assert"
 )
 
 func TestFlag(t *testing.T) {
@@ -150,10 +148,9 @@ func TestFlag(t *testing.T) {
 		tn := fmt.Sprintf("flag=%s,tty=%t", tc.flag, tc.tty)
 		t.Run(tn, func(t *testing.T) {
 			val := isColorable(tc.flag, tc.tty)
-			// if tc.expect != val {
-			// 	t.Errorf("%s => got=%v, want=%v", tn, val, tc.expect)
-			// }
-			assert.Equal(t, val, tc.expect, tn)
+			if tc.expect != val {
+				t.Errorf("%s => got=%v, want=%v", tn, val, tc.expect)
+			}
 		})
 	}
 }
@@ -316,10 +313,9 @@ func TestEnvVariables(t *testing.T) {
 				t.Setenv("CI", "")
 			}
 			val := isColorable("auto", tc.tty)
-			// if tc.expect != val {
-			// 	t.Errorf("%s => got=%v, want=%v", tn, val, tc.expect)
-			// }
-			assert.Equal(t, val, tc.expect)
+			if tc.expect != val {
+				t.Errorf("%s => got=%v, want=%v", tn, val, tc.expect)
+			}
 		})
 	}
 }

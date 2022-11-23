@@ -23,8 +23,8 @@ type Field struct {
 // or context of its own Handlers can use already implemented Marshal functions
 // or implement their own, its up to the handler to decide.
 type Entry struct {
-	// Logger Namespace
-	// This can be different than filed namespaces.
+	// Namespace
+	// This can be different than filed namespace.
 	// Filed namespaces will always append logger namespace
 	// if their Namespace filed is empty.
 	Namespace string

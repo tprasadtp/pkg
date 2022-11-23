@@ -40,10 +40,10 @@ func (h *Handler) Flush() error {
 }
 
 func (h *Handler) Write(e *log.Entry) error {
-	h.mu.Lock()
-	defer h.mu.Unlock()
 	if h.closed {
 		return nil
 	}
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	return nil
 }

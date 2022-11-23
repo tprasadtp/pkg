@@ -10,7 +10,7 @@ import (
 )
 
 // nolint: gochecknoglobals
-var osVersion *windows.OsVersionInfoEx = windows.RtlGetVersion()
+var osVersion = windows.RtlGetVersion()
 
 // isTerminal returns true if given file handle is a terminal
 // and virtual terminal processing can be enabled.

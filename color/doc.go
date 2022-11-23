@@ -1,5 +1,6 @@
-// This package only supports true colors. 256 bit and
-// 16 bit colors are not supported.
+// This package only supports terminals which support true colors (24 bit).
+// In case terminal does not support true color, input bytes/strings are
+// left unmodified and returns a no-op equivalents.
 //
 // This is primarily intended for use with
 // [tprasadtp/pkg/log] and [tprasadtp/pkg/cli] libraries
