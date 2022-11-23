@@ -1,6 +1,7 @@
 package discard
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/tprasadtp/pkg/log"
@@ -32,6 +33,7 @@ func (h *Handler) Level() log.Level {
 func (h *Handler) Close() error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
+	h.closed = true
 	return nil
 }
 
@@ -41,7 +43,7 @@ func (h *Handler) Flush() error {
 
 func (h *Handler) Write(e *log.Entry) error {
 	if h.closed {
-		return nil
+		return fmt.Errorf("log.handler.%s: Handler is closed", h.id)
 	}
 	h.mu.Lock()
 	defer h.mu.Unlock()

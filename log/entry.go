@@ -56,18 +56,25 @@ type Entry struct {
 	Caller CallerInfo
 }
 
-// JSONEncoderConfig is encode configuration for JSON encoder
-type JSONEncoderConfig struct {
+// EncoderConfig is encode configuration for encoders
+type EncoderConfig struct {
 	CallerFileKey string
 	CallerLineKey string
 	ErrorKey      string
-	LevelKey      string
 	SpanKey       string
-	TimeKey       string
 	TraceKey      string
+
+	LevelKey     string
+	SkipLevelKey bool
+
+	TimeKey     string
+	SkipTimeKey bool
+
+	VersionKey     string
+	SkipVersionKey bool
 }
 
-var DefaultJSONEncoderConfig = JSONEncoderConfig{
+var DefaultEncoderConfig = EncoderConfig{
 	CallerFileKey: "file",
 	CallerLineKey: "line",
 	ErrorKey:      "error",
@@ -75,23 +82,19 @@ var DefaultJSONEncoderConfig = JSONEncoderConfig{
 	SpanKey:       "span_id",
 	TimeKey:       "time",
 	TraceKey:      "trace_id",
+	VersionKey:    "version",
 }
 
 // MarshalJSON implements json.Marshaler interface
-// This used default JsonEncoderConfig.
+// This uses default JsonEncoderConfig.
 func (e Entry) MarshalJSON() ([]byte, error) {
 	return nil, nil
 }
 
 // MarshalJSON implements json.Marshaler interface
-// This is same as MarshalJSON but used custom JSONEncoderConfig.
-// Useful when custom keys are required
-func (e Entry) MarshalJSONWithConfig(c JSONEncoderConfig) ([]byte, error) {
-	return nil, nil
-}
-
-// MarshalLogFmt marshalls Event to Logfmt format
-func (e Entry) MarshalLogFmt() ([]byte, error) {
+// This is same as MarshalJSON but uses custom EncoderConfig.
+// Useful when custom keys are required.
+func (e Entry) MarshalJSONWithConfig(c EncoderConfig) ([]byte, error) {
 	return nil, nil
 }
 
