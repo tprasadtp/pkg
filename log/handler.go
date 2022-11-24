@@ -1,9 +1,10 @@
 package log
 
-// Handler implements a log handler.
-// Its up to the handler to be thread-safe.
-// Please note that handlers may not be able to preserve
-// Event Levels as not all levels are supported on all handlers.
+// A Handler describes the logging backend.
+// It handles log records produced by a Logger.
+// A typical handler may
+//   - print log records to standard error,
+//   - write them to a file, database or network service etc.
 type Handler interface {
 	// Init is usually used to initialize buffer pools,
 	// channels do some sanity checks on the handler.
@@ -14,7 +15,7 @@ type Handler interface {
 	Level() Level
 	Enabled(level Level) bool
 
-	WithCallerInfo() bool
+	IncludeCallerInfo() bool
 
 	Write(e Entry) error
 

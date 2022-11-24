@@ -8,17 +8,17 @@ import (
 	"go.uber.org/multierr"
 )
 
-// Logger Logger includes handlers
+// Logger
 type Logger struct {
 	mu       sync.Mutex
 	handlers []Handler
 }
 
 // SubLogger inherits handlers from Logger,
-// It implements almost all methods of Logger
+// It implements all methods of Logger
 // with exception of managing handlers.
 type SubLogger struct {
-	core      *Logger
+	handlers  []Handler
 	namespace string
 	err       error
 	fields    []Field
@@ -52,8 +52,13 @@ func (l *Logger) AddHandler(handler Handler) error {
 		}
 	}
 
-	l.handlers = append(l.handlers, handler)
-	return nil
+	if err == nil {
+		multierr.Append(err, handler.Init())
+		if err == nil {
+			l.handlers = append(l.handlers, handler)
+		}
+	}
+	return err
 }
 
 // Remove existing handler with id specified.
@@ -82,6 +87,15 @@ func (l *Logger) RemoveHandler(id string) error {
 	return err
 }
 
+// Flushes all handlers synchronously.
+func (l *Logger) Flush() error {
+	var err error
+	for _, h := range l.handlers {
+		multierr.Append(err, h.Flush())
+	}
+	return err
+}
+
 // WithNamespace returns a SubLogger with added namespace
 func (l *Logger) WithNamespace(name string) SubLogger {
 	l.mu.Lock()
@@ -93,19 +107,19 @@ func (l *Logger) WithNamespace(name string) SubLogger {
 	}
 
 	return SubLogger{
-		core:      l,
+		handlers:  l.handlers,
 		namespace: name,
 	}
 }
 
 // WithNamespace returns a SubLogger with added fields
-func (l *Logger) WithFields(fields []Field) SubLogger {
+func (l *Logger) WithFields(fields ...Field) SubLogger {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
 	return SubLogger{
-		core:   l,
-		fields: fields,
+		handlers: l.handlers,
+		fields:   fields,
 	}
 }
 
@@ -115,7 +129,7 @@ func (l *Logger) WithField(key string, value any) SubLogger {
 	defer l.mu.Unlock()
 
 	return SubLogger{
-		core: l,
+		handlers: l.handlers,
 		fields: []Field{
 			{
 				Key:   key,
@@ -131,7 +145,7 @@ func (l *Logger) WithError(err error) SubLogger {
 	defer l.mu.Unlock()
 
 	return SubLogger{
-		core: l,
-		err:  err,
+		handlers: l.handlers,
+		err:      err,
 	}
 }

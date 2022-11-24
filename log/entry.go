@@ -2,6 +2,8 @@ package log
 
 import (
 	"time"
+
+	"github.com/tprasadtp/pkg/version"
 )
 
 // Caller info
@@ -42,10 +44,10 @@ type Entry struct {
 	Error error
 
 	// OpenTracing/OpenTelemetry Trace ID (Global)
-	Trace string
+	TraceID string
 
 	// OpenTracing/OpenTelemetry Span ID (Global)
-	Span string
+	SpanID string
 
 	// Contextual fields
 	// Marshaller MUST consider namespaces on both Entry AND Fields.
@@ -54,6 +56,10 @@ type Entry struct {
 	// CallerInfo is only populated if one of the handlers in
 	// root logger has WithCallerInfo() returns true (Global)
 	Caller CallerInfo
+
+	// VersionInfo
+	// This is extremely useful for A/B deployed logs
+	VersionInfo version.Info
 }
 
 // EncoderConfig is encode configuration for encoders

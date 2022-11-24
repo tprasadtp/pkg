@@ -7,12 +7,17 @@ import (
 	"github.com/tprasadtp/pkg/log"
 )
 
+var (
+	_ log.Handler = &Handler{}
+)
+
 // Discard handler. Used for testing
 type Handler struct {
-	mu     sync.Mutex
-	closed bool
-	id     string
-	level  log.Level
+	mu         sync.Mutex
+	closed     bool
+	id         string
+	level      log.Level
+	callerinfo bool
 }
 
 func New(id string, level log.Level) *Handler {
@@ -20,6 +25,18 @@ func New(id string, level log.Level) *Handler {
 		id:    id,
 		level: level,
 	}
+}
+
+func NewWithCallerInfo(id string, level log.Level) *Handler {
+	return &Handler{
+		id:         id,
+		level:      level,
+		callerinfo: true,
+	}
+}
+
+func (h *Handler) Init() error {
+	return nil
 }
 
 func (h *Handler) Id() string {
@@ -37,13 +54,23 @@ func (h *Handler) Close() error {
 	return nil
 }
 
+func (h *Handler) Enabled(l log.Level) bool {
+	return h.level >= l
+}
+
+func (h *Handler) IncludeCallerInfo() bool {
+	return h.callerinfo
+}
+
 func (h *Handler) Flush() error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	return nil
 }
 
-func (h *Handler) Write(e *log.Entry) error {
+func (h *Handler) Write(e log.Entry) error {
 	if h.closed {
-		return fmt.Errorf("log.handler.%s: Handler is closed", h.id)
+		return fmt.Errorf("log.handler.discard: Handler is closed")
 	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
