@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "bungcip.better-toml",
+        "golang.go",
+        "redhat.vscode-commons",
+        "streetsidesoftware.code-spell-checker",
+        "visualstudioexptteam.intellicode-api-usage-examples",
+        "visualstudioexptteam.vscodeintellicode-completions",
+        "visualstudioexptteam.vscodeintellicode",
+    ]
+}

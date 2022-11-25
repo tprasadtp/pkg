@@ -68,7 +68,7 @@ func preExecHook(cmd *Command) {
 		ppid := os.Getppid()
 		pe, err := getProcessEntry(ppid)
 		if err != nil {
-			return false
+			return
 		}
 		// check if parent process is explorer.exe
 		name := syscall.UTF16ToString(pe.exeFile[:])
