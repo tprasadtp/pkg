@@ -70,13 +70,3 @@ func (e Event) MarshalJSON() ([]byte, error) {
 func (e Event) MarshalJSONWithConfig(c EntryEncoderConfig) ([]byte, error) {
 	return nil, nil
 }
-
-// MarshalLogFmt marshalls Event to Journald format
-func (e Event) MarshalJournald() ([]byte, error) {
-	return nil, nil
-}
-
-// MarshalLogFmt marshalls Event to syslog format
-func (e Event) MarshalSyslog() ([]byte, error) {
-	return nil, nil
-}
