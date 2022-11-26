@@ -68,7 +68,7 @@ func (h *Handler) Flush() error {
 	return nil
 }
 
-func (h *Handler) Write(e log.Entry) error {
+func (h *Handler) Write(e log.Event) error {
 	if h.closed {
 		return fmt.Errorf("log.handler.discard: Handler is closed")
 	}

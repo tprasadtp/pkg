@@ -4,22 +4,23 @@ import (
 	"math"
 )
 
+// Level Level represents log level.
 type Level uint16
 
 const (
 	DEBUG   Level = 10
-	VERBOSE Level = 15
-	INFO    Level = 20
-	SUCCESS Level = 21
-	NOTICE  Level = 25
-	WARNING Level = 30
-	ERROR   Level = 40
-	FATAL   Level = 50
-	PANIC   Level = FATAL
+	VERBOSE Level = 20
+	INFO    Level = 30
+	SUCCESS Level = 40
+	NOTICE  Level = 50
+	WARNING Level = 60
+	ERROR   Level = 70
+	PANIC   Level = 80
+	EXIT    Level = math.MaxUint16 - 1
 )
 
 const (
 	ALL     Level = 0
 	NONE    Level = math.MaxUint16
-	UNKNOWN Level = math.MaxUint16 - 1
+	UNKNOWN Level = math.MaxUint16 - 2
 )
