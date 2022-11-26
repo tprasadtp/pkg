@@ -9,4 +9,13 @@ type Logger struct {
 	namespace string
 	err       error
 	fields    []Field
+	span      string
+	trace     string
+}
+
+// NewLogger returns a new Logger with specified handler
+func NewLogger(h Handler) *Logger {
+	return &Logger{
+		handler: h,
+	}
 }
