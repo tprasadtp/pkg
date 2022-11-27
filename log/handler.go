@@ -21,22 +21,12 @@ type Handler interface {
 	//    not initialized or closed.
 	//  - It is responsibility of the implementation to be thread safe.
 	//    Logger WILL NOT handle thread safety.
-	Process(e Event) error
+	Handle(e Event) error
 
 	// Flushes pending entries in the buffer.
 	//  - Its up to the handler to implement timeouts,
 	//    However it is highly encouraged to do so.
-	//  - Panic and Exit methods of the Logger will call Flush automatically.
+	//  - Panic/Panicf and method on the Logger will call this automatically.
 	//  - It is NOT an error if there are no pending entries to flush.
 	Flush() error
-
-	// Closes the handler.
-	//  - Any log writes after calling Close may be ignored
-	//    resulting in lost logs or cause panics depending on implementation.
-	//  - It is encouraged to close handler only after ensuring, all the
-	//    goroutines have completed execution.
-	//  - Similar to Flush, it is up to the handler to implement timeouts.
-	//  - Implementations SHOULD return error upon attempts to Close an already
-	//    closed handler.
-	Close() error
 }

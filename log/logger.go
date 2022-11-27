@@ -2,7 +2,6 @@ package log
 
 import (
 	"context"
-	"fmt"
 )
 
 // Logger
@@ -44,17 +43,6 @@ func (l *Logger) Namespace() string {
 // Flush flushes Logger's Handler.
 func (l *Logger) Flush() error {
 	return l.handler.Flush()
-}
-
-// Close flushes Logger's Handler and closes it.
-// This also flushes the handler.
-func (l *Logger) Close() error {
-	err := l.handler.Flush()
-	if err != nil {
-		return fmt.Errorf("%w;%e", err, l.handler.Close())
-	} else {
-		return l.handler.Close()
-	}
 }
 
 // WithContext returns a new Logger with the same handler

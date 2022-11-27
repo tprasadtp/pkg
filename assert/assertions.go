@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-// ObjectsAreEqual determines if two objects are considered equal.
+// objectsAreEqual determines if two objects are considered equal.
 // This function does no assertion of any kind.
 func objectsAreEqual(a, b any) bool {
 

@@ -1,4 +1,4 @@
-//go:build !linux && !darwin && !windows
+//go:build !linux && !windows && !darwin && !dragonfly && !freebsd && !netbsd && !openbsd
 
 package color
 

@@ -7,7 +7,7 @@
 global logger. Global logger becomes necessary as `context.Context` might be missing Logger.
 - Even thought passing logger via context.Context is not supported, `log.Event` does include
 the context to allow handlers to populate contextual fields like Span and Trace.
-- Uses `map[string]any` to specify attributes/fields. This is better compared to passing variadic slice
+- Uses `map[string]any` to specify fields. This is better compared to passing variadic slice
 `...any` as it avoids depending on a vet to check for errors.
 
 [wire]: https://github.com/google/wire

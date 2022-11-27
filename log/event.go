@@ -36,6 +36,12 @@ type Event struct {
 	// Contextual fields
 	Fields []Field
 
-	// Caller Info
-
+	pc uintptr
 }
+
+// Caller returns the file, line, function of the log event.
+// If the Event was created without the necessary information,
+// or if the location is unavailable, it returns ("", 0, "").
+// func (e Event) Caller() (string, uint, string) {
+// 	return runtime.Callers()
+// }
