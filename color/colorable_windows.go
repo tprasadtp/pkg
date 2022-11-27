@@ -52,7 +52,7 @@ func isColorable(flag string, istty bool) bool {
 		return false
 	}
 	// CI
-	if strings.ToLower(os.Getenv("NO_COLOR")) == "true" {
+	if strings.ToLower(os.Getenv("CI")) == "true" {
 		return true
 	}
 	return istty

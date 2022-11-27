@@ -225,6 +225,7 @@ func TestEnvVariables(t *testing.T) {
 			tty:      true,
 			expect:   true,
 		},
+		//NO_COLOR (defined whitespace only)
 		{
 			NO_COLOR: "  ",
 			tty:      false,
@@ -233,9 +234,9 @@ func TestEnvVariables(t *testing.T) {
 		{
 			NO_COLOR: "  ",
 			tty:      true,
-			expect:   false,
+			expect:   true,
 		},
-		//NO_COLOR (defined or not empty)
+		//NO_COLOR defined and not empty
 		{
 			NO_COLOR: "defined",
 			tty:      false,
@@ -246,17 +247,7 @@ func TestEnvVariables(t *testing.T) {
 			tty:      true,
 			expect:   false,
 		},
-		{
-			NO_COLOR: "  ",
-			tty:      false,
-			expect:   false,
-		},
-		{
-			NO_COLOR: "  ",
-			tty:      true,
-			expect:   false,
-		},
-		// CI
+		// CI=true, enables colors even when TTY is not attached
 		{
 			CI:     "true",
 			tty:    true,
@@ -267,6 +258,7 @@ func TestEnvVariables(t *testing.T) {
 			tty:    false,
 			expect: true,
 		},
+		// CI != true
 		{
 			CI:     "none",
 			tty:    true,
@@ -285,7 +277,8 @@ func TestEnvVariables(t *testing.T) {
 
 	for _, tc := range tt {
 		tn := fmt.Sprintf(
-			"CLICOLOR_FORCE=%s,NO_COLOR=%s,CLICOLOR=%s,tty=%t",
+			"CI=%s,CLICOLOR_FORCE=%s,NO_COLOR=%s,CLICOLOR=%s,tty=%t",
+			tc.CI,
 			tc.CLICOLOR_FORCE,
 			tc.NO_COLOR,
 			tc.CLICOLOR,
