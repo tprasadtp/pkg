@@ -1,7 +1,7 @@
 package log
 
-// EntryEncoderConfig is encode configuration for encoder
-type EntryEncoderConfig struct {
+// EncoderConfig is encode configuration for encoder
+type EncoderConfig struct {
 	CallerFileKey string
 	CallerLineKey string
 	CallerFuncKey string
@@ -25,7 +25,7 @@ const (
 	DefaultTimeKey = "time"
 
 	// Default Trace ID key for Entry encoder
-	DefaultTraceKey = "trace"
+	DefaultTraceKey = "traceID"
 
 	// Default Span Key for Entry encoder
 	DefaultSpanKey = "spanID"
@@ -43,10 +43,10 @@ const (
 	DefaultCallerLineKey = "line"
 )
 
-// DefaultEntryEncoderConf is default Entry encoder configuration.
+// DefaultEncoderConf is default Entry encoder configuration.
 // It is not recommended to change this.
 // Use Marshal*WithConfig functions instead of modifying the default.
-var DefaultEntryEncoderConf = EntryEncoderConfig{
+var DefaultEncoderConf = EncoderConfig{
 	CallerFileKey: DefaultCallerFileKey,
 	CallerLineKey: DefaultCallerLineKey,
 	CallerFuncKey: DefaultCallerFuncKey,
@@ -59,7 +59,6 @@ var DefaultEntryEncoderConf = EntryEncoderConfig{
 }
 
 // MarshalJSON implements json.Marshaler interface
-// This uses DefaultEntryEncoderConf.
 func (e Event) MarshalJSON() ([]byte, error) {
 	return nil, nil
 }
@@ -67,6 +66,6 @@ func (e Event) MarshalJSON() ([]byte, error) {
 // MarshalJSON implements json.Marshaler interface
 // This is same as MarshalJSON but uses custom EncoderConfig.
 // Useful when custom keys are required.
-func (e Event) MarshalJSONWithConfig(c EntryEncoderConfig) ([]byte, error) {
+func (e Event) MarshalJSONWithConfig(c EncoderConfig) ([]byte, error) {
 	return nil, nil
 }

@@ -5,8 +5,6 @@ package color
 import (
 	"fmt"
 	"testing"
-
-	"github.com/tprasadtp/pkg/assert"
 )
 
 func TestUnixTERM(t *testing.T) {
@@ -69,11 +67,10 @@ func TestUnixTERM(t *testing.T) {
 				t.Setenv("TERM", "")
 			}
 
-			got := isColorable("auto", tc.tty)
-			// if tc.expect != val {
-			// 	t.Errorf("%s => got=%v, want=%v", tn, val, tc.expect)
-			// }
-			assert.Equal(t, got, tc.expect)
+			val := isColorable("auto", tc.tty)
+			if tc.expect != val {
+				t.Errorf("%s => got=%v, want=%v", tn, val, tc.expect)
+			}
 		})
 	}
 }

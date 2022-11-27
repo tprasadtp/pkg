@@ -73,6 +73,7 @@ func (l Level) String() string {
 	}
 }
 
+// MarshalJSON implements json.Marshaler interface
 func (l Level) MarshalJSON() ([]byte, error) {
 	// AppendQuote is sufficient for JSON-encoding all Level strings.
 	// They don't contain any runes that would produce invalid JSON
