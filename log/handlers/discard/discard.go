@@ -1,6 +1,6 @@
-// Package noop implements a no-op [github.com/tprasadtp/pkg/log.Handler].
+// Package discard implements a no-op [github.com/tprasadtp/pkg/log.Handler].
 // This [Handler] simply discards the log events.
-package noop
+package discard
 
 import (
 	"io"
