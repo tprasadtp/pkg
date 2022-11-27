@@ -67,16 +67,17 @@ func (log *Logger) WithHandler(h Handler) *Logger {
 }
 
 // WithNamespace returns a new Logger with given name segment
-// appended to its Namespace. Segments are joined by periods.
-func (log *Logger) WithNamespace(n string) *Logger {
-	if n == "" {
+// appended to its original Namespace.
+// Segments are joined by periods.
+func (log *Logger) WithNamespace(namespace string) *Logger {
+	if namespace == "" {
 		return log
 	}
 	rv := log.clone()
 	if log.namespace == "" {
-		log.namespace = n
+		log.namespace = namespace
 	} else {
-		log.namespace = strings.Join([]string{log.namespace, n}, ".")
+		log.namespace = strings.Join([]string{log.namespace, namespace}, ".")
 	}
 	return rv
 }
