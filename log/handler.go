@@ -9,6 +9,8 @@ type Handler interface {
 	//  - Handler may chose to only log a single level, for example a handler for
 	//    error tracking services like [Sentry] or [Cloud Trace] might only
 	//    process events at ERROR level.
+	//	- Enabled is called early, before any arguments are processed,
+	//    to save effort if the log event should be discarded.
 	//
 	// [Sentry]: https://sentry.io
 	// [Cloud Trace]: https://cloud.google.com/trace/docs/setup/go
@@ -19,14 +21,13 @@ type Handler interface {
 	//  - Please note that this is ONLY called if Enabled returns true.
 	//  - Implementations SHOULD return error to when handler is
 	//    not initialized or closed.
-	//  - It is responsibility of the implementation to be thread safe.
-	//    Logger WILL NOT handle thread safety.
-	Handle(e Event) error
+	//  - It is responsibility of the implementation to be concurrent safe.
+	//    Logger WILL NOT handle any sort of locking.
+	Handle(e Entry) error
 
-	// Flushes pending entries in the buffer.
+	// Writes pending entries in the buffer to disk/network.
 	//  - Its up to the handler to implement timeouts,
 	//    However it is highly encouraged to do so.
 	//  - Panic/Panicf and method on the Logger will call this automatically.
-	//  - It is NOT an error if there are no pending entries to flush.
 	Flush() error
 }

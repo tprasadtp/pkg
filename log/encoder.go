@@ -59,13 +59,13 @@ var DefaultEncoderConf = EncoderConfig{
 }
 
 // MarshalJSON implements json.Marshaler interface
-func (e Event) MarshalJSON() ([]byte, error) {
+func (e Entry) MarshalJSON() ([]byte, error) {
 	return nil, nil
 }
 
 // MarshalJSON implements json.Marshaler interface
 // This is same as MarshalJSON but uses custom EncoderConfig.
 // Useful when custom keys are required.
-func (e Event) MarshalJSONWithConfig(c EncoderConfig) ([]byte, error) {
+func (e Entry) MarshalJSONWithConfig(c EncoderConfig) ([]byte, error) {
 	return nil, nil
 }

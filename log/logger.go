@@ -2,7 +2,15 @@ package log
 
 import (
 	"context"
+	"strings"
 )
+
+// New creates a new Logger with the given Handler.
+func New(h Handler) *Logger {
+	return &Logger{
+		handler: h,
+	}
+}
 
 // Logger
 type Logger struct {
@@ -13,42 +21,81 @@ type Logger struct {
 	fields    []Field
 }
 
-// New creates a new Logger with the given Handler.
-func New(h Handler) *Logger {
-	return &Logger{
-		handler: h,
-	}
+func (log *Logger) clone() *Logger {
+	copy := *log
+	return &copy
 }
 
 // Enabled reports whether Logger emits log records at the given level.
-func (l *Logger) Enabled(level Level) bool {
-	return l.Handler().Enabled(level)
+func (log *Logger) Enabled(level Level) bool {
+	return log.Handler().Enabled(level)
 }
 
 // Context returns Logger's context.
-func (l *Logger) Context() context.Context {
-	return l.ctx
+func (log *Logger) Context() context.Context {
+	return log.ctx
 }
 
 // Handler returns Logger's Handler.
-func (l *Logger) Handler() Handler {
-	return l.handler
+func (log *Logger) Handler() Handler {
+	return log.handler
 }
 
 // Namespace returns Logger's Namespace.
-func (l *Logger) Namespace() string {
-	return l.namespace
+func (log *Logger) Namespace() string {
+	return log.namespace
 }
 
 // Flush flushes Logger's Handler.
-func (l *Logger) Flush() error {
-	return l.handler.Flush()
+func (log *Logger) Flush() error {
+	return log.handler.Flush()
 }
 
 // WithContext returns a new Logger with the same handler
-// as the receiver and the given context.
-func (l *Logger) WithContext(ctx context.Context) *Logger {
-	rv := *l
-	rv.ctx = ctx
-	return &rv
+// as the receiver and the given attribute.
+func (log *Logger) WithContext(ctx context.Context) *Logger {
+	clone := log.clone()
+	clone.ctx = ctx
+	return clone
+}
+
+// WithHandler returns a new Logger with specified handler
+func (log *Logger) WithHandler(h Handler) *Logger {
+	rv := log.clone()
+	rv.handler = h
+	return rv
+}
+
+// WithNamespace returns a new Logger with given name segment
+// appended to its Namespace. Segments are joined by periods.
+func (log *Logger) WithNamespace(n string) *Logger {
+	if n == "" {
+		return log
+	}
+	rv := log.clone()
+	if log.namespace == "" {
+		log.namespace = n
+	} else {
+		log.namespace = strings.Join([]string{log.namespace, n}, ".")
+	}
+	return rv
+}
+
+// With returns a new Logger with given Key Value pair added to fields
+func (log *Logger) With(key string, value any) *Logger {
+	rv := log.clone()
+	return rv
+}
+
+// WithKV returns a new Logger with given KV fields
+func (log *Logger) WithKV(kv KV) *Logger {
+	rv := log.clone()
+	return rv
+}
+
+// WithError returns a new Logger with given error.
+func (log *Logger) WithError(err error) *Logger {
+	copy := log.clone()
+	copy.err = err
+	return copy
 }

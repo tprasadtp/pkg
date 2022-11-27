@@ -1,12 +1,7 @@
-# https://taskfile.dev
-
 version: '3'
-
-vars:
-  GREETING: Hello, World!
 
 tasks:
   default:
+    desc: "Show a list of available tasks"
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+      - task --list

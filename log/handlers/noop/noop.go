@@ -1,5 +1,5 @@
 // Package noop implements a no-op [github.com/tprasadtp/pkg/log.Handler].
-// This [Handler] simply discards the log events. It does not implement
+// This [Handler] simply discards the log events.
 package noop
 
 import (
@@ -31,7 +31,7 @@ func (h *Handler) Enabled(level log.Level) bool {
 }
 
 // Handle the Event
-func (h *Handler) Handle(e log.Event) error {
+func (h *Handler) Handle(e log.Entry) error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	return nil
