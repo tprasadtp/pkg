@@ -25,10 +25,10 @@ const (
 	DefaultTimeKey = "time"
 
 	// Default Trace ID key for Entry encoder
-	DefaultTraceKey = "traceID"
+	DefaultTraceKey = "trace_id"
 
 	// Default Span Key for Entry encoder
-	DefaultSpanKey = "spanID"
+	DefaultSpanKey = "span_id"
 
 	// Default app Version Key for Entry encoder
 	DefaultVersionKey = "version"
@@ -46,7 +46,7 @@ const (
 // DefaultEncoderConf is default Entry encoder configuration.
 // It is not recommended to change this.
 // Use Marshal*WithConfig functions instead of modifying the default.
-var DefaultEncoderConf = EncoderConfig{
+var DefaultEncoderConfig = EncoderConfig{
 	CallerFileKey: DefaultCallerFileKey,
 	CallerLineKey: DefaultCallerLineKey,
 	CallerFuncKey: DefaultCallerFuncKey,
