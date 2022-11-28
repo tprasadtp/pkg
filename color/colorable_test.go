@@ -178,6 +178,7 @@ func TestEnvVariables(t *testing.T) {
 			tty:            true,
 			expect:         true,
 		},
+		// CLICOLOR_FORCE (defined=0)
 		{
 			CLICOLOR_FORCE: "0",
 			tty:            false,
@@ -210,7 +211,17 @@ func TestEnvVariables(t *testing.T) {
 			expect:         true,
 		},
 		{
-			CLICOLOR_FORCE: "non-zero-with space",
+			CLICOLOR_FORCE: "  ",
+			tty:            false,
+			expect:         true,
+		},
+		{
+			CLICOLOR_FORCE: "non-zero",
+			tty:            false,
+			expect:         true,
+		},
+		{
+			CLICOLOR_FORCE: "  ",
 			tty:            false,
 			expect:         true,
 		},
@@ -234,7 +245,7 @@ func TestEnvVariables(t *testing.T) {
 		{
 			NO_COLOR: "  ",
 			tty:      true,
-			expect:   true,
+			expect:   false,
 		},
 		//NO_COLOR defined and not empty
 		{

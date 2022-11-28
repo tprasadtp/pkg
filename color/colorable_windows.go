@@ -42,13 +42,11 @@ func isColorable(flag string, istty bool) bool {
 		return false
 	}
 	// CLICOLOR_FORCE != 0 and CLICOLOR_FORCE is not empty
-	if os.Getenv("CLICOLOR_FORCE") != "0" &&
-		len(strings.TrimSpace(os.Getenv("CLICOLOR_FORCE"))) > 0 {
+	if len(os.Getenv("CLICOLOR_FORCE")) > 0 && os.Getenv("CLICOLOR_FORCE") != "0" {
 		return true
 	}
 	// CLICOLOR == 0 or NO_COLOR is set and not empty
-	if len(strings.TrimSpace(os.Getenv("NO_COLOR"))) > 0 ||
-		os.Getenv("CLICOLOR") == "0" {
+	if len(os.Getenv("NO_COLOR")) > 0 || os.Getenv("CLICOLOR") == "0" {
 		return false
 	}
 	// CI
