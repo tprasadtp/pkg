@@ -10,9 +10,10 @@ import (
 func TestUnixTERM(t *testing.T) {
 	// This test MUST not be parallel
 	type testCase struct {
-		TERM   string
-		tty    bool
-		expect bool
+		TERM         string
+		TERM_PROGRAM string
+		tty          bool
+		expect       bool
 	}
 
 	var tt = []testCase{
@@ -33,7 +34,7 @@ func TestUnixTERM(t *testing.T) {
 		},
 		{
 			TERM:   "linux",
-			tty:    false,
+			tty:    true,
 			expect: false,
 		},
 		// dumb
@@ -44,8 +45,32 @@ func TestUnixTERM(t *testing.T) {
 		},
 		{
 			TERM:   "dumb",
+			tty:    true,
+			expect: false,
+		},
+		// screen
+		{
+			TERM:   "screen",
 			tty:    false,
 			expect: false,
+		},
+		{
+			TERM:   "screen",
+			tty:    true,
+			expect: false,
+		},
+		// tmux
+		{
+			TERM:         "screen",
+			TERM_PROGRAM: "tmux",
+			tty:          false,
+			expect:       false,
+		},
+		{
+			TERM:         "screen",
+			TERM_PROGRAM: "tmux",
+			tty:          true,
+			expect:       true,
 		},
 	}
 

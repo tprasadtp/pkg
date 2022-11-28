@@ -11,11 +11,10 @@ import (
 // objectsAreEqual determines if two objects are considered equal.
 // This function does no assertion of any kind.
 func objectsAreEqual(a, b any) bool {
-
 	if reflect.DeepEqual(a, b) {
 		return true
 	}
-
+	//nolint:govet // This is a test helper.
 	if reflect.ValueOf(a) == reflect.ValueOf(b) {
 		return true
 	}
@@ -25,6 +24,7 @@ func objectsAreEqual(a, b any) bool {
 // callerInfo returns a string containing the file and line number of the assert call
 // that failed.
 func callerInfo() string {
+	//nolint:staticcheck // legacy code
 	_, file, line, ok := runtime.Caller(0)
 	if !ok {
 		return ""
@@ -44,7 +44,6 @@ func callerInfo() string {
 			break
 		}
 	}
-
 	return fmt.Sprintf("[ %s:%d ] - ", file, line)
 }
 
@@ -68,7 +67,13 @@ func Implements(t *testing.T, interfaceObject any, object any, message ...interf
 
 // IsType asserts that the specified objects are of the same type.
 func IsType(t *testing.T, expectedType any, object any, message ...string) bool {
-	return Equal(t, reflect.TypeOf(object), reflect.TypeOf(expectedType), fmt.Sprintf("Object expected to be of type %s, but was %s. %s", reflect.TypeOf(expectedType), reflect.TypeOf(object), message))
+	return Equal(t,
+		reflect.TypeOf(object),
+		reflect.TypeOf(expectedType),
+		fmt.Sprintf("Object expected to be of type %s, but was %s. %s",
+			reflect.TypeOf(expectedType),
+			reflect.TypeOf(object), message),
+	)
 }
 
 // Equal asserts that two objects are equal.
@@ -77,13 +82,12 @@ func IsType(t *testing.T, expectedType any, object any, message ...string) bool 
 //
 // Returns whether the assertion was successful (true) or not (false).
 func Equal(t *testing.T, expected, got any, message ...string) bool {
-
 	if !objectsAreEqual(expected, got) {
-		t.Errorf("%s%s Not equal. (expect)%#v != (got)%#v.", callerInfo(), message, expected, got)
+		t.Errorf("%s%s Not equal. (expect)%#v != (got)%#v.", callerInfo(),
+			message, expected, got)
 		return false
 	}
 	return true
-
 }
 
 // NotNil asserts that the specified object is not nil.
@@ -92,8 +96,7 @@ func Equal(t *testing.T, expected, got any, message ...string) bool {
 //
 // Returns whether the assertion was successful (true) or not (false).
 func NotNil(t *testing.T, object any, message ...string) bool {
-
-	var success bool = true
+	var success = true
 
 	if object == nil {
 		success = false
@@ -114,7 +117,6 @@ func NotNil(t *testing.T, object any, message ...string) bool {
 //
 // Returns whether the assertion was successful (true) or not (false).
 func Nil(t *testing.T, object any, message ...string) bool {
-
 	if object == nil {
 		return true
 	} else if reflect.ValueOf(object).IsNil() {
@@ -150,14 +152,12 @@ func False(t *testing.T, value bool, message ...string) bool {
 //
 // Returns whether the assertion was successful (true) or not (false).
 func NotEqual(t *testing.T, expected, got any, message ...string) bool {
-
 	if objectsAreEqual(expected, got) {
-
-		t.Errorf("%s%s Should not be equal. (expected)%#v != (got)%#v", callerInfo(), message, expected, got)
+		t.Errorf("%s%s Should not be equal. (expected)%#v != (got)%#v", callerInfo(),
+			message, expected, got)
 		return false
 	}
 	return true
-
 }
 
 // Contains asserts that the specified string contains the specified substring.
@@ -166,14 +166,12 @@ func NotEqual(t *testing.T, expected, got any, message ...string) bool {
 //
 // Returns whether the assertion was successful (true) or not (false).
 func Contains(t *testing.T, s, contains string, message ...string) bool {
-
 	if !strings.Contains(s, contains) {
 		t.Errorf("%s %s '%s' does not contain '%s'", callerInfo(), message, s, contains)
 		return false
 	}
 
 	return true
-
 }
 
 // NotContains asserts that the specified string does NOT contain the specified substring.
@@ -182,22 +180,18 @@ func Contains(t *testing.T, s, contains string, message ...string) bool {
 //
 // Returns whether the assertion was successful (true) or not (false).
 func NotContains(t *testing.T, s, contains string, message ...string) bool {
-
 	if strings.Contains(s, contains) {
 		t.Errorf("%s%s '%s' should not contain '%s'", callerInfo(), message, s, contains)
 		return false
 	}
 
 	return true
-
 }
 
 // didPanic returns true if the function passed to it panics. Otherwise, it returns false.
 func didPanic(f func()) bool {
-
-	var didPanic bool = false
+	var didPanic = false
 	func() {
-
 		defer func() {
 			if r := recover(); r != nil {
 				didPanic = true
@@ -206,11 +200,9 @@ func didPanic(f func()) bool {
 
 		// call the target function
 		f()
-
 	}()
 
 	return didPanic
-
 }
 
 // Panics asserts that the code inside the specified PanicTestFunc panics.

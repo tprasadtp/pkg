@@ -21,7 +21,6 @@ type AssertionTesterNonConformingObject struct {
 }
 
 func TestObjectsAreEqual(t *testing.T) {
-
 	if !objectsAreEqual("Hello World", "Hello World") {
 		t.Error("objectsAreEqual should return true")
 	}
@@ -37,37 +36,43 @@ func TestObjectsAreEqual(t *testing.T) {
 	if !objectsAreEqual(nil, nil) {
 		t.Error("objectsAreEqual should return true")
 	}
-
 }
 
 func TestImplements(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !Implements(mockT, (*AssertionTesterInterface)(nil), new(AssertionTesterConformingObject)) {
-		t.Error("Implements method should return true: AssertionTesterConformingObject implements AssertionTesterInterface")
+		t.Error("Implements method should return true: ",
+			"AssertionTesterConformingObject implements ",
+			"AssertionTesterInterface")
 	}
 	if Implements(mockT, (*AssertionTesterInterface)(nil), new(AssertionTesterNonConformingObject)) {
-		t.Error("Implements method should return false: AssertionTesterNonConformingObject does not implements AssertionTesterInterface")
+		t.Error("Implements method should return false: ",
+			"AssertionTesterNonConformingObject does not implements ", "AssertionTesterInterface")
 	}
 
 }
 
 func TestIsType(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !IsType(mockT, new(AssertionTesterConformingObject), new(AssertionTesterConformingObject)) {
-		t.Error("IsType should return true: AssertionTesterConformingObject is the same type as AssertionTesterConformingObject")
+		t.Error("IsType should return true: ",
+			"AssertionTesterConformingObject is the same type as ",
+			"AssertionTesterConformingObject")
 	}
-	if IsType(mockT, new(AssertionTesterConformingObject), new(AssertionTesterNonConformingObject)) {
-		t.Error("IsType should return false: AssertionTesterConformingObject is not the same type as AssertionTesterNonConformingObject")
+	if IsType(mockT,
+		new(AssertionTesterConformingObject),
+		new(AssertionTesterNonConformingObject)) {
+		t.Error(
+			"IsType should return false: ",
+			"AssertionTesterConformingObject is not the same type as ",
+			"AssertionTesterNonConformingObject")
 	}
 
 }
 
 func TestEqual(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !Equal(mockT, "Hello World", "Hello World") {
@@ -85,11 +90,9 @@ func TestEqual(t *testing.T) {
 	if !Equal(mockT, nil, nil) {
 		t.Error("Equal should return true")
 	}
-
 }
 
 func TestNotNil(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !NotNil(mockT, new(AssertionTesterConformingObject)) {
@@ -98,7 +101,6 @@ func TestNotNil(t *testing.T) {
 	if NotNil(mockT, nil) {
 		t.Error("NotNil should return false: object is nil")
 	}
-
 }
 
 func TestNil(t *testing.T) {
@@ -111,11 +113,9 @@ func TestNil(t *testing.T) {
 	if Nil(mockT, new(AssertionTesterConformingObject)) {
 		t.Error("Nil should return false: object is not nil")
 	}
-
 }
 
 func TestTrue(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !True(mockT, true) {
@@ -124,11 +124,9 @@ func TestTrue(t *testing.T) {
 	if True(mockT, false) {
 		t.Error("True should return false")
 	}
-
 }
 
 func TestFalse(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !False(mockT, false) {
@@ -137,11 +135,9 @@ func TestFalse(t *testing.T) {
 	if False(mockT, true) {
 		t.Error("False should return false")
 	}
-
 }
 
 func TestNotEqual(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !NotEqual(mockT, "Hello World", "Hello World!") {
@@ -162,7 +158,6 @@ func TestNotEqual(t *testing.T) {
 }
 
 func TestContains(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !Contains(mockT, "Hello World", "Hello") {
@@ -175,7 +170,6 @@ func TestContains(t *testing.T) {
 }
 
 func TestNotContains(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !NotContains(mockT, "Hello World", "Hello!") {
@@ -184,11 +178,9 @@ func TestNotContains(t *testing.T) {
 	if NotContains(mockT, "Hello World", "Hello") {
 		t.Error("NotContains should return false: \"Hello World\" contains \"Hello\"")
 	}
-
 }
 
 func TestDidPanic(t *testing.T) {
-
 	if !didPanic(func() {
 		panic("Panic!")
 	}) {
@@ -203,7 +195,6 @@ func TestDidPanic(t *testing.T) {
 }
 
 func TestPanics(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !Panics(mockT, func() {
@@ -220,7 +211,6 @@ func TestPanics(t *testing.T) {
 }
 
 func TestNotPanics(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !NotPanics(mockT, func() {
@@ -233,11 +223,9 @@ func TestNotPanics(t *testing.T) {
 	}) {
 		t.Error("NotPanics should return false")
 	}
-
 }
 
-func TestEqual_Funcs(t *testing.T) {
-
+func TestEqualFuncs(t *testing.T) {
 	type f func() int
 	var f1 f = func() int { return 1 }
 	var f2 f = func() int { return 2 }
@@ -246,5 +234,4 @@ func TestEqual_Funcs(t *testing.T) {
 
 	Equal(t, f1_copy, f1, "Funcs are the same and should be considered equal")
 	NotEqual(t, f1, f2, "f1 and f2 are different")
-
 }
