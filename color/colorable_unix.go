@@ -47,8 +47,8 @@ func isColorable(flag string, istty bool) bool {
 		return false
 	case strings.HasPrefix(t, "screen"):
 		// tmux supports 24 bit color but screen does not
-		if os.Getenv("TERM_PROGRAM") != "tmux" {
-			return false
+		if os.Getenv("TERM_PROGRAM") == "tmux" {
+			return istty
 		}
 		return false
 	}

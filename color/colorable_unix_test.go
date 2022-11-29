@@ -8,7 +8,7 @@ import (
 )
 
 func TestUnixTERM(t *testing.T) {
-	// This test MUST not be parallel
+	// We never want to call t.Parallel() as they use t.Setenv
 	type testCase struct {
 		TERM         string
 		TERM_PROGRAM string
@@ -76,10 +76,14 @@ func TestUnixTERM(t *testing.T) {
 
 	for _, tc := range tt {
 		tn := fmt.Sprintf(
-			"TERM=%s,tty=%t",
+			"TERM=%s,TERM_PROGRAM=%s,tty=%t",
 			tc.TERM,
+			tc.TERM_PROGRAM,
 			tc.tty,
 		)
+		// t.Run blocks till func returns, or calls t.Parallel()
+		// Thus, we never want to call t.Parallel() in any of these sub-tests
+		// as they use t.Setenv
 		t.Run(tn, func(t *testing.T) {
 			t.Setenv("CLICOLOR_FORCE", "")
 			t.Setenv("CLICOLOR", "")
@@ -90,6 +94,12 @@ func TestUnixTERM(t *testing.T) {
 				t.Setenv("TERM", tc.TERM)
 			} else {
 				t.Setenv("TERM", "")
+			}
+
+			if tc.TERM_PROGRAM != "" {
+				t.Setenv("TERM_PROGRAM", tc.TERM_PROGRAM)
+			} else {
+				t.Setenv("TERM_PROGRAM", "")
 			}
 
 			val := isColorable("auto", tc.tty)
