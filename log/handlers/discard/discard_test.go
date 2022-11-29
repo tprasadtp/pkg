@@ -9,5 +9,8 @@ import (
 )
 
 func TestInterface(t *testing.T) {
-	assert.Implements(t, (*log.Handler)(nil), discard.New(log.DEBUG), "discard.Handler => log.Handler")
+	assert.Implements(t,
+		(*log.Handler)(nil),
+		discard.New(log.DebugLevel),
+		"discard.Handler => log.Handler")
 }

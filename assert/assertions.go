@@ -21,8 +21,8 @@ func objectsAreEqual(a, b any) bool {
 	return false
 }
 
-// callerInfo returns a string containing the file and line number of the assert call
-// that failed.
+// callerInfo returns a string containing the file
+// and line number of the assert call that failed.
 func callerInfo() string {
 	//nolint:staticcheck // legacy code
 	_, file, line, ok := runtime.Caller(0)
@@ -47,7 +47,8 @@ func callerInfo() string {
 	return fmt.Sprintf("[ %s:%d ] - ", file, line)
 }
 
-// Implements asserts that an object is implemented by the specified interface.
+// Implements asserts that an object is implemented by
+// the specified interface.
 //
 //	assert.Implements(t, (*MyInterface)(nil), new(MyObject), "MyObject")
 func Implements(t *testing.T, interfaceObject any, object any, message ...interface{}) bool {

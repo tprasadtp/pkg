@@ -4,19 +4,22 @@ import (
 	"testing"
 )
 
-// AssertionTesterInterface defines an interface to be used for testing assertion methods
+// AssertionTesterInterface defines an interface
+// to be used for testing assertion methods.
 type AssertionTesterInterface interface {
 	TestMethod()
 }
 
-// AssertionTesterConformingObject is an object that conforms to the AssertionTesterInterface interface
+// AssertionTesterConformingObject is an object that
+// conforms to the AssertionTesterInterface interface.
 type AssertionTesterConformingObject struct {
 }
 
 func (a *AssertionTesterConformingObject) TestMethod() {
 }
 
-// AssertionTesterNonConformingObject is an object that does not conform to the AssertionTesterInterface interface
+// AssertionTesterNonConformingObject is an object
+// that does not conform to the AssertionTesterInterface interface.
 type AssertionTesterNonConformingObject struct {
 }
 
@@ -50,7 +53,6 @@ func TestImplements(t *testing.T) {
 		t.Error("Implements method should return false: ",
 			"AssertionTesterNonConformingObject does not implements ", "AssertionTesterInterface")
 	}
-
 }
 
 func TestIsType(t *testing.T) {
@@ -69,7 +71,6 @@ func TestIsType(t *testing.T) {
 			"AssertionTesterConformingObject is not the same type as ",
 			"AssertionTesterNonConformingObject")
 	}
-
 }
 
 func TestEqual(t *testing.T) {
@@ -104,7 +105,6 @@ func TestNotNil(t *testing.T) {
 }
 
 func TestNil(t *testing.T) {
-
 	mockT := new(testing.T)
 
 	if !Nil(mockT, nil) {
@@ -166,7 +166,6 @@ func TestContains(t *testing.T) {
 	if Contains(mockT, "Hello World", "Salut") {
 		t.Error("Contains should return false: \"Hello World\" does not contain \"Salut\"")
 	}
-
 }
 
 func TestNotContains(t *testing.T) {
@@ -191,7 +190,6 @@ func TestDidPanic(t *testing.T) {
 	}) {
 		t.Error("didPanic should return false")
 	}
-
 }
 
 func TestPanics(t *testing.T) {
@@ -207,7 +205,6 @@ func TestPanics(t *testing.T) {
 	}) {
 		t.Error("Panics should return false")
 	}
-
 }
 
 func TestNotPanics(t *testing.T) {
@@ -230,8 +227,8 @@ func TestEqualFuncs(t *testing.T) {
 	var f1 f = func() int { return 1 }
 	var f2 f = func() int { return 2 }
 
-	var f1_copy f = f1
+	var f1Copy = f1
 
-	Equal(t, f1_copy, f1, "Funcs are the same and should be considered equal")
+	Equal(t, f1Copy, f1, "Funcs are the same and should be considered equal")
 	NotEqual(t, f1, f2, "f1 and f2 are different")
 }

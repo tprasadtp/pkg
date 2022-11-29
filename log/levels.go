@@ -10,19 +10,19 @@ import (
 type Level uint16
 
 const (
-	DEBUG    Level = 10
-	VERBOSE  Level = 20
-	INFO     Level = 30
-	SUCCESS  Level = 40
-	NOTICE   Level = 50
-	WARNING  Level = 60
-	ERROR    Level = 70
-	CRITICAL Level = 80
+	DebugLevel   Level = 10
+	VerboseLevel Level = 20
+	InfoLevel    Level = 30
+	SuccessLevel Level = 40
+	NoticeLevel  Level = 50
+	WarningLevel Level = 60
+	ErrorLevel   Level = 70
+	FatalLevel   Level = 80
 )
 
 const (
-	ALL  Level = 0
-	NONE Level = math.MaxUint16
+	AllLevels Level = 0
+	NoneLevel Level = math.MaxUint16
 )
 
 // String returns a name for the level.
@@ -32,44 +32,44 @@ const (
 // an integer is appended to the uppercase name.
 // Examples:
 //
-//	DEBUG.String() => "DEBUG"
-//	(DEBUG-2).String() => "DEBUG-2"
+//	DebugLevel.String() => "DEBUG"
+//	(DebugLevel-2).String() => "DEBUG-2"
 func (l Level) String() string {
 	switch {
-	case l < DEBUG:
-		return fmt.Sprintf("DEBUG-%d", DEBUG-l)
-	case l == DEBUG:
+	case l < DebugLevel:
+		return fmt.Sprintf("DEBUG-%d", DebugLevel-l)
+	case l == DebugLevel:
 		return "DEBUG"
-	case l < VERBOSE:
-		return fmt.Sprintf("VERBOSE-%d", VERBOSE-l)
-	case l == VERBOSE:
+	case l < VerboseLevel:
+		return fmt.Sprintf("VERBOSE-%d", VerboseLevel-l)
+	case l == VerboseLevel:
 		return "VERBOSE"
-	case l < INFO:
-		return fmt.Sprintf("INFO-%d", INFO-l)
-	case l == INFO:
-		return "INFO"
-	case l < SUCCESS:
-		return fmt.Sprintf("SUCCESS-%d", SUCCESS-l)
-	case l == SUCCESS:
-		return "SUCCESS"
-	case l < NOTICE:
-		return fmt.Sprintf("SUCCESS-%d", NOTICE-l)
-	case l == NOTICE:
-		return "NOTICE"
-	case l < WARNING:
-		return fmt.Sprintf("WARNING-%d", WARNING-l)
-	case l == WARNING:
+	case l < InfoLevel:
+		return fmt.Sprintf("INFO-%d", InfoLevel-l)
+	case l == InfoLevel:
+		return "InfoLevel"
+	case l < SuccessLevel:
+		return fmt.Sprintf("SUCCESS-%d", SuccessLevel-l)
+	case l == SuccessLevel:
+		return "SuccessLevel"
+	case l < NoticeLevel:
+		return fmt.Sprintf("NOTICE-%d", NoticeLevel-l)
+	case l == NoticeLevel:
+		return "NoticeLevel"
+	case l < WarningLevel:
+		return fmt.Sprintf("WARNING-%d", WarningLevel-l)
+	case l == WarningLevel:
 		return "WARNING"
-	case l < ERROR:
-		return fmt.Sprintf("WARNING-%d", ERROR-l)
-	case l == ERROR:
+	case l < ErrorLevel:
+		return fmt.Sprintf("ERROR-%d", ErrorLevel-l)
+	case l == ErrorLevel:
 		return "ERROR"
-	case l < CRITICAL:
-		return fmt.Sprintf("WARNING-%d", CRITICAL-l)
-	case l == CRITICAL:
+	case l < FatalLevel:
+		return fmt.Sprintf("FATAL-%d", FatalLevel-l)
+	case l == FatalLevel:
 		return "CRITICAL"
 	default:
-		return fmt.Sprintf("CRITICAL+%d", l-CRITICAL)
+		return fmt.Sprintf("FATAL+%d", l-FatalLevel)
 	}
 }
 

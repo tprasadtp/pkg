@@ -35,12 +35,12 @@ func TestLevelStringer(t *testing.T) {
 			expect: "DEBUG",
 		},
 		{
-			lvl:    log.INFO,
+			lvl:    log.InfoLevel,
 			expect: "INFO",
 		},
 		{
 			lvl:    log.Level(100),
-			expect: "CRITICAL+20",
+			expect: "FATAL+20",
 		},
 	}
 	for _, tc := range tt {
@@ -68,7 +68,7 @@ func TestLevelMarshalJSON(t *testing.T) {
 			expect: []byte{34, 68, 69, 66, 85, 71, 34},
 		},
 		{
-			lvl:    log.INFO,
+			lvl:    log.InfoLevel,
 			expect: []byte{34, 73, 78, 70, 79, 34},
 		},
 		{
