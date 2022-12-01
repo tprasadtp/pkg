@@ -8,22 +8,6 @@ import (
 	"testing"
 )
 
-func TestCompleteNoDesCmdInFishScript(t *testing.T) {
-	rootCmd := &Command{Use: "root", Args: NoArgs, Run: emptyRun}
-	child := &Command{
-		Use:               "child",
-		ValidArgsFunction: validArgsFunc,
-		Run:               emptyRun,
-	}
-	rootCmd.AddCommand(child)
-
-	buf := new(bytes.Buffer)
-	AssertErrNil(t, rootCmd.GenFishCompletion(buf))
-	output := buf.String()
-
-	check(t, output, ShellCompNoDescRequestCmd)
-}
-
 func TestCompleteCmdInFishScript(t *testing.T) {
 	rootCmd := &Command{Use: "root", Args: NoArgs, Run: emptyRun}
 	child := &Command{

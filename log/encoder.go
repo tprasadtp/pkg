@@ -1,6 +1,6 @@
 package log
 
-// EncoderConfig is encode configuration for encoder
+// EncoderConfig is encode configuration for encoder.
 type EncoderConfig struct {
 	CallerFileKey string
 	CallerLineKey string
@@ -15,35 +15,35 @@ type EncoderConfig struct {
 }
 
 const (
-	// Default level key for Entry encoder
+	// Default level key for Entry encoder.
 	DefaultLevelKey = "level"
 
-	// Default error key for Entry encoder
+	// Default error key for Entry encoder.
 	DefaultErrorKey = "error"
 
-	// Default time key (timestamp) for Entry encoder
+	// Default time key (timestamp) for Entry encoder.
 	DefaultTimeKey = "time"
 
-	// Default Trace ID key for Entry encoder
+	// Default Trace ID key for Entry encoder.
 	DefaultTraceKey = "trace_id"
 
-	// Default Span Key for Entry encoder
+	// Default Span Key for Entry encoder.
 	DefaultSpanKey = "span_id"
 
-	// Default app Version Key for Entry encoder
+	// Default app Version Key for Entry encoder.
 	DefaultVersionKey = "version"
 
-	// Default Caller function key for for Entry encoder
+	// Default Caller function key for for Entry encoder.
 	DefaultCallerFileKey = "file"
 
-	// Default Caller function key for for Entry encoder
+	// Default Caller function key for for Entry encoder.
 	DefaultCallerFuncKey = "function"
 
-	// Default Caller function key for for Entry encoder
+	// Default Caller function key for for Entry encoder.
 	DefaultCallerLineKey = "line"
 )
 
-// DefaultEncoderConf is default Entry encoder configuration.
+// DefaultEncoderConfig is default Entry encoder configuration.
 // It is not recommended to change this.
 // Use Marshal*WithConfig functions instead of modifying the default.
 var DefaultEncoderConfig = EncoderConfig{
@@ -58,14 +58,14 @@ var DefaultEncoderConfig = EncoderConfig{
 	VersionKey:    DefaultVersionKey,
 }
 
-// MarshalJSON implements json.Marshaler interface
-func (e Entry) MarshalJSON() ([]byte, error) {
+// MarshalJSON implements json.Marshaler interface.
+func (e Event) MarshalJSON() ([]byte, error) {
 	return nil, nil
 }
 
 // MarshalJSON implements json.Marshaler interface
 // This is same as MarshalJSON but uses custom EncoderConfig.
 // Useful when custom keys are required.
-func (e Entry) MarshalJSONWithConfig(c EncoderConfig) ([]byte, error) {
+func (e Event) MarshalJSONWithConfig(c EncoderConfig) ([]byte, error) {
 	return nil, nil
 }

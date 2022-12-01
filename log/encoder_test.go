@@ -9,5 +9,5 @@ import (
 )
 
 func TestEntry_Implements(t *testing.T) {
-	assert.Implements(t, (*json.Marshaler)(nil), new(log.Entry), "log.Entry MarshalJSON")
+	assert.Implements(t, (*json.Marshaler)(nil), new(log.Event), "log.Event MarshalJSON")
 }

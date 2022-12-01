@@ -3,24 +3,26 @@
 package discard
 
 import (
-	"io"
 	"sync"
 
 	"github.com/tprasadtp/pkg/log"
 )
 
-// No-Op Handler
+// Compile time check for handler.
+// This will fail if discard.Handler does not
+// implement log.Handler interface.
+var _ log.Handler = &Handler{}
+
+// No-Op Handler.
 type Handler struct {
 	mu    sync.Mutex
-	w     io.Writer
 	level log.Level
 }
 
-// Creates a new No-Op Handler. Unlike most handler constructors,
+// New  returns a a new no-op Handler. Unlike most handler constructors,
 // this DOES NOT have a [io.Writer] as argument.
 func New(l log.Level) *Handler {
 	return &Handler{
-		w:     io.Discard,
 		level: l,
 	}
 }
@@ -30,8 +32,8 @@ func (h *Handler) Enabled(level log.Level) bool {
 	return h.level >= level
 }
 
-// Handle the Event
-func (h *Handler) Handle(e log.Entry) error {
+// Handle the Event.
+func (h *Handler) Handle(e log.Event) error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	return nil

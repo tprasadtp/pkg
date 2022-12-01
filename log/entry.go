@@ -10,7 +10,7 @@ import (
 // Log entry is immutable, it has no internal state
 // or context of its own. Handlers can use already implemented Marshal functions
 // or implement their own, its up to the handler to decide.
-type Entry struct {
+type Event struct {
 	// Event Namespace
 	Namespace string
 

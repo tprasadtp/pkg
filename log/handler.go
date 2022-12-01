@@ -16,16 +16,18 @@ type Handler interface {
 	// [Cloud Trace]: https://cloud.google.com/trace/docs/setup/go
 	Enabled(l Level) bool
 
-	// Writes a Log Entry.
+	// Writes a Log Event.
 	//  - Depending on implementation, writes may be buffered/batched.
-	//  - Please note that this is ONLY called if Enabled returns true.
+	//  - Please note that this is ONLY called if Enabled(e.Level) returns true.
 	//  - Implementations SHOULD return error to when handler is
 	//    not initialized or closed.
 	//  - It is responsibility of the implementation to be concurrent safe.
-	//    Logger WILL NOT handle any sort of locking.
-	Handle(e Entry) error
+	Handle(e Event) error
 
 	// Writes pending entries in the buffer to disk/network.
+	//  - If handler is a network handler it MUST write all pending entries to
+	//    network endpoint.
+	//  - If handler is a file handle, it MUST flush entries to disk AND call fsync.
 	//  - Its up to the handler to implement timeouts,
 	//    However it is highly encouraged to do so.
 	//  - Panic/Panicf and method on the Logger will call this automatically.

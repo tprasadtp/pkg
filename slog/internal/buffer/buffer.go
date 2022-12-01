@@ -26,7 +26,7 @@ func New() *Buffer {
 
 func (b *Buffer) Free() {
 	// To reduce peak allocation, return only smaller buffers to the pool.
-	const maxBufferSize = 16 << 10
+	const maxBufferSize = 16 << 12
 	if cap(*b) <= maxBufferSize {
 		*b = (*b)[:0]
 		bufPool.Put(b)
