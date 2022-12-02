@@ -17,13 +17,18 @@ const (
 	ErrMockHandler = mockError("mock handler error")
 )
 
+// This should only be used in unit tests, as all log.Events
+//
 // MockHandler is a mock handler which is used for tests.
 // This holds some counters for tracking state to be used in tests.
 // This handler lacks sync semantics aka this is not concurrent safe.
+// If you are looking for handler to use with testing.TB, see
+// [github.com/tprasadtp/pkg/log/handlers/testing.Handler].
 type MockHandler struct {
 	// Replaces Enabled() with custom function
 	EnabledFunc func(Level) bool
 	// Number of times handler cal invoked
+	// This is incremented even when methods return an error.
 	HandleCount int
 	// Always return an error on Flush and Handle methods.
 	// This also skips incrementing EventCount.
@@ -31,6 +36,9 @@ type MockHandler struct {
 	// Number of Events pending to be written.
 	// Flush will reset this counter.
 	EventCount int
+	// Events stores all the events passed to this handler.
+	// Upon Flush(), this slice is cleared.
+	Events []Event
 	// Handler Level
 	Level Level
 }
