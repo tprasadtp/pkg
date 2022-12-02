@@ -37,7 +37,9 @@ func (m *Handler) Enabled(level log.Level) bool {
 func (m *Handler) Handle(event log.Event) error {
 	var err error
 	for _, h := range m.handlers {
-		err = multierr.Append(err, h.Handle(event))
+		if h.Enabled(event.Level) {
+			err = multierr.Append(err, h.Handle(event))
+		}
 	}
 	return err
 }

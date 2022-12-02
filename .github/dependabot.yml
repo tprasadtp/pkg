@@ -5,7 +5,7 @@ updates:
       - "dependabot"
       - "dependencies"
       - "dep/actions"
-      - "luna/autoupdate"
+      - "luna/auto-update"
     commit-message:
       prefix: "chore(deps):"
     schedule:
@@ -24,7 +24,7 @@ updates:
       - "dependabot"
       - "dependencies"
       - "dep/go"
-      - "luna/autoupdate"
+      - "luna/auto-update"
     commit-message:
       prefix: "chore(deps):"
     schedule:

@@ -80,9 +80,9 @@ func (log *Logger) WithFields(fields Field) *Logger {
 	return clone
 }
 
-// WithContext returns a new Logger with the same handler
+// WithCtx returns a new Logger with the same handler
 // as the receiver and the given attribute.
-func (log *Logger) WithContext(ctx context.Context) *Logger {
+func (log *Logger) WithCtx(ctx context.Context) *Logger {
 	clone := log.clone()
 	clone.ctx = ctx
 	return clone

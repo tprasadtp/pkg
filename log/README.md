@@ -1,7 +1,8 @@
 # Log
 
 
-- Logger should passed using dependency injection. With tools like [wire][], you can have build time safety.
+- Logger should passed using dependency injection.
+With tools like [wire][], you can have build time safety.
 - DOES NOT provide global logger. Having a global logger leads to library developers using it as a kitchen sink. Pass logger via dependency injection.
 - DOES NOT support passing logger via context. This is because of above design decision to not have a
 global logger. Global logger becomes necessary as `context.Context` might be missing Logger.
