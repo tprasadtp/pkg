@@ -84,15 +84,15 @@ type fakeTB struct {
 
 func (tb *fakeTB) Helper() {}
 
-func (tb *fakeTB) Log(v ...interface{}) {
+func (tb *fakeTB) Log(v ...any) {
 	tb.logs++
 }
 
-func (tb *fakeTB) Error(v ...interface{}) {
+func (tb *fakeTB) Error(v ...any) {
 	tb.errors++
 }
 
-func (tb *fakeTB) Fatal(v ...interface{}) {
+func (tb *fakeTB) Fatal(v ...any) {
 	tb.fatals++
 	panic("")
 }

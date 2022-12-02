@@ -228,11 +228,11 @@ func appendNames(names []string, names2 ...string) []string {
 // Field represents a log field.
 type Field struct {
 	Name  string
-	Value interface{}
+	Value any
 }
 
 // F is a convenience constructor for Field.
-func F(name string, value interface{}) Field {
+func F(name string, value any) Field {
 	return Field{Name: name, Value: value}
 }
 

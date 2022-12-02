@@ -69,7 +69,7 @@ func marshalList(rv reflect.Value) []byte {
 	return b.Bytes()
 }
 
-func encode(v interface{}) []byte {
+func encode(v any) []byte {
 	switch v := v.(type) {
 	case json.Marshaler:
 		return encodeJSON(v)
@@ -124,7 +124,7 @@ func encodeStruct(rv reflect.Value) ([]byte, bool) {
 	return nil, false
 }
 
-func encodeJSON(v interface{}) []byte {
+func encodeJSON(v any) []byte {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return encode(M(
@@ -136,8 +136,8 @@ func encodeJSON(v interface{}) []byte {
 	return b
 }
 
-func errorChain(f xerrors.Formatter) []interface{} {
-	var errs []interface{}
+func errorChain(f xerrors.Formatter) []any {
+	var errs []any
 
 	next := error(f)
 	for {
@@ -164,12 +164,12 @@ type xerrorPrinter struct {
 	e wrapError
 }
 
-func (p *xerrorPrinter) Print(v ...interface{}) {
+func (p *xerrorPrinter) Print(v ...any) {
 	s := fmt.Sprint(v...)
 	p.write(s)
 }
 
-func (p *xerrorPrinter) Printf(f string, v ...interface{}) {
+func (p *xerrorPrinter) Printf(f string, v ...any) {
 	s := fmt.Sprintf(f, v...)
 	p.write(s)
 }

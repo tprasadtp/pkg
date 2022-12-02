@@ -10,7 +10,7 @@ import (
 )
 
 // Diff returns a diff between exp and act.
-func Diff(exp, act interface{}, opts ...cmp.Option) string {
+func Diff(exp, act any, opts ...cmp.Option) string {
 	opts = append(opts, cmpopts.EquateErrors(), cmp.Exporter(func(r reflect.Type) bool {
 		return true
 	}))
@@ -18,7 +18,7 @@ func Diff(exp, act interface{}, opts ...cmp.Option) string {
 }
 
 // Equal asserts exp == act.
-func Equal(t testing.TB, name string, exp, act interface{}) {
+func Equal(t testing.TB, name string, exp, act any) {
 	t.Helper()
 	if diff := Diff(exp, act); diff != "" {
 		t.Fatalf(`unexpected %v: diff:
@@ -55,7 +55,7 @@ func False(t testing.TB, name string, act bool) {
 }
 
 // Len asserts n == len(a).
-func Len(t testing.TB, name string, n int, a interface{}) {
+func Len(t testing.TB, name string, n int, a any) {
 	t.Helper()
 	act := reflect.ValueOf(a).Len()
 	if n != act {

@@ -92,7 +92,7 @@ func (s *uintSliceValue) GetSlice() []string {
 	return out
 }
 
-func uintSliceConv(val string) (interface{}, error) {
+func uintSliceConv(val string) (any, error) {
 	val = strings.Trim(val, "[]")
 	// Empty string would cause a slice with one (empty) entry
 	if len(val) == 0 {

@@ -81,7 +81,7 @@ func rpad(s string, padding int) string {
 }
 
 // tmpl executes the given template text on data, writing the result to w.
-func tmpl(w io.Writer, text string, data interface{}) error {
+func tmpl(w io.Writer, text string, data any) error {
 	t := template.New("top")
 	t.Funcs(templateFuncs)
 	template.Must(t.Parse(text))
@@ -135,7 +135,7 @@ func stringInSlice(a string, list []string) bool {
 
 // CheckErr prints the msg with the prefix 'Error:' and exits
 // with error code 1. If the msg is nil, it does nothing.
-func CheckErr(msg interface{}) {
+func CheckErr(msg any) {
 	if msg != nil {
 		fmt.Fprintln(os.Stderr, "Error:", msg)
 		os.Exit(1)

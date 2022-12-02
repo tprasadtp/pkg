@@ -44,7 +44,7 @@ func NewDocument() *Document {
 // write writes the given text to the internal buffer. Following the roff docs,
 // we prevent empty lines in its output, as that may mysteriously break some
 // roff renderers.
-func (tr *Document) writef(format string, args ...interface{}) {
+func (tr *Document) writef(format string, args ...any) {
 	if bytes.HasSuffix(tr.buffer.Bytes(), []byte("\n")) &&
 		strings.HasPrefix(format, "\n") {
 		// prevent empty lines in output
@@ -54,7 +54,7 @@ func (tr *Document) writef(format string, args ...interface{}) {
 	fmt.Fprintf(&tr.buffer, format, args...)
 }
 
-func (tr *Document) writelnf(format string, args ...interface{}) {
+func (tr *Document) writelnf(format string, args ...any) {
 	tr.writef(format+"\n", args...)
 }
 

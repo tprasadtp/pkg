@@ -51,7 +51,7 @@ func callerInfo() string {
 // the specified interface.
 //
 //	assert.Implements(t, (*MyInterface)(nil), new(MyObject), "MyObject")
-func Implements(t *testing.T, interfaceObject any, object any, message ...interface{}) bool {
+func Implements(t *testing.T, interfaceObject any, object any, message ...any) bool {
 	interfaceType := reflect.TypeOf(interfaceObject).Elem()
 
 	if object == nil {

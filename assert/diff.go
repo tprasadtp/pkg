@@ -8,7 +8,7 @@ import (
 )
 
 // Diff returns a diff between exp and act.
-func Diff(exp, act interface{}, opts ...cmp.Option) string {
+func Diff(exp, act any, opts ...cmp.Option) string {
 	opts = append(opts, cmpopts.EquateErrors(), cmp.Exporter(func(r reflect.Type) bool {
 		return true
 	}))

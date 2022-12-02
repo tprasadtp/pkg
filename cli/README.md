@@ -1,6 +1,6 @@
 # cli
 
-- This is fork of `github.com/tprasadtp/pkg/cli`.
+- This is fork of `github.com/spf13/cobra` and `github.com/spf13/pflag`
 
 ### Changes from upstream
 

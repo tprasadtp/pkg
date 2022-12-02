@@ -89,7 +89,7 @@ func (s *float64SliceValue) GetSlice() []string {
 	return out
 }
 
-func float64SliceConv(val string) (interface{}, error) {
+func float64SliceConv(val string) (any, error) {
 	val = strings.Trim(val, "[]")
 	// Empty string would cause a slice with one (empty) entry
 	if len(val) == 0 {

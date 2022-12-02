@@ -25,7 +25,7 @@ func (v *triStateValue) IsBoolFlag() bool {
 	return true
 }
 
-func (v *triStateValue) Get() interface{} {
+func (v *triStateValue) Get() any {
 	return triStateValue(*v)
 }
 

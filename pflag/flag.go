@@ -391,7 +391,7 @@ func (f *FlagSet) lookup(name NormalizedName) *Flag {
 }
 
 // func to return a given type for a given flag name
-func (f *FlagSet) getFlagType(name string, ftype string, convFunc func(sval string) (interface{}, error)) (interface{}, error) {
+func (f *FlagSet) getFlagType(name string, ftype string, convFunc func(sval string) (any, error)) (any, error) {
 	flag := f.Lookup(name)
 	if flag == nil {
 		err := fmt.Errorf("flag accessed but not defined: %s", name)
@@ -926,7 +926,7 @@ func VarP(value Value, name, shorthand, usage string) {
 
 // failf prints to standard error a formatted error and usage message and
 // returns the error.
-func (f *FlagSet) failf(format string, a ...interface{}) error {
+func (f *FlagSet) failf(format string, a ...any) error {
 	err := fmt.Errorf(format, a...)
 	if f.errorHandling != ContinueOnError {
 		fmt.Fprintln(f.Output(), err)

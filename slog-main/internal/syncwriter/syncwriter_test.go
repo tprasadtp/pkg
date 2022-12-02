@@ -20,7 +20,7 @@ func TestWriter_Sync(t *testing.T) {
 		tw := &testWriter{
 			w: New(w),
 		}
-		tw.w.errorf = func(f string, v ...interface{}) {
+		tw.w.errorf = func(f string, v ...any) {
 			tw.errors++
 		}
 		return tw

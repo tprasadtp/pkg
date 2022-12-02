@@ -15,7 +15,7 @@ type Writer struct {
 	mu sync.Mutex
 	w  io.Writer
 
-	errorf func(f string, v ...interface{})
+	errorf func(f string, v ...any)
 }
 
 // New returns a new Writer that writes to w.
@@ -23,7 +23,7 @@ func New(w io.Writer) *Writer {
 	return &Writer{
 		w: w,
 
-		errorf: func(f string, v ...interface{}) {
+		errorf: func(f string, v ...any) {
 			println(fmt.Sprintf(f, v...))
 		},
 	}

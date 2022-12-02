@@ -65,7 +65,7 @@ func (s *stringToInt64Value) String() string {
 	return "[" + buf.String() + "]"
 }
 
-func stringToInt64Conv(val string) (interface{}, error) {
+func stringToInt64Conv(val string) (any, error) {
 	val = strings.Trim(val, "[]")
 	// An empty string would cause an empty map
 	if len(val) == 0 {

@@ -71,7 +71,7 @@ func (s *ipNetSliceValue) String() string {
 	return "[" + out + "]"
 }
 
-func ipNetSliceConv(val string) (interface{}, error) {
+func ipNetSliceConv(val string) (any, error) {
 	val = strings.Trim(val, "[]")
 	// Emtpy string would cause a slice with one (empty) entry
 	if len(val) == 0 {

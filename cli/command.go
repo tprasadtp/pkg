@@ -1196,32 +1196,32 @@ main:
 }
 
 // Print is a convenience method to Print to the defined output, fallback to Stderr if not set.
-func (c *Command) Print(i ...interface{}) {
+func (c *Command) Print(i ...any) {
 	fmt.Fprint(c.OutOrStderr(), i...)
 }
 
 // Println is a convenience method to Println to the defined output, fallback to Stderr if not set.
-func (c *Command) Println(i ...interface{}) {
+func (c *Command) Println(i ...any) {
 	c.Print(fmt.Sprintln(i...))
 }
 
 // Printf is a convenience method to Printf to the defined output, fallback to Stderr if not set.
-func (c *Command) Printf(format string, i ...interface{}) {
+func (c *Command) Printf(format string, i ...any) {
 	c.Print(fmt.Sprintf(format, i...))
 }
 
 // PrintErr is a convenience method to Print to the defined Err output, fallback to Stderr if not set.
-func (c *Command) PrintErr(i ...interface{}) {
+func (c *Command) PrintErr(i ...any) {
 	fmt.Fprint(c.ErrOrStderr(), i...)
 }
 
 // PrintErrln is a convenience method to Println to the defined Err output, fallback to Stderr if not set.
-func (c *Command) PrintErrln(i ...interface{}) {
+func (c *Command) PrintErrln(i ...any) {
 	c.PrintErr(fmt.Sprintln(i...))
 }
 
 // PrintErrf is a convenience method to Printf to the defined Err output, fallback to Stderr if not set.
-func (c *Command) PrintErrf(format string, i ...interface{}) {
+func (c *Command) PrintErrf(format string, i ...any) {
 	c.PrintErr(fmt.Sprintf(format, i...))
 }
 

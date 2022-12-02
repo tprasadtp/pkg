@@ -110,7 +110,7 @@ func (s *ipSliceValue) GetSlice() []string {
 	return out
 }
 
-func ipSliceConv(val string) (interface{}, error) {
+func ipSliceConv(val string) (any, error) {
 	val = strings.Trim(val, "[]")
 	// Empty string would cause a slice with one (empty) entry
 	if len(val) == 0 {

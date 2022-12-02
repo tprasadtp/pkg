@@ -22,7 +22,7 @@ import (
 // two objects.
 //
 // Errors will be compared with errors.Is.
-func Equal(t testing.TB, name string, exp, act interface{}, opts ...cmp.Option) {
+func Equal(t testing.TB, name string, exp, act any, opts ...cmp.Option) {
 	slog.Helper()
 
 	if diff := assert.Diff(exp, act, opts...); diff != "" {

@@ -95,7 +95,7 @@ func (s *int32SliceValue) GetSlice() []string {
 	return out
 }
 
-func int32SliceConv(val string) (interface{}, error) {
+func int32SliceConv(val string) (any, error) {
 	val = strings.Trim(val, "[]")
 	// Empty string would cause a slice with one (empty) entry
 	if len(val) == 0 {
