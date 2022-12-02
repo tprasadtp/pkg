@@ -36,9 +36,9 @@ type Logger struct {
 	namespace string
 	err       error
 	fields    []Field
-	exit      func(int)
 
-	disableCallerInfo bool
+	exit          func(int)
+	disableCaller bool
 }
 
 // Clone the logger.
@@ -57,12 +57,12 @@ func (log *Logger) Context() context.Context {
 // performance gain from this is very small.
 // this also disables stacktraces in errors.
 func (log *Logger) DisableCallerTracing() {
-	log.disableCallerInfo = true
+	log.disableCaller = true
 }
 
 // Enables tracing caller information (default).
 func (log *Logger) EnableCallerTracing() {
-	log.disableCallerInfo = false
+	log.disableCaller = false
 }
 
 // Namespace returns Logger's Namespace.

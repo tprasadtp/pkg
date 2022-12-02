@@ -35,11 +35,11 @@ func (m *Handler) Enabled(level log.Level) bool {
 }
 
 // Passes the event to all the handlers and let them handle it.
-func (m *Handler) Handle(event log.Event) error {
+func (m *Handler) Write(event log.Event) error {
 	var err error
 	for _, h := range m.handlers {
 		if h.Enabled(event.Level) {
-			if eloop := h.Handle(event); eloop != nil {
+			if eloop := h.Write(event); eloop != nil {
 				if err != nil {
 					err = fmt.Errorf("%w", eloop)
 				} else {
@@ -56,6 +56,21 @@ func (m *Handler) Flush() error {
 	var err error
 	for _, h := range m.handlers {
 		if eloop := h.Flush(); eloop != nil {
+			if err != nil {
+				err = fmt.Errorf("%w", eloop)
+			} else {
+				err = eloop
+			}
+		}
+	}
+	return err
+}
+
+// Flushes all the handlers.
+func (m *Handler) Close() error {
+	var err error
+	for _, h := range m.handlers {
+		if eloop := h.Close(); eloop != nil {
 			if err != nil {
 				err = fmt.Errorf("%w", eloop)
 			} else {

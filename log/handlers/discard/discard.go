@@ -33,9 +33,9 @@ func (h *Handler) Enabled(level log.Level) bool {
 	return level >= h.level
 }
 
-// Handle the Event. Because this handler discards all events written to it,
+// Write the Event. Because this handler discards all events written to it,
 // Handle simply acquires the mutex and releases it.
-func (h *Handler) Handle(e log.Event) error {
+func (h *Handler) Write(event log.Event) error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	return nil
@@ -44,6 +44,14 @@ func (h *Handler) Handle(e log.Event) error {
 // Flushes the handler. Because this handler discards all events written to it,
 // flush simply acquires the mutex and releases it.
 func (h *Handler) Flush() error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	return nil
+}
+
+// Closes the handler. Because this handler discards all events written to it,
+// close simply acquires the mutex and releases it.
+func (h *Handler) Close() error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	return nil

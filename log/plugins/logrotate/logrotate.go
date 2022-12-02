@@ -1,73 +1,39 @@
 package logrotate
 
 import (
-	"fmt"
 	"os"
-	"os/signal"
 	"sync"
-	"syscall"
-	"time"
 )
 
-// File wraps an *os.File and listens for a 'SIGHUP' signal from logrotated
-// so it can reopen the new file.
+// Compile time check ensures that File always
+// implements Write Closer.
+// This will fail if multi.Handler does not
+// implement log.Handler interface.
+// var _ io.WriteCloser = &File{}
+
 type File struct {
-	*os.File
-	me     sync.Mutex
-	path   string
-	sighup chan os.Signal
+	// Filename is the file to write logs to.  Backup log files will be retained
+	// in the same directory.  It uses <processname>-lumberjack.log in
+	// os.TempDir() if empty.
+	Name string
+	// MaxBackups is the maximum number of old log files to retain.  The default
+	// is to retain all old log files (though MaxAge may still cause them to get
+	// deleted.)
+	MaxBackups uint
+	// MaxSize is the maximum size in megabytes of the log file before it gets
+	// rotated. It defaults to 100 megabytes.
+	MaxSizeMB uint
+	// underlying file
+	osFile *os.File
+	mu     sync.Mutex
 }
 
-// NewFile creates a File pointer and kicks off the goroutine listening for
-// SIGHUP signals.
-func NewFile(path string) (*File, error) {
-	lr := &File{
-		me:     sync.Mutex{},
-		path:   path,
-		sighup: make(chan os.Signal, 1),
+// Implements io.Writer.
+func (f *File) Write(b []byte) (int, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if f.osFile != nil {
+		return f.osFile.Write(b)
 	}
-
-	if err := lr.reopen(); err != nil {
-		return nil, err
-	}
-
-	go func() {
-		signal.Notify(lr.sighup, syscall.SIGHUP)
-
-		for _ = range lr.sighup {
-			fmt.Fprintf(os.Stderr, "%s: Reopening %q\n", time.Now(), lr.path)
-			if err := lr.reopen(); err != nil {
-				fmt.Fprintf(os.Stderr, "%s: Error reopening: %s\n", time.Now(), err)
-			}
-		}
-	}()
-
-	return lr, nil
-}
-
-func (lr *File) reopen() error {
-	var err error
-	lr.me.Lock()
-	defer lr.me.Unlock()
-	lr.File.Close()
-	lr.File, err = os.OpenFile(lr.path, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0640)
-	return err
-}
-
-// Write will write to the underlying file. It uses a sync.Mutex to ensure
-// uninterrupted writes during logrotates.
-func (lr *File) Write(b []byte) (int, error) {
-	lr.me.Lock()
-	defer lr.me.Unlock()
-	return lr.File.Write(b)
-}
-
-// Close will stop the goroutine listening for SIGHUP signals and then close
-// the underlying os.File.
-func (lr *File) Close() error {
-	lr.me.Lock()
-	defer lr.me.Unlock()
-	signal.Stop(lr.sighup)
-	close(lr.sighup)
-	return lr.File.Close()
+	return 0, os.ErrNotExist
 }

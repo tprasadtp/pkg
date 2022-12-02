@@ -138,34 +138,76 @@ func TestMockHandlerCustomLevelFunc(t *testing.T) {
 	}
 }
 
-func TestMockHandlerHandle(t *testing.T) {
+func TestMockHandler(t *testing.T) {
 	t.Run("InfoLevel", func(t *testing.T) {
 		h := log.MockHandler{
 			Level: log.InfoLevel,
 		}
-		var err error
-
+		// Write to handler
 		for _, e := range events {
 			if h.Enabled(e.Level) {
-				err = h.Handle(e)
-				if err != nil {
+				if err := h.Write(e); err != nil {
 					t.Errorf("handler returned error(%e), event=%+v", err, e)
 				}
 			}
 		}
-		if h.EventCount != 12 {
-			t.Errorf("handler incorrect Events. expected=12, got=%d", h.EventCount)
+		if len(h.Events) != 12 {
+			t.Errorf("handler incorrect Events. expected=12, got=%d", len(h.Events))
 		}
 		if h.HandleCount != 12 {
 			t.Errorf("handler incorrect HandleCount. expected=12, got=%d", h.HandleCount)
 		}
-
-		err = h.Flush()
-		if err != nil {
+		// Flush Handler
+		if err := h.Flush(); err != nil {
 			t.Errorf("handler flush error(%e)", err)
 		}
-		if h.EventCount != 0 {
+		if len(h.Events) != 0 {
 			t.Errorf("handler did not flush events")
+		}
+
+		// Close Handler
+		if err := h.Close(); err != nil {
+			t.Errorf("handler close error(%e)", err)
+		}
+		if len(h.Events) != 0 {
+			t.Errorf("handler close not flush events")
+		}
+
+		// Write to already closed handler
+		for _, e := range events {
+			if h.Enabled(e.Level) {
+				if err := h.Write(e); !errors.Is(err, log.ErrMockHandlerClosed) {
+					t.Errorf("handler(closed) invalid error => got=(%s), expected=(%s)",
+						err,
+						log.ErrMockHandlerClosed,
+					)
+				}
+			}
+		}
+		if len(h.Events) != 0 {
+			t.Errorf("handler(closed) incorrect events. expected=0, got=%d",
+				len(h.Events))
+		}
+		// Events are not written but handler is invoked.
+		if h.HandleCount != 24 {
+			t.Errorf("handler(closed) incorrect HandleCount. expected=24, got=%d",
+				h.HandleCount)
+		}
+
+		// Flush already closed Handler
+		if err := h.Flush(); !errors.Is(err, log.ErrMockHandlerClosed) {
+			t.Errorf("flushing already closed handler => got=(%s), expected=(%s)",
+				err,
+				log.ErrMockHandlerClosed,
+			)
+		}
+
+		// Close already closed Handler
+		if err := h.Close(); !errors.Is(err, log.ErrMockHandlerClosed) {
+			t.Errorf("closing already closed handler => got=(%s), expected=(%s)",
+				err,
+				log.ErrMockHandlerClosed,
+			)
 		}
 	})
 }
@@ -178,7 +220,7 @@ func TestMockHandlerHandleAlwaysErr(t *testing.T) {
 
 	for _, e := range events {
 		if h.Enabled(e.Level) {
-			if err := h.Handle(e); !errors.Is(err, log.ErrMockHandler) {
+			if err := h.Write(e); !errors.Is(err, log.ErrMockHandler) {
 				t.Errorf("handler.Handle() AlwaysErr=true did not return %s error",
 					log.ErrMockHandler)
 			}
@@ -188,8 +230,8 @@ func TestMockHandlerHandleAlwaysErr(t *testing.T) {
 		t.Errorf("handler incorrect HandleCount. expected=2, got=%d", h.HandleCount)
 	}
 
-	if h.EventCount != 0 {
-		t.Errorf("handler incorrect Events. expected=0, got=%d", h.EventCount)
+	if len(h.Events) != 0 {
+		t.Errorf("handler incorrect Events. expected=0, got=%d", len(h.Events))
 	}
 
 	if err := h.Flush(); !errors.Is(err, log.ErrMockHandler) {
