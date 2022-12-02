@@ -9,8 +9,6 @@ import (
 )
 
 func TestMultiHandler(t *testing.T) {
-	var err error
-
 	h1 := log.MockHandler{
 		Level: log.InfoLevel,
 	}
@@ -23,8 +21,7 @@ func TestMultiHandler(t *testing.T) {
 
 	for _, e := range events {
 		if m.Enabled(e.Level) {
-			err = m.Handle(e)
-			if err != nil {
+			if err := m.Handle(e); err != nil {
 				t.Errorf("handler returned error(%e), event=%s", err, e.Message)
 			}
 		}
@@ -39,8 +36,7 @@ func TestMultiHandler(t *testing.T) {
 			h2.EventCount)
 	}
 
-	err = m.Flush()
-	if err != nil {
+	if err := m.Flush(); err != nil {
 		t.Errorf("handler flush returned error(%e)", err)
 	}
 
@@ -73,11 +69,12 @@ func TestMultiHandlerWithError(t *testing.T) {
 
 	for _, e := range events {
 		if m.Enabled(e.Level) {
-			if err := m.Handle(e); errors.Is(err, log.ErrMockHandler) {
-				t.Errorf("handler returned %s, when it should error %s (@%s)",
-					err,
+			if err := m.Handle(e); !errors.Is(err, log.ErrMockHandler) {
+				t.Errorf(
+					"handle error mismatch (@%s) => expected=%s, got=%s",
+					e.Message,
 					log.ErrMockHandler,
-					e.Message)
+					err)
 			}
 		}
 	}
@@ -101,9 +98,9 @@ func TestMultiHandlerWithError(t *testing.T) {
 	}
 
 	if err := m.Flush(); !errors.Is(err, log.ErrMockHandler) {
-		t.Errorf("flush returned %s, when it should error %s",
-			err,
+		t.Errorf(
+			"flush error mismatch => expected=%s, got=%s",
 			log.ErrMockHandler,
-		)
+			err)
 	}
 }
