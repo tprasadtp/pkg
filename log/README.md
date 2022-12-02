@@ -11,5 +11,6 @@ the context to allow handlers to populate contextual fields like Span and Trace.
 - Uses `map[string]any` to specify fields. This is better compared to passing variadic slice
 `...any` as it avoids depending on a vet to check for errors. For allocation optimization reasons,
 this is translated to list of attributes in `Event`.
+- Hooks? hooks are nothing but a custom handlers, if you want a custom hook, simply implement log.Handler interface. For simple hooks, you can simple wrap an existing handler in your custom handler implementation.
 
 [wire]: https://github.com/google/wire

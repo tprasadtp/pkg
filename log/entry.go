@@ -5,6 +5,26 @@ import (
 	"time"
 )
 
+// Stacktrace includes stacktrace of the error.
+type StackTrace struct {
+}
+
+// Includes caller info if available.
+type CallerInfo struct {
+	// Line number of the caller
+	// If not available, this is 0.
+	Line uint
+	// File containing the code
+	// If not available this is empty string.
+	File string
+	// Function name of the caller.
+	// this includes full path of the package.
+	// except for main package. This is limitation
+	// of [runtime.FuncForPC]
+	// This is empty if information is not available.
+	Func string
+}
+
 // Event Represents a single Log event.
 // Marshalling this to JSON/Binary must have minimal allocations.
 // Log entry is immutable, it has no internal state
@@ -36,12 +56,11 @@ type Event struct {
 	// Contextual fields
 	Fields []Field
 
-	pc uintptr
-}
+	// Callerinfo this can be nil, of caller info collection
+	// is disabled.
+	Caller CallerInfo
 
-// Caller returns the file, line, function of the log event.
-// If the Event was created without the necessary information,
-// or if the location is unavailable, it returns ("", 0, "").
-// func (e Event) Caller() (string, uint, string) {
-// 	return runtime.Callers()
-// }
+	// StackTrace is stacktrace. This is nil
+	// if stacktracing is disabled.
+	StackTrace StackTrace
+}

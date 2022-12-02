@@ -1,6 +1,6 @@
 package log
 
-// Level Level represents log level.
+// Level represents log level.
 type Level uint16
 
 // Named Log Levels. Level Constants do not really matter,

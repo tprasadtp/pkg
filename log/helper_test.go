@@ -12,9 +12,8 @@ func helperBar() {
 	Helper()
 }
 
-// This test is sensitive to package name changes.
-// as it uses runtime.Caller. If you change/move the package
-// Please change below tests values accordingly.
+// This test is sensitive to package name changes as it uses runtime.Caller.
+// If you change/move the package Please change below tests values accordingly.
 const (
 	helper01FuncName = "github.com/tprasadtp/pkg/log.helperFoo"
 	helper02FuncName = "github.com/tprasadtp/pkg/log.helperBar"
@@ -40,6 +39,7 @@ func TestHelper(t *testing.T) {
 		t.Errorf("%s(value) should return nil as its being used as list", helper01FuncName)
 	}
 
+	// call second helper func
 	helperBar()
 	h2, ok2 := helpers.Load(helper02FuncName)
 	if !ok2 {

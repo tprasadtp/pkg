@@ -3,15 +3,29 @@ package log
 import (
 	"context"
 	"fmt"
-	"os"
 	"strings"
 )
 
 // New creates a new Logger with the given Handler.
+// Its is recommended that namespaces start with
+// a letter and only include alphanumerics in snake case or
+// camel case.
 func New(h Handler, namespaces ...string) *Logger {
-	return &Logger{
-		handler: h,
-		exit:    os.Exit,
+	switch len(namespaces) {
+	case 0:
+		return &Logger{
+			handler: h,
+		}
+	case 1:
+		return &Logger{
+			handler:   h,
+			namespace: namespaces[0],
+		}
+	default:
+		return &Logger{
+			handler:   h,
+			namespace: strings.Join(namespaces, "."),
+		}
 	}
 }
 
@@ -23,6 +37,8 @@ type Logger struct {
 	err       error
 	fields    []Field
 	exit      func(int)
+
+	disableCallerInfo bool
 }
 
 // Clone the logger.
@@ -34,6 +50,19 @@ func (log *Logger) clone() *Logger {
 // Context returns Logger's context.
 func (log *Logger) Context() context.Context {
 	return log.ctx
+}
+
+// Disables tracing caller information.
+// In most cases you do not need this,
+// performance gain from this is very small.
+// this also disables stacktraces in errors.
+func (log *Logger) DisableCallerTracing() {
+	log.disableCallerInfo = true
+}
+
+// Enables tracing caller information (default).
+func (log *Logger) EnableCallerTracing() {
+	log.disableCallerInfo = false
 }
 
 // Namespace returns Logger's Namespace.

@@ -20,7 +20,8 @@ func TestDiscardHandler(t *testing.T) {
 	}
 
 	if handleInvokeCount != 12 {
-		t.Errorf("incorrect Enabled(), Handle() should be invoked=12 times, but got=%d", handleInvokeCount)
+		t.Errorf("incorrect Enabled(), Handle() should be invoked=12 times, but got=%d",
+			handleInvokeCount)
 	}
 
 	if err := h.Flush(); err != nil {

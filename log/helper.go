@@ -21,7 +21,7 @@ func Helper() {
 	pc, _, _, ok := runtime.Caller(1)
 	if ok {
 		f := runtime.FuncForPC(pc)
-		// We just want the function to be stored, make key as nil.
+		// We just want the function to be stored, make value as nil.
 		helpers.LoadOrStore(f.Name(), nil)
 	}
 }
