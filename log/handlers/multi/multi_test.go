@@ -70,10 +70,10 @@ func TestOneClosedHandler(t *testing.T) {
 
 	for _, e := range testdata.GetEvents() {
 		if m.Enabled(e.Level) {
-			if err := m.Write(e); !errors.Is(err, log.ErrMockHandlerClosed) {
+			if err := m.Write(e); !errors.Is(err, log.ErrHandlerClosed) {
 				t.Errorf("h1(closed) invalid error => got=(%s), expected=(%s)",
 					err,
-					log.ErrMockHandlerClosed,
+					log.ErrHandlerClosed,
 				)
 			}
 		}
@@ -91,7 +91,7 @@ func TestOneClosedHandler(t *testing.T) {
 		)
 	}
 
-	if err := m.Flush(); !errors.Is(err, log.ErrMockHandlerClosed) {
+	if err := m.Flush(); !errors.Is(err, log.ErrHandlerClosed) {
 		t.Errorf("handler flush returned error(%e)", err)
 	}
 
@@ -124,11 +124,11 @@ func TestMultiHandlerWithError(t *testing.T) {
 
 	for _, e := range testdata.GetEvents() {
 		if m.Enabled(e.Level) {
-			if err := m.Write(e); !errors.Is(err, log.ErrMockHandler) {
+			if err := m.Write(e); !errors.Is(err, log.ErrHandlerWrite) {
 				t.Errorf(
 					"handle error mismatch (@%s) => expected=%s, got=%s",
 					e.Message,
-					log.ErrMockHandler,
+					log.ErrHandlerWrite,
 					err)
 			}
 		}
@@ -152,10 +152,10 @@ func TestMultiHandlerWithError(t *testing.T) {
 			len(h3.Events))
 	}
 
-	if err := m.Flush(); !errors.Is(err, log.ErrMockHandler) {
+	if err := m.Flush(); !errors.Is(err, log.ErrHandlerWrite) {
 		t.Errorf(
 			"flush error mismatch => expected=%s, got=%s",
-			log.ErrMockHandler,
+			log.ErrHandlerWrite,
 			err)
 	}
 }

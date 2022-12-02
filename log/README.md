@@ -12,6 +12,6 @@ the context to allow handlers to populate contextual fields like Span and Trace.
 `...any` as it avoids depending on a vet to check for errors. For allocation optimization reasons,
 this is translated to list of attributes in `Event`.
 - Hooks? hooks are nothing but a custom handlers, if you want a custom hook, simply implement log.Handler interface. For simple hooks, you can simple wrap an existing handler in your custom handler implementation.
-- Don't be afraid of dependencies like aws/sdk and google cloud sdk, journald dependencies in the mod file, they are only pulled if you use their respective handlers or use `handlers.AutoSelect` (Requires g 1.17 or later)
+- Don't be afraid of dependencies like aws/sdk, google cloud sdk, journald etc. in the mod file, they are only pulled if you use their respective handlers or use `handlers.AutoConfigure` (Requires g 1.17 or later)
 
 [wire]: https://github.com/google/wire

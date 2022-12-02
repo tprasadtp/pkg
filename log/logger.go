@@ -3,7 +3,9 @@ package log
 import (
 	"context"
 	"fmt"
+	"runtime"
 	"strings"
+	"time"
 )
 
 // New creates a new Logger with the given Handler.
@@ -140,4 +142,27 @@ func (log *Logger) WithError(err error) *Logger {
 	clone := log.clone()
 	clone.err = err
 	return clone
+}
+
+// Internal wrapper which writes event to log.Handler.
+// All other named levels and methods use this with some form or other.
+func (log *Logger) write(level Level, message string, depth uint) {
+	if log.handler != nil {
+		if log.handler.Enabled(level) {
+			// build log Event
+			event := Event{
+				Level:   level,
+				Message: message,
+				Error:   log.err,
+				Time:    time.Now(),
+				Fields:  log.fields,
+			}
+
+			// Build caller info
+			if !log.disableCaller {
+				pc, file, line, ok := runtime.Caller(int(depth + 1))
+			}
+			log.handler.Write(event)
+		}
+	}
 }

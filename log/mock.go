@@ -4,21 +4,6 @@ package log
 // This will fail if MockHandler does not implement Handler interface.
 var _ Handler = &MockHandler{}
 
-// mockError error used for testing.
-type mockError string
-
-// Implements Error() interface on mockError.
-func (m mockError) Error() string {
-	return string(m)
-}
-
-const (
-	// Error returned by MockHandler.
-	ErrMockHandler = mockError("mock handler error")
-	// Error returned by MockHandler when writing or closing already closed handler.
-	ErrMockHandlerClosed = mockError("mock handler is closed")
-)
-
 // This should only be used in unit tests, as all log.Events
 // are simply appended to a slice, which can lead to
 // memory exhaustion.
@@ -63,10 +48,10 @@ func (m *MockHandler) Enabled(level Level) bool {
 func (m *MockHandler) Write(event Event) error {
 	m.HandleCount++
 	if m.closed {
-		return ErrMockHandlerClosed
+		return ErrHandlerClosed
 	}
 	if m.AlwaysErr {
-		return ErrMockHandler
+		return ErrHandlerWrite
 	}
 	m.Events = append(m.Events, event)
 	return nil
@@ -77,10 +62,10 @@ func (m *MockHandler) Write(event Event) error {
 // and method returns an error.
 func (m *MockHandler) Flush() error {
 	if m.closed {
-		return ErrMockHandlerClosed
+		return ErrHandlerClosed
 	}
 	if m.AlwaysErr {
-		return ErrMockHandler
+		return ErrHandlerWrite
 	}
 	m.Events = []Event{}
 	return nil
@@ -90,7 +75,7 @@ func (m *MockHandler) Flush() error {
 // and closes writing to this handler.
 func (m *MockHandler) Close() error {
 	if m.closed {
-		return ErrMockHandlerClosed
+		return ErrHandlerClosed
 	}
 	m.closed = true
 	m.Events = []Event{}

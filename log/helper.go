@@ -21,7 +21,10 @@ func Helper() {
 	pc, _, _, ok := runtime.Caller(1)
 	if ok {
 		f := runtime.FuncForPC(pc)
-		// We just want the function to be stored, make value as nil.
-		helpers.LoadOrStore(f.Name(), nil)
+		// Ignore if called from Main function.
+		if f.Name() != "main.Main" {
+			// We just want the function to be stored, make value as nil.
+			helpers.LoadOrStore(f.Name(), nil)
+		}
 	}
 }

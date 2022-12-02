@@ -12,7 +12,7 @@ import (
 // implement log.Handler interface.
 var _ log.Handler = &Handler{}
 
-// No-Op Handler.
+// Multi Handler wraps multiple handlers into one.
 type Handler struct {
 	handlers []log.Handler
 }
@@ -66,7 +66,7 @@ func (m *Handler) Flush() error {
 	return err
 }
 
-// Flushes all the handlers.
+// Closes all the handlers.
 func (m *Handler) Close() error {
 	var err error
 	for _, h := range m.handlers {
