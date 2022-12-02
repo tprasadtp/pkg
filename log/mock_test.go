@@ -1,6 +1,7 @@
 package log_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/tprasadtp/pkg/log"
@@ -174,13 +175,12 @@ func TestMockHandlerHandleAlwaysErr(t *testing.T) {
 		Level:     log.InfoLevel,
 		AlwaysErr: true,
 	}
-	var err error
 
 	for _, e := range events {
 		if h.Enabled(e.Level) {
-			err = h.Handle(e)
-			if err == nil {
-				t.Errorf("handler.Handle() AlwaysErr=true did not return an error")
+			if err := h.Handle(e); !errors.Is(err, log.ErrMockHandler) {
+				t.Errorf("handler.Handle() AlwaysErr=true did not return %s error",
+					log.ErrMockHandler)
 			}
 		}
 	}
@@ -192,8 +192,7 @@ func TestMockHandlerHandleAlwaysErr(t *testing.T) {
 		t.Errorf("handler incorrect Events. expected=0, got=%d", h.EventCount)
 	}
 
-	err = h.Flush()
-	if err == nil {
+	if err := h.Flush(); !errors.Is(err, log.ErrMockHandler) {
 		t.Errorf("handler.Flush() AlwaysErr=true dif not return an error")
 	}
 }

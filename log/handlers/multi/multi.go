@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/tprasadtp/pkg/log"
-	"go.uber.org/multierr"
 )
 
 // Compile time check for handler.
@@ -40,19 +39,29 @@ func (m *Handler) Handle(event log.Event) error {
 	var err error
 	for _, h := range m.handlers {
 		if h.Enabled(event.Level) {
-			errPerH := h.Handle(event)
-			fmt.Printf("left=%s, right=%s\n", err, errPerH)
-			err = multierr.Append(err, errPerH)
+			if eloop := h.Handle(event); eloop != nil {
+				if err != nil {
+					err = fmt.Errorf("%w", eloop)
+				} else {
+					err = eloop
+				}
+			}
 		}
 	}
 	return err
 }
 
-// Flushes the handler, because this handler is no-op, flush in also a no-op.
+// Flushes all the handlers.
 func (m *Handler) Flush() error {
 	var err error
 	for _, h := range m.handlers {
-		err = multierr.Append(err, h.Flush())
+		if eloop := h.Flush(); eloop != nil {
+			if err != nil {
+				err = fmt.Errorf("%w", eloop)
+			} else {
+				err = eloop
+			}
+		}
 	}
 	return err
 }

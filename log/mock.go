@@ -1,12 +1,21 @@
 package log
 
-import (
-	"fmt"
-)
-
 // Compile time check for handler.
 // This will fail if MockHandler does not implement Handler interface.
 var _ Handler = &MockHandler{}
+
+// mockError error used for testing.
+type mockError string
+
+// Implements Error() interface on mockError.
+func (m mockError) Error() string {
+	return string(m)
+}
+
+const (
+	// Error returned by MockHandler.
+	ErrMockHandler = mockError("mock handler error")
+)
 
 // MockHandler is a mock handler which is used for tests.
 // This holds some counters for tracking state to be used in tests.
@@ -44,7 +53,7 @@ func (m *MockHandler) Handle(e Event) error {
 		m.EventCount++
 		return nil
 	}
-	return fmt.Errorf("mock handler Handle() error")
+	return ErrMockHandler
 }
 
 // Flush clears its internal Events slice.
@@ -55,5 +64,5 @@ func (m *MockHandler) Flush() error {
 		m.EventCount = 0
 		return nil
 	}
-	return fmt.Errorf("mock handler Flush() error")
+	return ErrMockHandler
 }

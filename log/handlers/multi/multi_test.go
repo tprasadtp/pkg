@@ -1,6 +1,7 @@
 package multi_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/tprasadtp/pkg/log"
@@ -72,9 +73,37 @@ func TestMultiHandlerWithError(t *testing.T) {
 
 	for _, e := range events {
 		if m.Enabled(e.Level) {
-			if err := m.Handle(e); err == nil {
-				t.Errorf("handler returned nil, when it should error, @%s", e.Message)
+			if err := m.Handle(e); errors.Is(err, log.ErrMockHandler) {
+				t.Errorf("handler returned %s, when it should error %s (@%s)",
+					err,
+					log.ErrMockHandler,
+					e.Message)
 			}
 		}
+	}
+
+	if h2.EventCount != 0 {
+		t.Errorf("incorrect number of events on h2(@ErrorLevel) expected=0, got=%d",
+			h2.EventCount)
+	}
+	if h2.HandleCount != 5 {
+		t.Errorf("incorrect number of Handle() calls on h2(@ErrorLevel) expected=5, got=%d",
+			h2.EventCount)
+	}
+
+	if h3.EventCount != 0 {
+		t.Errorf("incorrect number of events on h1(@ErrorLevel) expected=0, got=%d",
+			h3.EventCount)
+	}
+	if h3.HandleCount != 14 {
+		t.Errorf("incorrect number of events on h1(@ErrorLevel) expected=14, got=%d",
+			h3.EventCount)
+	}
+
+	if err := m.Flush(); !errors.Is(err, log.ErrMockHandler) {
+		t.Errorf("flush returned %s, when it should error %s",
+			err,
+			log.ErrMockHandler,
+		)
 	}
 }
