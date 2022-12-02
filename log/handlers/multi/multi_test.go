@@ -64,7 +64,8 @@ func TestMultiHandlerWithError(t *testing.T) {
 	}
 
 	h3 := log.MockHandler{
-		Level: log.DebugLevel,
+		Level:     log.VerboseLevel,
+		AlwaysErr: true,
 	}
 
 	m := multi.New(&h1, &h2, &h3)
@@ -72,9 +73,8 @@ func TestMultiHandlerWithError(t *testing.T) {
 	for _, e := range events {
 		if m.Enabled(e.Level) {
 			if err := m.Handle(e); err == nil {
-				t.Errorf("handler returned nil, when it should error, %s", e.Message)
+				t.Errorf("handler returned nil, when it should error, @%s", e.Message)
 			}
 		}
 	}
-	t.Log()
 }

@@ -2,6 +2,8 @@
 package multi
 
 import (
+	"fmt"
+
 	"github.com/tprasadtp/pkg/log"
 	"go.uber.org/multierr"
 )
@@ -38,7 +40,9 @@ func (m *Handler) Handle(event log.Event) error {
 	var err error
 	for _, h := range m.handlers {
 		if h.Enabled(event.Level) {
-			err = multierr.Append(err, h.Handle(event))
+			errPerH := h.Handle(event)
+			fmt.Printf("left=%s, right=%s\n", err, errPerH)
+			err = multierr.Append(err, errPerH)
 		}
 	}
 	return err
