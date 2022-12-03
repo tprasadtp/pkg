@@ -13,6 +13,7 @@ package stdlog
 import (
 	"io"
 	stdliblog "log"
+	"sync"
 
 	"github.com/tprasadtp/pkg/log"
 )
@@ -29,6 +30,7 @@ var defaultBridge = bridge{
 
 // Bridge implements bridge interfaces.
 type bridge struct {
+	mu     sync.Mutex
 	logger *log.Logger
 	level  log.Level
 }
@@ -48,7 +50,15 @@ func (br *bridge) Write(b []byte) (int, error) {
 //     on Panic/Panicf/Panicln events.
 //   - This cannot prevent standard library logger from calling os.Exit
 //     on Fatal/Fatalf/Fatalln events.
-func SetupBridge(level log.Level, logger *log.Logger) {
-	stdliblog.Default().SetFlags(stdliblog.Llongfile)
-	stdliblog.Default().SetOutput(&defaultBridge)
+func SetupBridge(logger *log.Logger, level log.Level, stdlibLoggers ...*stdliblog.Logger) {
+	defaultBridge.mu.Lock()
+
+	switch len(stdlibLoggers) {
+	case 0:
+		if logger.NoCallerTracing {
+			stdliblog.Default().SetFlags(0)
+		}
+		stdliblog.Default().SetOutput(&defaultBridge)
+	}
+
 }

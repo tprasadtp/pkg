@@ -33,14 +33,18 @@ func New(h Handler, namespaces ...string) *Logger {
 
 // Logger.
 type Logger struct {
+	// Disable caller tracing.
+	// This also means caller tracing is not
+	// available in stacktraces.
+	NoCallerTracing bool
+
 	handler   Handler
 	ctx       context.Context
 	namespace string
 	err       error
 	fields    []Field
 
-	exit          func(int)
-	disableCaller bool
+	exit func(int)
 }
 
 // Clone the logger.
@@ -78,19 +82,6 @@ func (log *Logger) WriteEvent(event Event) error {
 // Context returns Logger's context.
 func (log *Logger) Context() context.Context {
 	return log.ctx
-}
-
-// Disables tracing caller information.
-// In most cases you do not need this,
-// performance gain from this is very small.
-// This also disables stacktraces.
-func (log *Logger) DisableCallerTracing() {
-	log.disableCaller = true
-}
-
-// Enables tracing caller information (default).
-func (log *Logger) EnableCallerTracing() {
-	log.disableCaller = false
 }
 
 // Namespace returns Logger's Namespace.
@@ -177,7 +168,7 @@ func (log *Logger) write(level Level, message string, depth uint) error {
 			}
 
 			// Build caller info
-			if !log.disableCaller {
+			if log.NoCallerTracing {
 				// depth + 1 (this function)
 				if pc, file, line, ok := runtime.Caller(int(depth + 1)); ok {
 					if fn := runtime.FuncForPC(pc); fn != nil {

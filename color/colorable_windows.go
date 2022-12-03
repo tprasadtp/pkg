@@ -12,9 +12,9 @@ import (
 // nolint: gochecknoglobals
 var osVersion = windows.RtlGetVersion()
 
-// isTerminal returns true if given file handle is a terminal
+// isColorableTerminal returns true if given file handle is a terminal
 // and virtual terminal processing can be enabled.
-func isTerminal(fd uintptr) bool {
+func isColorableTerminal(fd uintptr) bool {
 	var handle = windows.Handle(fd)
 	var mode uint32
 	var err error

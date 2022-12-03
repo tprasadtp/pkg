@@ -9,8 +9,8 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-// isTerminal returns true if given file descriptor is a terminal
-func isTerminal(fd uintptr) bool {
+// isColorableTerminal returns true if given file descriptor is a terminal
+func isColorableTerminal(fd uintptr) bool {
 	_, err := unix.IoctlGetTermios(int(fd), ioctlReadTermios)
 	return err == nil
 }

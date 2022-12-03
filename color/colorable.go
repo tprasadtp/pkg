@@ -22,7 +22,7 @@ import "os"
 // [NO_COLOR]: https://no-color.org/
 // [CLICOLOR]: https://bixense.com/clicolors/
 func IsStdoutColorable(flag string) bool {
-	return isColorable(flag, isTerminal(os.Stdout.Fd()))
+	return isColorable(flag, isColorableTerminal(os.Stdout.Fd()))
 }
 
 // Detects whether true color(24 bit) output
@@ -45,7 +45,7 @@ func IsStdoutColorable(flag string) bool {
 // [NO_COLOR]: https://no-color.org/
 // [CLICOLOR]: https://bixense.com/clicolors/
 func IsStderrColorable(flag string) bool {
-	return isColorable(flag, isTerminal(os.Stderr.Fd()))
+	return isColorable(flag, isColorableTerminal(os.Stderr.Fd()))
 }
 
 // IsColorable detects whether true color(24 bit) output
