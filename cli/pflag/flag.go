@@ -16,7 +16,7 @@ pflag is a drop-in replacement of Go's native flag package. If you import
 pflag under the name "flag" then all code should continue to function
 with no changes.
 
-	import flag "github.com/tprasadtp/pkg/pflag"
+	import flag "github.com/tprasadtp/pkg/cli/pflag"
 
 There is one exception to this: if you directly instantiate the Flag struct
 there is one more field "Shorthand" that you will need to set.

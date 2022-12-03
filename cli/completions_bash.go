@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/tprasadtp/pkg/pflag"
+	"github.com/tprasadtp/pkg/cli/pflag"
 )
 
 // Annotations for Bash completion.

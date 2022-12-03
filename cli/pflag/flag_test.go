@@ -1245,7 +1245,7 @@ func TestPrintDefaults(t *testing.T) {
 func TestVisitAllFlagOrder(t *testing.T) {
 	fs := NewFlagSet("TestVisitAllFlagOrder", ContinueOnError)
 	fs.SortFlags = false
-	// https://github.com/tprasadtp/pkg/pflag/issues/120
+	// https://github.com/tprasadtp/pkg/cli/pflag/issues/120
 	fs.SetNormalizeFunc(func(f *FlagSet, name string) NormalizedName {
 		return NormalizedName(name)
 	})

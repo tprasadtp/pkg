@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tprasadtp/pkg/pflag"
+	"github.com/tprasadtp/pkg/cli/pflag"
 )
 
 const (

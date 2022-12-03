@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/spf13/pflag.svg?branch=master)](https://travis-ci.org/spf13/pflag)
-[![Go Report Card](https://goreportcard.com/badge/github.com/tprasadtp/pkg/pflag)](https://goreportcard.com/report/github.com/tprasadtp/pkg/pflag)
-[![GoDoc](https://godoc.org/github.com/tprasadtp/pkg/pflag?status.svg)](https://godoc.org/github.com/tprasadtp/pkg/pflag)
+[![Go Report Card](https://goreportcard.com/badge/github.com/tprasadtp/pkg/cli/pflag)](https://goreportcard.com/report/github.com/tprasadtp/pkg/cli/pflag)
+[![GoDoc](https://godoc.org/github.com/tprasadtp/pkg/cli/pflag?status.svg)](https://godoc.org/github.com/tprasadtp/pkg/cli/pflag)
 
 ## Description
 
@@ -22,11 +22,11 @@ pflag is available using the standard `go get` command.
 
 Install by running:
 
-    go get github.com/tprasadtp/pkg/pflag
+    go get github.com/tprasadtp/pkg/cli/pflag
 
 Run tests by running:
 
-    go test github.com/tprasadtp/pkg/pflag
+    go test github.com/tprasadtp/pkg/cli/pflag
 
 ## Usage
 
@@ -35,7 +35,7 @@ pflag under the name "flag" then all code should continue to function
 with no changes.
 
 ``` go
-import flag "github.com/tprasadtp/pkg/pflag"
+import flag "github.com/tprasadtp/pkg/cli/pflag"
 ```
 
 There is one exception to this: if you directly instantiate the Flag struct
@@ -273,7 +273,7 @@ to support flags defined by third-party dependencies (e.g. `golang/glog`).
 ```go
 import (
 	goflag "flag"
-	flag "github.com/tprasadtp/pkg/pflag"
+	flag "github.com/tprasadtp/pkg/cli/pflag"
 )
 
 var ip *int = flag.Int("flagname", 1234, "help message for flagname")
@@ -289,8 +289,8 @@ func main() {
 You can see the full reference documentation of the pflag package
 [at godoc.org][3], or through go's standard documentation system by
 running `godoc -http=:6060` and browsing to
-[http://localhost:6060/pkg/github.com/tprasadtp/pkg/pflag][2] after
+[http://localhost:6060/pkg/github.com/tprasadtp/pkg/cli/pflag][2] after
 installation.
 
-[2]: http://localhost:6060/pkg/github.com/tprasadtp/pkg/pflag
-[3]: http://godoc.org/github.com/tprasadtp/pkg/pflag
+[2]: http://localhost:6060/pkg/github.com/tprasadtp/pkg/cli/pflag
+[3]: http://godoc.org/github.com/tprasadtp/pkg/cli/pflag

@@ -14,7 +14,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tprasadtp/pkg/pflag"
+	"github.com/tprasadtp/pkg/cli/pflag"
 )
 
 // FParseErrWhitelist configures Flag parse errors to be ignored

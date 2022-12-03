@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tprasadtp/pkg/pflag"
+	"github.com/tprasadtp/pkg/cli/pflag"
 )
 
 func emptyRun(*Command, []string) {}

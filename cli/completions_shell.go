@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/tprasadtp/pkg/pflag"
+	"github.com/tprasadtp/pkg/cli/pflag"
 )
 
 // MarkFlagRequired instructs the various shell completion implementations to
