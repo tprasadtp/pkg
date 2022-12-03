@@ -2,15 +2,9 @@ package log
 
 import (
 	"runtime"
-	"sync"
-)
 
-// helpers stores helper's reference.
-// sync.Map may be not the best fit here, but it is the easiest,
-// and uses a well tested standard library code.
-//
-//nolint:gochecknoglobals // This cannot be avoided, as helpers map needs to be global.
-var helpers sync.Map
+	"github.com/tprasadtp/pkg/log/internal/helpers"
+)
 
 // Helper marks the calling function as a helper
 // and skips it for source location information.
@@ -22,7 +16,7 @@ func Helper() {
 		// Ignore if called from main().
 		if f.Name() != "main.main" {
 			// We just want the function to be stored, make value as nil.
-			helpers.LoadOrStore(f.Name(), nil)
+			helpers.Map.LoadOrStore(f.Name(), nil)
 		}
 	}
 }

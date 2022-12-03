@@ -14,8 +14,6 @@ var _ Handler = &MockHandler{}
 // If you are looking for handler to use with testing.TB, see
 // [github.com/tprasadtp/pkg/log/handlers/testing.Handler].
 type MockHandler struct {
-	// Replaces Enabled() with custom function
-	EnabledFunc func(Level) bool
 	// Number of times handler call invoked
 	// This is incremented even when methods return an error.
 	HandleCount int
@@ -36,10 +34,7 @@ type MockHandler struct {
 // Enabled can be replaced with a custom function.
 // If EnabledFunc is set to nil, this will return true.
 func (m *MockHandler) Enabled(level Level) bool {
-	if m.EnabledFunc == nil {
-		return level >= m.Level
-	}
-	return m.EnabledFunc(level)
+	return level >= m.Level
 }
 
 // Handle simply saves the event in to Events slice.

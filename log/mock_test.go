@@ -7,7 +7,7 @@ import (
 	"github.com/tprasadtp/pkg/log"
 )
 
-func TestMockHandlerLevel(t *testing.T) {
+func TestMockHandlerEnabled(t *testing.T) {
 	h := log.MockHandler{
 		Level: log.InfoLevel,
 	}
@@ -58,74 +58,6 @@ func TestMockHandlerLevel(t *testing.T) {
 			Name:   "CriticalLevel",
 			Level:  log.CriticalLevel,
 			Expect: true,
-		},
-	}
-	for _, tc := range tt {
-		t.Run(tc.Name, func(t *testing.T) {
-			value := h.Enabled(tc.Level)
-			if tc.Expect != value {
-				t.Errorf("at %s => got=%t want=%t", tc.Name, value, tc.Expect)
-			}
-		})
-	}
-}
-
-func TestMockHandlerCustomLevelFunc(t *testing.T) {
-	h := log.MockHandler{
-		EnabledFunc: func(l log.Level) bool { return l == log.ErrorLevel },
-	}
-
-	type testCase struct {
-		Name   string
-		Level  log.Level
-		Expect bool
-	}
-
-	tt := []testCase{
-		{
-			Name:   "DebugLevel",
-			Level:  log.DebugLevel,
-			Expect: false,
-		},
-		{
-			Name:   "VerboseLevel",
-			Level:  log.VerboseLevel,
-			Expect: false,
-		},
-		{
-			Name:   "InfoLevel",
-			Level:  log.InfoLevel,
-			Expect: false,
-		},
-		{
-			Name:   "SuccessLevel",
-			Level:  log.SuccessLevel,
-			Expect: false,
-		},
-		{
-			Name:   "NoticeLevel",
-			Level:  log.NoticeLevel,
-			Expect: false,
-		},
-		{
-			Name:   "WarningLevel",
-			Level:  log.WarningLevel,
-			Expect: false,
-		},
-		{
-			Name:   "ErrorLevel",
-			Level:  log.ErrorLevel,
-			Expect: true,
-		},
-		{
-			Name:   "CriticalLevel",
-			Level:  log.CriticalLevel,
-			Expect: false,
-		},
-		{
-			Name:   "CriticalLevel",
-			Level:  log.CriticalLevel,
-			Expect: false,
 		},
 	}
 	for _, tc := range tt {

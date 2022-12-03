@@ -1,6 +1,7 @@
 package discard_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/tprasadtp/pkg/log"
@@ -25,8 +26,26 @@ func TestDiscardHandler(t *testing.T) {
 			testdata.I,
 			handleInvokeCount)
 	}
-
+	// flush and close handler
 	if err := h.Flush(); err != nil {
 		t.Errorf("handler flush returned error(%e)", err)
+	}
+	if err := h.Close(); err != nil {
+		t.Errorf("handler flush returned error(%e)", err)
+	}
+
+	// write to closed handler must error
+	if err := h.Write(log.Event{Level: log.InfoLevel}); !errors.Is(err, log.ErrHandlerClosed) {
+		t.Errorf("write on closed handler returned unexpected error (%v)", err)
+	}
+
+	// flush on closed handler must error
+	if err := h.Flush(); !errors.Is(err, log.ErrHandlerClosed) {
+		t.Errorf("flush on closed handler returned unexpected error (%v)", err)
+	}
+
+	// close on already closed handler must error
+	if err := h.Close(); !errors.Is(err, log.ErrHandlerClosed) {
+		t.Errorf("close on closed handler returned unexpected error (%v)", err)
 	}
 }

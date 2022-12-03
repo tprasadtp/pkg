@@ -12,20 +12,20 @@ import (
 // Its is recommended that namespaces start with
 // a letter and only include alphanumerics in snake case or
 // camel case.
-func New(h Handler, namespaces ...string) *Logger {
+func New(handler Handler, namespaces ...string) *Logger {
 	switch len(namespaces) {
 	case 0:
 		return &Logger{
-			handler: h,
+			handler: handler,
 		}
 	case 1:
 		return &Logger{
-			handler:   h,
+			handler:   handler,
 			namespace: namespaces[0],
 		}
 	default:
 		return &Logger{
-			handler:   h,
+			handler:   handler,
 			namespace: strings.Join(namespaces, "."),
 		}
 	}
@@ -33,9 +33,7 @@ func New(h Handler, namespaces ...string) *Logger {
 
 // Logger.
 type Logger struct {
-	// Disable caller tracing.
-	// This also means caller tracing is not
-	// available in stacktraces.
+	// NoCallerTracing disables caller tracing.
 	NoCallerTracing bool
 
 	handler   Handler
@@ -69,7 +67,7 @@ func (log *Logger) Flush() error {
 
 // Write the event directly to the handler if it is enabled.
 // This should not be used by normal library users.
-//   - This is intended by plugins.
+//   - This is intended to be used by plugins.
 //   - For example stdlib plugin uses this to write
 //     Event generated to handler.
 func (log *Logger) WriteEvent(event Event) error {

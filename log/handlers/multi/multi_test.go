@@ -55,7 +55,44 @@ func TestHandler(t *testing.T) {
 	}
 }
 
-func TestOneClosedHandler(t *testing.T) {
+func TestHandlerClose(t *testing.T) {
+	h1 := log.MockHandler{
+		Level: log.InfoLevel,
+	}
+
+	h2 := log.MockHandler{
+		Level: log.ErrorLevel,
+	}
+
+	m := multi.New(&h1, &h2)
+
+	e := log.Event{
+		Level:   log.InfoLevel,
+		Message: "TestEvent",
+	}
+
+	// Close the handler
+	if err := m.Close(); err != nil {
+		t.Errorf("first handler close returned error(%e)", err)
+	}
+
+	// Write to closed handler should error
+	if err := m.Write(e); !errors.Is(err, log.ErrHandlerClosed) {
+		t.Errorf("write on closed handler returned unexpected error (%v)", err)
+	}
+
+	// Flushing closed handler should error
+	if err := m.Flush(); !errors.Is(err, log.ErrHandlerClosed) {
+		t.Errorf("flush on closed handler returned unexpected error (%v)", err)
+	}
+
+	// Close to already closed handler should error
+	if err := m.Close(); !errors.Is(err, log.ErrHandlerClosed) {
+		t.Errorf("close on closed handler returned unexpected error(%v)", err)
+	}
+}
+
+func TestOneAlreadyClosedHandler(t *testing.T) {
 	h1 := log.MockHandler{
 		Level: log.InfoLevel,
 	}

@@ -1,19 +1,10 @@
 package log
 
-// EncoderConfig is encode configuration for encoder.
-type EncoderConfig struct {
-	CallerFileKey string
-	CallerLineKey string
-	CallerFuncKey string
-	StacktraceKey string
+import "encoding/json"
 
-	ErrorKey   string
-	SpanKey    string
-	TraceKey   string
-	LevelKey   string
-	TimeKey    string
-	VersionKey string
-}
+// Ensures Event type implements
+// json.Marshaler interface.
+var _ json.Marshaler = Event{}
 
 const (
 	// Default level key for Entry encoder.
@@ -62,14 +53,22 @@ var DefaultEncoderConfig = EncoderConfig{
 	VersionKey:    DefaultVersionKey,
 }
 
-// MarshalJSON implements json.Marshaler interface.
-func (e Event) MarshalJSON() ([]byte, error) {
-	return nil, nil
+// EncoderConfig is encode configuration for encoder.
+type EncoderConfig struct {
+	CallerFileKey string
+	CallerLineKey string
+	CallerFuncKey string
+	StacktraceKey string
+
+	ErrorKey   string
+	SpanKey    string
+	TraceKey   string
+	LevelKey   string
+	TimeKey    string
+	VersionKey string
 }
 
-// MarshalJSON implements json.Marshaler interface
-// This is same as MarshalJSON but uses custom EncoderConfig.
-// Useful when custom keys are required.
-func (e Event) MarshalJSONWithConfig(c EncoderConfig) ([]byte, error) {
+// MarshalJSON implements json.Marshaler interface.
+func (e Event) MarshalJSON() ([]byte, error) {
 	return nil, nil
 }

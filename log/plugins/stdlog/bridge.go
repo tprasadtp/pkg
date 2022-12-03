@@ -50,15 +50,16 @@ func (br *bridge) Write(b []byte) (int, error) {
 //     on Panic/Panicf/Panicln events.
 //   - This cannot prevent standard library logger from calling os.Exit
 //     on Fatal/Fatalf/Fatalln events.
-func SetupBridge(logger *log.Logger, level log.Level, stdlibLoggers ...*stdliblog.Logger) {
-	defaultBridge.mu.Lock()
-
-	switch len(stdlibLoggers) {
-	case 0:
-		if logger.NoCallerTracing {
-			stdliblog.Default().SetFlags(0)
-		}
-		stdliblog.Default().SetOutput(&defaultBridge)
+func SetupBridge(logger *log.Logger, level log.Level) error {
+	if logger == nil {
+		return log.ErrLoggerInvalid
 	}
+	defaultBridge.mu.Lock()
+	defer defaultBridge.mu.Unlock()
 
+	if logger.NoCallerTracing {
+		stdliblog.Default().SetFlags(0)
+	}
+	stdliblog.Default().SetOutput(&defaultBridge)
+	return nil
 }
