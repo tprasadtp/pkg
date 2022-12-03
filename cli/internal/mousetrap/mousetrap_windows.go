@@ -4,7 +4,6 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"syscall"
 	"time"
 	"unsafe"
@@ -65,7 +64,7 @@ func getProcessEntry(pid int) (pe *processEntry32, err error) {
 
 func preExecHook(cmd *Command) {
 	if MousetrapHelpText != "" {
-		ppid := os.Getppid()
+		ppid := syscall.Getppid()
 		pe, err := getProcessEntry(ppid)
 		if err != nil {
 			return false

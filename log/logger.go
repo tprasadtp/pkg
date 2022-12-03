@@ -180,3 +180,23 @@ func (log *Logger) write(level Level, message string, depth uint) error {
 	}
 	return nil
 }
+
+// func (ent SinkEntry) fillLoc(skip int) SinkEntry {
+// 	// Copied from testing.T
+// 	const maxStackLen = 50
+// 	var pc [maxStackLen]uintptr
+
+// 	// Skip two extra frames to account for this function
+// 	// and runtime.Callers itself.
+// 	n := runtime.Callers(skip+2, pc[:])
+// 	frames := runtime.CallersFrames(pc[:n])
+// 	for {
+// 		frame, more := frames.Next()
+// 		_, helper := helpers.Load(frame.Function)
+// 		if !helper || !more {
+// 			// Found a frame that wasn't a helper function.
+// 			// Or we ran out of frames to check.
+// 			return ent.fillFromFrame(frame)
+// 		}
+// 	}
+// }
