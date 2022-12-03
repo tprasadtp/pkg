@@ -8,10 +8,8 @@ import (
 // helpers stores helper's reference.
 // sync.Map may be not the best fit here, but it is the easiest,
 // and uses a well tested standard library code.
-// because its use is well known and only limited to within
-// this package it works fine.
 //
-//nolint:gochecknoglobals // This cannot be avoided, but it is not exported.
+//nolint:gochecknoglobals // This cannot be avoided, as helpers map needs to be global.
 var helpers sync.Map
 
 // Helper marks the calling function as a helper
@@ -21,8 +19,8 @@ func Helper() {
 	pc, _, _, ok := runtime.Caller(1)
 	if ok {
 		f := runtime.FuncForPC(pc)
-		// Ignore if called from Main function.
-		if f.Name() != "main.Main" {
+		// Ignore if called from main().
+		if f.Name() != "main.main" {
 			// We just want the function to be stored, make value as nil.
 			helpers.LoadOrStore(f.Name(), nil)
 		}

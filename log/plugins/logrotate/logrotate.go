@@ -12,16 +12,22 @@ import (
 // var _ io.WriteCloser = &File{}
 
 type File struct {
-	// Filename is the file to write logs to.  Backup log files will be retained
-	// in the same directory.  It uses <processname>-lumberjack.log in
-	// os.TempDir() if empty.
-	Name string
-	// MaxBackups is the maximum number of old log files to retain.  The default
-	// is to retain all old log files (though MaxAge may still cause them to get
-	// deleted.)
+	// Filename is the file to write logs to.
+	// Backup log files will be retained in the same directory.
+	// If not specified empty, uses <processname>-log.log.
+	// on Linux
+	//  - if $LOGS_DIRECTORY is non empty and writable, it is used.
+	//  - if $LOGS_DIRECTORY is not set, uses /var/log if it writable
+	//  - if both above conditions are not specified, panics.
+	// on Windows
+	//  - $env:PROGRAMDATA is used if not specified or empty.
+	FileName string
+	// MaxBackups is the maximum number of old log files to retain.
+	// The default is to retain all old log files
+	// (though MaxAge may still cause them to get deleted.)
 	MaxBackups uint
 	// MaxSize is the maximum size in megabytes of the log file before it gets
-	// rotated. It defaults to 100 megabytes.
+	// rotated. It defaults to 100 MB.
 	MaxSizeMB uint
 	// underlying file
 	osFile *os.File

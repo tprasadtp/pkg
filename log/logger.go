@@ -49,6 +49,32 @@ func (log *Logger) clone() *Logger {
 	return &clone
 }
 
+// Enabled checks if underlying handler is enabled
+// at the specified log level.
+func (log *Logger) Enabled(level Level) bool {
+	return log.handler.Enabled(level)
+}
+
+// Flush flushes Logger's Handler.
+func (log *Logger) Flush() error {
+	if err := log.handler.Flush(); err != nil {
+		return fmt.Errorf("failed to flush handler; %w", err)
+	}
+	return nil
+}
+
+// Write the event directly to the handler if it is enabled.
+// This should not be used by normal library users.
+//   - This is intended by plugins.
+//   - For example stdlib plugin uses this to write
+//     Event generated to handler.
+func (log *Logger) WriteEvent(event Event) error {
+	if log.handler.Enabled(event.Level) {
+		return log.handler.Write(event)
+	}
+	return nil
+}
+
 // Context returns Logger's context.
 func (log *Logger) Context() context.Context {
 	return log.ctx
@@ -57,7 +83,7 @@ func (log *Logger) Context() context.Context {
 // Disables tracing caller information.
 // In most cases you do not need this,
 // performance gain from this is very small.
-// this also disables stacktraces in errors.
+// This also disables stacktraces.
 func (log *Logger) DisableCallerTracing() {
 	log.disableCaller = true
 }
@@ -70,14 +96,6 @@ func (log *Logger) EnableCallerTracing() {
 // Namespace returns Logger's Namespace.
 func (log *Logger) Namespace() string {
 	return log.namespace
-}
-
-// Flush flushes Logger's Handler.
-func (log *Logger) Flush() error {
-	if err := log.handler.Flush(); err != nil {
-		return fmt.Errorf("failed to flush handler; %w", err)
-	}
-	return nil
 }
 
 // WithNamespace returns a new Logger with given name segment
@@ -146,7 +164,7 @@ func (log *Logger) WithError(err error) *Logger {
 
 // Internal wrapper which writes event to log.Handler.
 // All other named levels and methods use this with some form or other.
-func (log *Logger) write(level Level, message string, depth uint) {
+func (log *Logger) write(level Level, message string, depth uint) error {
 	if log.handler != nil {
 		if log.handler.Enabled(level) {
 			// build log Event
@@ -160,9 +178,16 @@ func (log *Logger) write(level Level, message string, depth uint) {
 
 			// Build caller info
 			if !log.disableCaller {
-				pc, file, line, ok := runtime.Caller(int(depth + 1))
+				// depth + 1 (this function)
+				if pc, file, line, ok := runtime.Caller(int(depth + 1)); ok {
+					if fn := runtime.FuncForPC(pc); fn != nil {
+
+					}
+				}
+
 			}
-			log.handler.Write(event)
+			return log.handler.Write(event)
 		}
 	}
+	return nil
 }

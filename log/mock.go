@@ -4,7 +4,7 @@ package log
 // This will fail if MockHandler does not implement Handler interface.
 var _ Handler = &MockHandler{}
 
-// This should only be used in unit tests, as all log.Events
+// This MUST only be used in unit tests, as all log.Events
 // are simply appended to a slice, which can lead to
 // memory exhaustion.
 //

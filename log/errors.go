@@ -9,8 +9,9 @@ func (m handlerError) Error() string {
 }
 
 const (
-	// Error returned by MockHandler.
+	// Error returned when write or flush methods fail.
 	ErrHandlerWrite = handlerError("handler write failed")
-	// Error returned by MockHandler when writing or closing already closed handler.
+	// Error returned when writing, flushing or closing an
+	// already closed handler.
 	ErrHandlerClosed = handlerError("handler is closed")
 )
