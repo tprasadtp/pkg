@@ -76,7 +76,7 @@ const (
 	V = 14
 	// Number of Events greater than or equal to InfoLevel returned by GetEvents.
 	I = 12
-	// Number of Events greater than or equal to WArningLevel returned by GetEvents.
+	// Number of Events greater than or equal to WarningLevel returned by GetEvents.
 	W = 9
 	// Number of Events greater than or equal to ErrorLevel returned by GetEvents.
 	E = 5

@@ -170,7 +170,7 @@ func (log *Logger) write(level Level, message string, depth uint) error {
 			// Build caller info
 			if log.NoCallerTracing {
 				// depth + 1 (this function)
-				if pc, file, line, ok := runtime.Caller(int(depth + 1)); ok {
+				if pc, _, _, ok := runtime.Caller(int(depth + 1)); ok {
 					if fn := runtime.FuncForPC(pc); fn != nil {
 
 					}

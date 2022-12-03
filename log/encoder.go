@@ -5,6 +5,7 @@ type EncoderConfig struct {
 	CallerFileKey string
 	CallerLineKey string
 	CallerFuncKey string
+	StacktraceKey string
 
 	ErrorKey   string
 	SpanKey    string
@@ -41,6 +42,9 @@ const (
 
 	// Default Caller function key for for Entry encoder.
 	DefaultCallerLineKey = "line"
+
+	// Default Stacktrace key for for Entry encoder.
+	DefaultStacktraceKey = "line"
 )
 
 // DefaultEncoderConfig is default Entry encoder configuration.

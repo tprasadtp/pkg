@@ -16,7 +16,7 @@ var _ Handler = &MockHandler{}
 type MockHandler struct {
 	// Replaces Enabled() with custom function
 	EnabledFunc func(Level) bool
-	// Number of times handler cal invoked
+	// Number of times handler call invoked
 	// This is incremented even when methods return an error.
 	HandleCount int
 	// Always return an error on Flush and Write methods.
