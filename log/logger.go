@@ -105,9 +105,9 @@ func (log *Logger) WithNamespace(namespace string) *Logger {
 // With returns a new Logger with given key-value pair,
 // with optionally defined namespace. Namespace specified applies
 // to the kv field, not the logger. Use WithNamespace for namespaced logger.
-func (log *Logger) With(key string, value any, ns ...string) *Logger {
+func (log *Logger) With(key string, value any) *Logger {
 	clone := log.clone()
-	clone.fields = append(clone.fields, F(key, value, ns...))
+	clone.fields = append(clone.fields, F(key, value))
 	return clone
 }
 
@@ -176,7 +176,7 @@ func (log *Logger) write(level Level, message string, depth uint) error {
 			return log.handler.Write(event)
 		}
 	}
-	return nil
+	return ErrLoggerInvalid
 }
 
 // func (ent SinkEntry) fillLoc(skip int) SinkEntry {

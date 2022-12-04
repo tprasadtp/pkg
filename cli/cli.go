@@ -1,4 +1,4 @@
-// package factory provides a wrapper around github.com/tprasadtp/pkg/cli
+// package cli provides a wrapper around [github.com/spf13/cobra/cli]
 // which handles common tasks like version command, help text
 // along with helpers to generate documentation, and shell completions.
 package cli

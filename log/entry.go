@@ -2,15 +2,13 @@ package log
 
 import (
 	"context"
-	"strings"
 	"time"
 )
 
 // Field is logger fields.
 type Field struct {
-	Namespace string
-	Key       string
-	Value     Value
+	Key   string
+	Value Value
 }
 
 // Stacktrace includes stacktrace of the error.
@@ -64,36 +62,20 @@ type Event struct {
 	// Contextual fields
 	Fields []Field
 
-	// Callerinfo this can be nil, of caller info collection
-	// is disabled.
+	// Caller
 	Caller CallerInfo
 
-	// StackTrace is stacktrace. This is nil
-	// if stacktracing is disabled.
+	// StackTrace is stacktrace. This is not valid if Error is nil
+	// and MUST be ignored by the handlers.
 	StackTrace StackTrace
 }
 
 // Returns a new Field. Namespace is optional,
 // if multiple namespaces are specified, it is joined with a '.'
 // as the separator.
-func F(key string, value any, namespace ...string) Field {
-	switch len(namespace) {
-	case 0:
-		return Field{
-			Key:   key,
-			Value: NewValue(value),
-		}
-	case 1:
-		return Field{
-			Namespace: namespace[0],
-			Key:       key,
-			Value:     NewValue(value),
-		}
-	default:
-		return Field{
-			Namespace: strings.Join(namespace, "."),
-			Key:       key,
-			Value:     NewValue(value),
-		}
+func F(key string, value any) Field {
+	return Field{
+		Key:   key,
+		Value: NewValue(value),
 	}
 }

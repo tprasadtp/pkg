@@ -1,7 +1,6 @@
 package log
 
-// Ensure all custom errors
-// implement error interface.
+// Ensures all custom errors implement the error interface.
 var (
 	_ error = handlerError("")
 	_ error = loggerError("")
