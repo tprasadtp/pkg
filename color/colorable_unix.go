@@ -9,7 +9,7 @@ import (
 	"golang.org/x/term"
 )
 
-// isColorableTerminal returns true if given file descriptor is a terminal
+// isColorableTerminal returns true if given file descriptor is a terminal.
 func isColorableTerminal(fd uintptr) bool {
 	return term.IsTerminal(int(fd))
 }

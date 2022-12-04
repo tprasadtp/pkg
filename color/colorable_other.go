@@ -10,8 +10,3 @@ func isColorable(flag string, istty bool) bool {
 func isColorableTerminal(fd int) bool {
 	return false
 }
-
-// isTerminal returns false on all unsupported platforms.
-func isTerminal(fd int) bool {
-	return false
-}

@@ -170,10 +170,8 @@ func (log *Logger) write(level Level, message string, depth uint) error {
 				// depth + 1 (this function)
 				if pc, _, _, ok := runtime.Caller(int(depth + 1)); ok {
 					if fn := runtime.FuncForPC(pc); fn != nil {
-
 					}
 				}
-
 			}
 			return log.handler.Write(event)
 		}
