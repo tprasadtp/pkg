@@ -6,13 +6,12 @@ import (
 	"os"
 	"strings"
 
-	"golang.org/x/sys/unix"
+	"golang.org/x/term"
 )
 
 // isColorableTerminal returns true if given file descriptor is a terminal
 func isColorableTerminal(fd uintptr) bool {
-	_, err := unix.IoctlGetTermios(int(fd), ioctlReadTermios)
-	return err == nil
+	return term.IsTerminal(int(fd))
 }
 
 // isTerminal returns true if colors are forced or can be enabled.
