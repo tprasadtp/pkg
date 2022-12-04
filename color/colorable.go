@@ -28,7 +28,7 @@ func IsStdoutColorable(flag string) bool {
 // Detects whether true color(24 bit) output
 // can be enabled for [os.Stderr].
 //
-// This supports both [CLICOLOR] and [NO_COLOR] standards
+// This supports both [CLICOLOR] and [NO_COLOR] standards.
 //
 //   - Argument 'flag' ALWAYS takes priority and is NOT case sensitive.
 //   - If flag is 'never', 'disable' or 'none' or 'false', returns false
