@@ -86,8 +86,8 @@ func TestMockHandler(t *testing.T) {
 		if len(h.Events) != 12 {
 			t.Errorf("handler incorrect Events. expected=12, got=%d", len(h.Events))
 		}
-		if h.HandleCount != 12 {
-			t.Errorf("handler incorrect HandleCount. expected=12, got=%d", h.HandleCount)
+		if h.WriteCount != 12 {
+			t.Errorf("handler incorrect WriteCount. expected=12, got=%d", h.WriteCount)
 		}
 		// Flush Handler
 		if err := h.Flush(); err != nil {
@@ -121,9 +121,9 @@ func TestMockHandler(t *testing.T) {
 				len(h.Events))
 		}
 		// Events are not written but handler is invoked.
-		if h.HandleCount != 24 {
-			t.Errorf("handler(closed) incorrect HandleCount. expected=24, got=%d",
-				h.HandleCount)
+		if h.WriteCount != 24 {
+			t.Errorf("handler(closed) incorrect WriteCount. expected=24, got=%d",
+				h.WriteCount)
 		}
 
 		// Flush already closed Handler
@@ -158,8 +158,8 @@ func TestMockHandlerHandleAlwaysErr(t *testing.T) {
 			}
 		}
 	}
-	if h.HandleCount != 12 {
-		t.Errorf("handler incorrect HandleCount. expected=2, got=%d", h.HandleCount)
+	if h.WriteCount != 12 {
+		t.Errorf("handler incorrect WriteCount. expected=2, got=%d", h.WriteCount)
 	}
 
 	if len(h.Events) != 0 {

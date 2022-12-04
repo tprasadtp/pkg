@@ -14,9 +14,9 @@ var _ Handler = &MockHandler{}
 // If you are looking for handler to use with testing.TB, see
 // [github.com/tprasadtp/pkg/log/handlers/testing.Handler].
 type MockHandler struct {
-	// Number of times handler call invoked
+	// Number of times handler call invoked Write
 	// This is incremented even when methods return an error.
-	HandleCount int
+	WriteCount int
 	// Always return an error on Flush and Write methods.
 	AlwaysErr bool
 	// Events slice stores all the events successfully processed
@@ -41,7 +41,7 @@ func (m *MockHandler) Enabled(level Level) bool {
 // If AlwaysErr is true, then event is not saved it internal slice,
 // and method returns an error.
 func (m *MockHandler) Write(event Event) error {
-	m.HandleCount++
+	m.WriteCount++
 	if m.closed {
 		return ErrHandlerClosed
 	}

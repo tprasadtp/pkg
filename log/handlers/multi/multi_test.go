@@ -175,7 +175,7 @@ func TestMultiHandlerWithError(t *testing.T) {
 		t.Errorf("incorrect number of events on h2(@ErrorLevel) expected=0, got=%d",
 			len(h2.Events))
 	}
-	if h2.HandleCount != 5 {
+	if h2.WriteCount != 5 {
 		t.Errorf("incorrect number of Handle() calls on h2(@ErrorLevel) expected=5, got=%d",
 			len(h2.Events))
 	}
@@ -184,7 +184,7 @@ func TestMultiHandlerWithError(t *testing.T) {
 		t.Errorf("incorrect number of events on h1(@ErrorLevel) expected=0, got=%d",
 			len(h3.Events))
 	}
-	if h3.HandleCount != 14 {
+	if h3.WriteCount != 14 {
 		t.Errorf("incorrect number of events on h1(@ErrorLevel) expected=14, got=%d",
 			len(h3.Events))
 	}
