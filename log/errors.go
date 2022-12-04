@@ -1,15 +1,15 @@
 package log
 
-// Ensure all custom errors implement error interface.
+// Ensure all custom errors
+// implement error interface.
 var (
-	_ error = ErrLoggerInvalid
-	_ error = ErrHandlerWrite
-	_ error = ErrHandlerClosed
+	_ error = handlerError("")
+	_ error = loggerError("")
 )
 
 const (
-	// Error returned when invalid logger or nil is used.
-	ErrLoggerInvalid = handlerError("logger is invalid or nil")
+	// Error returned when logger is invalid.
+	ErrLoggerInvalid = loggerError("logger is invalid or nil")
 	// Error returned when write or flush methods fail.
 	ErrHandlerWrite = handlerError("handler write failed")
 	// Error returned when writing, flushing or closing an
