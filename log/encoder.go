@@ -35,23 +35,8 @@ const (
 	DefaultCallerLineKey = "line"
 
 	// Default Stacktrace key for for Entry encoder.
-	DefaultStacktraceKey = "line"
+	DefaultStacktraceKey = "stacktrace"
 )
-
-// DefaultEncoderConfig is default Entry encoder configuration.
-// It is not recommended to change this.
-// Use Marshal*WithConfig functions instead of modifying the default.
-var DefaultEncoderConfig = EncoderConfig{
-	CallerFileKey: DefaultCallerFileKey,
-	CallerLineKey: DefaultCallerLineKey,
-	CallerFuncKey: DefaultCallerFuncKey,
-	ErrorKey:      DefaultErrorKey,
-	SpanKey:       DefaultSpanKey,
-	TraceKey:      DefaultTraceKey,
-	LevelKey:      DefaultLevelKey,
-	TimeKey:       DefaultLevelKey,
-	VersionKey:    DefaultVersionKey,
-}
 
 // EncoderConfig is encode configuration for encoder.
 type EncoderConfig struct {
@@ -66,6 +51,10 @@ type EncoderConfig struct {
 	LevelKey   string
 	TimeKey    string
 	VersionKey string
+}
+
+func (e Event) Encode(c EncoderConfig) ([]byte, error) {
+	return nil, nil
 }
 
 // MarshalJSON implements json.Marshaler interface.

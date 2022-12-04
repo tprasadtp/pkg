@@ -1,5 +1,7 @@
 package log
 
+import "fmt"
+
 // Compile time check for handler.
 // This will fail if MockHandler does not implement Handler interface.
 var _ Handler = &MockHandler{}
@@ -12,7 +14,7 @@ var _ Handler = &MockHandler{}
 // This holds some counters for tracking state to be used in tests.
 // This handler lacks sync semantics aka this is not concurrent safe.
 // If you are looking for handler to use with testing.TB, see
-// [github.com/tprasadtp/pkg/log/handlers/testing.Handler].
+// [github.com/tprasadtp/pkg/log/handlers/testlog.Handler].
 type MockHandler struct {
 	// Number of times handler call invoked Write
 	// This is incremented even when methods return an error.
@@ -70,7 +72,7 @@ func (m *MockHandler) Flush() error {
 // and closes writing to this handler.
 func (m *MockHandler) Close() error {
 	if m.closed {
-		return ErrHandlerClosed
+		return fmt.Errorf("mock handler error: %w", ErrHandlerClosed)
 	}
 	m.closed = true
 	m.Events = []Event{}

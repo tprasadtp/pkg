@@ -6,9 +6,10 @@ import (
 )
 
 // Field is logger fields.
+// Value can be any (even another Field or []Field).
 type Field struct {
 	Key   string
-	Value Value
+	Value any
 }
 
 // Stacktrace includes stacktrace of the error.
@@ -70,12 +71,18 @@ type Event struct {
 	StackTrace StackTrace
 }
 
-// Returns a new Field. Namespace is optional,
-// if multiple namespaces are specified, it is joined with a '.'
-// as the separator.
+// Returns a new Field.
 func F(key string, value any) Field {
 	return Field{
 		Key:   key,
-		Value: NewValue(value),
+		Value: value,
+	}
+}
+
+// Returns a new Map field.
+func M(key string, fields ...Field) Field {
+	return Field{
+		Key:   key,
+		Value: fields,
 	}
 }

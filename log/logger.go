@@ -88,8 +88,9 @@ func (log *Logger) Namespace() string {
 }
 
 // WithNamespace returns a new Logger with given name segment
-// appended to its original Namespace.
-// Segments are joined by periods.
+// appended to its original Namespace. Segments are joined by periods.
+// This is useful if you want to pass the logger to a library, especially
+// the one which you don't control.
 func (log *Logger) WithNamespace(namespace string) *Logger {
 	clone := log.clone()
 	if namespace != "" {
@@ -154,29 +155,34 @@ func (log *Logger) WithError(err error) *Logger {
 // Internal wrapper which writes event to log.Handler.
 // All other named levels and methods use this with some form or other.
 func (log *Logger) write(level Level, message string, depth uint) error {
-	if log.handler != nil {
-		if log.handler.Enabled(level) {
-			// build log Event
-			event := Event{
-				Level:   level,
-				Message: message,
-				Error:   log.err,
-				Time:    time.Now(),
-				Fields:  log.fields,
-			}
+	// logger must not be nil.
+	if log.handler == nil {
+		return ErrLoggerInvalid
+	}
 
-			// Build caller info
-			if log.NoCallerTracing {
-				// depth + 1 (this function)
-				if pc, _, _, ok := runtime.Caller(int(depth + 1)); ok {
-					if fn := runtime.FuncForPC(pc); fn != nil {
-					}
-				}
+	// Skip if handler is not enabled on the level.
+	if !log.handler.Enabled(level) {
+		return nil
+	}
+
+	// build log Event
+	event := Event{
+		Level:   level,
+		Message: message,
+		Error:   log.err,
+		Time:    time.Now(),
+		Fields:  log.fields,
+	}
+
+	// Build caller info
+	if !log.NoCallerTracing {
+		// depth + 1 (this function)
+		if pc, _, _, ok := runtime.Caller(int(depth + 1)); ok {
+			if fn := runtime.FuncForPC(pc); fn != nil {
 			}
-			return log.handler.Write(event)
 		}
 	}
-	return ErrLoggerInvalid
+	return log.handler.Write(event)
 }
 
 // func (ent SinkEntry) fillLoc(skip int) SinkEntry {
