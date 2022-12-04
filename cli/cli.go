@@ -1,11 +1,11 @@
 // package factory provides a wrapper around github.com/tprasadtp/pkg/cli
 // which handles common tasks like version command, help text
 // along with helpers to generate documentation, and shell completions.
-package factory
+package cli
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/tprasadtp/pkg/cli/internal/cmd"
+	"github.com/tprasadtp/pkg/cli/internal/factory"
 	"github.com/tprasadtp/pkg/version"
 )
 
@@ -17,14 +17,12 @@ import (
 // Please ensure to have directories already created, sub commands
 // will not do it fo you.
 //
-//		// go:generate go run -tags dev main.go completion bash completion/<name>.bash
-//		// go:generate go run -tags dev main.go completion fish completion/<name>.fish
-//		// go:generate go run -tags dev main.go completion zsh completion/<name>.zsh
-//		// go:generate go run -tags dev main.go completion powershell completion/<name>.ps1
-//
-//	  	// Generate man-pages and Markdown docs
-//		// go:generate go run -tags dev main.go docs man pages
-//		// go:generate go run -tags dev main.go docs markdown docs/content/manual
+//	// go:generate go run -tags dev main.go completion bash completion/<name>.bash
+//	// go:generate go run -tags dev main.go completion fish completion/<name>.fish
+//	// go:generate go run -tags dev main.go completion zsh completion/<name>.zsh
+//	// go:generate go run -tags dev main.go completion powershell completion/<name>.ps1
+//	// go:generate go run -tags dev main.go docs man pages
+//	// go:generate go run -tags dev main.go docs markdown docs/content/manual
 func New(name, shortDesc, longDesc string, commands ...*cobra.Command) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:     name,
@@ -33,19 +31,9 @@ func New(name, shortDesc, longDesc string, commands ...*cobra.Command) *cobra.Co
 		Long:    longDesc,
 		Args:    cobra.NoArgs,
 	}
-
 	if len(commands) > 0 {
 		rootCmd.AddCommand(commands...)
 	}
-	// if hasCompletionCmd {
-	// 	rootCmd.AddCommand(NewCompletionCmd(name, false))
-	// }
-	// This changes based on build tag.
-	// If used with build tag docs, returns cobra command
-	// which implements two subcommands, otherwise returns nil.
-	// if docsCmd := getDocsCmd(name); docsCmd != nil {
-	// 	rootCmd.AddCommand(docsCmd)
-	// }
-	rootCmd.AddCommand(cmd.NewVersionCmd(name))
+	rootCmd.AddCommand(factory.NewVersionCmd(name))
 	return rootCmd
 }
