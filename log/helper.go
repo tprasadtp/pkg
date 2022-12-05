@@ -8,7 +8,10 @@ import (
 
 // Helper marks the calling function as a helper
 // and skips it for source location information.
-// It's the log's equivalent of testing.TB.Helper().
+// It's the log's equivalent of testing.TB.Helper(), but with
+// following limitations.
+//   - This will ignore if called from main()
+//   - There can be maximum of 10 helpers in a call stack.
 func Helper() {
 	pc, _, _, ok := runtime.Caller(1)
 	if ok {

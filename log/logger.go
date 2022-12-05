@@ -3,9 +3,12 @@ package log
 import (
 	"context"
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/tprasadtp/pkg/log/internal/helpers"
 )
 
 // New creates a new Logger with the given Handler.
@@ -42,7 +45,7 @@ type Logger struct {
 	err       error
 	fields    []Field
 
-	exit func(int)
+	exit func()
 }
 
 // Clone the logger.
@@ -113,9 +116,9 @@ func (log *Logger) With(key string, value any) *Logger {
 }
 
 // WithFields returns a new Logger with given Fields fields appended.
-func (log *Logger) WithFields(fields Field) *Logger {
+func (log *Logger) WithFields(fields ...Field) *Logger {
 	clone := log.clone()
-	clone.fields = append(clone.fields, fields)
+	clone.fields = append(clone.fields, fields...)
 	return clone
 }
 
@@ -135,9 +138,9 @@ func (log *Logger) WithCtx(ctx context.Context) *Logger {
 //   - You wish to specify a specific exit code so that a service manager
 //     like systemd can handle it properly.
 //   - You wish to perform some tasks before program exits
-func (log *Logger) WithExitFunc(f func(int)) *Logger {
+func (log *Logger) WithExitFunc(fn func()) *Logger {
 	clone := log.clone()
-	clone.exit = f
+	clone.exit = fn
 	return clone
 }
 
@@ -152,7 +155,7 @@ func (log *Logger) WithError(err error) *Logger {
 	return clone
 }
 
-// Internal wrapper which writes event to log.Handler.
+// write is an internal wrapper which writes event to log.Handler.
 // All other named levels and methods use this with some form or other.
 func (log *Logger) write(level Level, message string, depth uint) error {
 	// logger must not be nil.
@@ -167,40 +170,120 @@ func (log *Logger) write(level Level, message string, depth uint) error {
 
 	// build log Event
 	event := Event{
-		Level:   level,
-		Message: message,
-		Error:   log.err,
-		Time:    time.Now(),
-		Fields:  log.fields,
+		Level:           level,
+		Context:         log.ctx,
+		Message:         message,
+		Error:           log.err,
+		Time:            time.Now(),
+		Fields:          log.fields,
+		NoCallerTracing: log.NoCallerTracing,
 	}
 
-	// Build caller info
-	if !log.NoCallerTracing {
-		// depth + 1 (this function)
-		if pc, _, _, ok := runtime.Caller(int(depth + 1)); ok {
-			if fn := runtime.FuncForPC(pc); fn != nil {
+	// If caller tracing is disabled, skip caller info and write to handler.
+	if event.NoCallerTracing {
+		return log.handler.Write(event)
+	}
+
+	// Caller Tracing
+
+	const maxStackLen = 10
+	var pc [maxStackLen]uintptr
+
+	// Skip two extra frames to account for this function
+	// and runtime.Callers itself.
+	//nolint:gomnd // ignore this magic number.
+	n := runtime.Callers(int(depth+2), pc[:])
+	frames := runtime.CallersFrames(pc[:n])
+	for i := 0; i < maxStackLen; i++ {
+		frame, more := frames.Next()
+		_, helper := helpers.Map.Load(frame.Function)
+		// We ran out of frames (This implies bug in log package)
+		if !more {
+			event.Caller = CallerInfo{
+				Line: 0,
+				File: "INVALID_FRAME",
+				Func: "INVALID_FRAME",
 			}
+			break
+		}
+
+		if !helper {
+			event.Caller = CallerInfo{
+				Line: uint(frame.Line),
+				File: frame.File,
+				Func: frame.Function,
+			}
+			break
 		}
 	}
 	return log.handler.Write(event)
 }
 
-// func (ent SinkEntry) fillLoc(skip int) SinkEntry {
-// 	// Copied from testing.T
-// 	const maxStackLen = 50
-// 	var pc [maxStackLen]uintptr
+// Write Log message with custom level, Usually you do not need this
+// unless you are using custom logging levels. Use one of the named log
+// levels instead.
+func (log *Logger) Log(level Level, message string) {
+	log.write(level, message, 1)
+}
 
-// 	// Skip two extra frames to account for this function
-// 	// and runtime.Callers itself.
-// 	n := runtime.Callers(skip+2, pc[:])
-// 	frames := runtime.CallersFrames(pc[:n])
-// 	for {
-// 		frame, more := frames.Next()
-// 		_, helper := helpers.Load(frame.Function)
-// 		if !helper || !more {
-// 			// Found a frame that wasn't a helper function.
-// 			// Or we ran out of frames to check.
-// 			return ent.fillFromFrame(frame)
-// 		}
-// 	}
-// }
+// Log at TraceLevel.
+func (log *Logger) Trace(message string) {
+	log.write(TraceLevel, message, 1)
+}
+
+// Log at DebugLevel.
+func (log *Logger) Debug(message string) {
+	log.write(DebugLevel, message, 1)
+}
+
+// Log at VerboseLevel.
+func (log *Logger) Verbose(message string) {
+	log.write(VerboseLevel, message, 1)
+}
+
+// Log at InfoLevel.
+func (log *Logger) Info(message string) {
+	log.write(InfoLevel, message, 1)
+}
+
+// Log at SuccessLevel.
+func (log *Logger) Success(message string) {
+	log.write(SuccessLevel, message, 1)
+}
+
+// Log at NoticeLevel.
+func (log *Logger) Notice(message string) {
+	log.write(NoticeLevel, message, 1)
+}
+
+// Log at WarningLevel.
+func (log *Logger) Warning(message string) {
+	log.write(WarningLevel, message, 1)
+}
+
+// Log at WarningLevel (This is an alias for log.Warning).
+func (log *Logger) Warn(message string) {
+	log.write(WarningLevel, message, 1)
+}
+
+// Log at ErrorLevel.
+func (log *Logger) Error(message string) {
+	log.write(ErrorLevel, message, 1)
+}
+
+// Log at CriticalLevel AND flush the handler.
+func (log *Logger) Critical(message string) {
+	log.write(CriticalLevel, message, 1)
+	log.handler.Flush()
+}
+
+// Log at FatalLevel AND flush the handler.
+func (log *Logger) Fatal(message string) {
+	log.write(FatalLevel, message, 1)
+	log.handler.Flush()
+	if log.exit == nil {
+		os.Exit(1)
+	} else {
+		log.exit()
+	}
+}

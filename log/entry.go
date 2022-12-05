@@ -12,10 +12,6 @@ type Field struct {
 	Value any
 }
 
-// Stacktrace includes stacktrace of the error.
-type StackTrace struct {
-}
-
 // Includes caller info if available.
 type CallerInfo struct {
 	// Line number of the caller
@@ -66,9 +62,8 @@ type Event struct {
 	// Caller
 	Caller CallerInfo
 
-	// StackTrace is stacktrace. This is not valid if Error is nil
-	// and MUST be ignored by the handlers.
-	StackTrace StackTrace
+	// NoCallerTracing
+	NoCallerTracing bool
 }
 
 // Returns a new Field.
