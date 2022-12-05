@@ -157,21 +157,21 @@ func (log *Logger) WithError(err error) *Logger {
 
 // write is an internal wrapper which writes event to log.Handler.
 // All other named levels and methods use this with some form or other.
-func (log *Logger) write(level Level, message string, depth uint) error {
+func (log *Logger) write(level Level, message string, depth uint) {
 	// logger must not be nil.
 	if log.handler == nil {
-		return ErrLoggerInvalid
+		panic(ErrLoggerInvalid)
 	}
 
 	// Skip if handler is not enabled on the level.
 	if !log.handler.Enabled(level) {
-		return nil
+		return
 	}
 
 	// build log Event
 	event := Event{
-		Level:           level,
-		Context:         log.ctx,
+		Level: level,
+		// Context:         log.ctx,
 		Message:         message,
 		Error:           log.err,
 		Time:            time.Now(),
@@ -181,7 +181,7 @@ func (log *Logger) write(level Level, message string, depth uint) error {
 
 	// If caller tracing is disabled, skip caller info and write to handler.
 	if event.NoCallerTracing {
-		return log.handler.Write(event)
+		log.handler.Write(event)
 	}
 
 	// Caller Tracing
@@ -216,7 +216,7 @@ func (log *Logger) write(level Level, message string, depth uint) error {
 			break
 		}
 	}
-	return log.handler.Write(event)
+	log.handler.Write(event)
 }
 
 // Write Log message with custom level, Usually you do not need this

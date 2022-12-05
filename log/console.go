@@ -30,7 +30,7 @@ func (h *ConsoleHandler) Write(event Event) error {
 	if h.closed {
 		return ErrHandlerClosed
 	}
-	fmt.Printf("%+v\n", event)
+	fmt.Printf("%+v\n\n", event)
 	return nil
 }
 

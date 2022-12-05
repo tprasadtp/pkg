@@ -8,24 +8,24 @@ import (
 // Field is logger fields.
 // Value can be any (even another Field or []Field).
 type Field struct {
-	Key   string
-	Value any
+	Key   string `json:"key,omitempty" yaml:"key,omitempty"`
+	Value any    `json:"value,omitempty" yaml:"value,omitempty"`
 }
 
 // Includes caller info if available.
 type CallerInfo struct {
 	// Line number of the caller
 	// If not available, this is 0.
-	Line uint
+	Line uint `json:"line,omitempty" yaml:"line,omitempty"`
 	// File containing the code
 	// If not available this is empty string.
-	File string
+	File string `json:"file,omitempty" yaml:"file,omitempty"`
 	// Function name of the caller.
 	// this includes full path of the package.
 	// except for main package. This is limitation
 	// of [runtime.FuncForPC]
 	// This is empty if information is not available.
-	Func string
+	Func string `json:"func,omitempty" yaml:"func,omitempty"`
 }
 
 // Event Represents a single Log event.
@@ -35,35 +35,35 @@ type CallerInfo struct {
 // or implement their own, its up to the handler to decide.
 type Event struct {
 	// Event Namespace
-	Namespace string
+	Namespace string `json:"namespace,omitempty" yaml:"namespace,omitempty"`
 
 	// Time (Global)
-	Time time.Time
+	Time time.Time `json:"time,omitempty" yaml:"time,omitempty"`
 
 	// Log Level (Global)
-	Level Level
+	Level Level `json:"level,omitempty" yaml:"level,omitempty"`
 
 	// Log Message (Global)
-	Message string
+	Message string `json:"message,omitempty" yaml:"message,omitempty"`
 
 	// Error (Global)
-	Error error
+	Error error `json:"error,omitempty" yaml:"error,omitempty"`
 
 	// Context
 	// The context of the Logger that created the Record.
 	// Present solely to provide Handlers access to context bound
 	// fields like Trace ID and Span ID.
 	// Canceling the context MUST NOT affect processing of log event.
-	Context context.Context
+	Context context.Context `json:"context,omitempty" yaml:"context,omitempty"`
 
 	// Contextual fields
-	Fields []Field
+	Fields []Field `json:"fields,omitempty" yaml:"fields,omitempty"`
 
 	// Caller
-	Caller CallerInfo
+	Caller CallerInfo `json:"caller,omitempty" yaml:"caller,omitempty"`
 
 	// NoCallerTracing
-	NoCallerTracing bool
+	NoCallerTracing bool `json:"noCallerTracing,omitempty" yaml:"noCallerTracing,omitempty"`
 }
 
 // Returns a new Field.
