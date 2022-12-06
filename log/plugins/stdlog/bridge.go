@@ -69,9 +69,6 @@ func SetupBridge(logger *log.Logger, level log.Level) error {
 	defaultBridge.mu.Lock()
 	defer defaultBridge.mu.Unlock()
 
-	if logger.NoCallerTracing {
-		stdliblog.Default().SetFlags(0)
-	}
 	stdliblog.Default().SetOutput(&defaultBridge)
 	return nil
 }

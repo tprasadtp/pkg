@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+const fieldsFront = 10
+
 // Field is logger fields.
 // Value can be any (even another Field or []Field).
 type Field struct {
@@ -56,14 +58,15 @@ type Event struct {
 	// Canceling the context MUST NOT affect processing of log event.
 	Context context.Context `json:"context,omitempty" yaml:"context,omitempty"`
 
-	// Contextual fields
-	Fields []Field `json:"fields,omitempty" yaml:"fields,omitempty"`
-
 	// Caller
 	Caller CallerInfo `json:"caller,omitempty" yaml:"caller,omitempty"`
 
 	// NoCallerTracing
 	NoCallerTracing bool `json:"noCallerTracing,omitempty" yaml:"noCallerTracing,omitempty"`
+
+	// Allocation optimization for fields
+	// Typically has around 10 fields.
+	Fields []Field `json:"fields,omitempty" yaml:"fields,omitempty"`
 }
 
 // Returns a new Field.

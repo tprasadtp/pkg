@@ -15,11 +15,11 @@ import (
 func Helper() {
 	pc, _, _, ok := runtime.Caller(1)
 	if ok {
-		f := runtime.FuncForPC(pc)
+		f := runtime.FuncForPC(pc).Name()
 		// Ignore if called from main().
-		if f.Name() != "main.main" {
+		if f != "main.main" {
 			// We just want the function to be stored, make value as nil.
-			helpers.Map.LoadOrStore(f.Name(), nil)
+			helpers.Map.LoadOrStore(f, nil)
 		}
 	}
 }
