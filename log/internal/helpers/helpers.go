@@ -1,4 +1,3 @@
-// Global holds log's internal global state.
 package helpers
 
 import "sync"

@@ -10,24 +10,24 @@ const fieldsFront = 10
 // Field is logger fields.
 // Value can be any (even another Field or []Field).
 type Field struct {
-	Key   string `json:"key,omitempty" yaml:"key,omitempty"`
-	Value any    `json:"value,omitempty" yaml:"value,omitempty"`
+	Key   string
+	Value any
 }
 
 // Includes caller info if available.
 type CallerInfo struct {
 	// Line number of the caller
 	// If not available, this is 0.
-	Line uint `json:"line,omitempty" yaml:"line,omitempty"`
+	Line uint
 	// File containing the code
 	// If not available this is empty string.
-	File string `json:"file,omitempty" yaml:"file,omitempty"`
+	File string
 	// Function name of the caller.
 	// this includes full path of the package.
 	// except for main package. This is limitation
 	// of [runtime.FuncForPC]
 	// This is empty if information is not available.
-	Func string `json:"func,omitempty" yaml:"func,omitempty"`
+	Func string
 }
 
 // Event Represents a single Log event.
@@ -37,36 +37,33 @@ type CallerInfo struct {
 // or implement their own, its up to the handler to decide.
 type Event struct {
 	// Event Namespace
-	Namespace string `json:"namespace,omitempty" yaml:"namespace,omitempty"`
+	Namespace string
 
 	// Time (Global)
-	Time time.Time `json:"time,omitempty" yaml:"time,omitempty"`
+	Time time.Time
 
 	// Log Level (Global)
-	Level Level `json:"level,omitempty" yaml:"level,omitempty"`
+	Level Level
 
 	// Log Message (Global)
-	Message string `json:"message,omitempty" yaml:"message,omitempty"`
+	Message string
 
 	// Error (Global)
-	Error error `json:"error,omitempty" yaml:"error,omitempty"`
+	Error error
 
 	// Context
 	// The context of the Logger that created the Record.
 	// Present solely to provide Handlers access to context bound
 	// fields like Trace ID and Span ID.
 	// Canceling the context MUST NOT affect processing of log event.
-	Context context.Context `json:"context,omitempty" yaml:"context,omitempty"`
+	Context context.Context
 
 	// Caller
-	Caller CallerInfo `json:"caller,omitempty" yaml:"caller,omitempty"`
-
-	// NoCallerTracing
-	NoCallerTracing bool `json:"noCallerTracing,omitempty" yaml:"noCallerTracing,omitempty"`
+	Caller CallerInfo
 
 	// Allocation optimization for fields
 	// Typically has around 10 fields.
-	Fields []Field `json:"fields,omitempty" yaml:"fields,omitempty"`
+	Fields [50]Field
 }
 
 // Returns a new Field.

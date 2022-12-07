@@ -66,11 +66,11 @@ func print(message string) {
 
 func main() {
 	print("PRINT WITH HELPER --> LINE 19")
-	pkg01.LogSomething(logger)
+	pkg01.LogSomething(&logger)
 	fmt.Println("-----------------------------------------------------------")
 
 	logger.WithNamespace("namespace-1").WithCtx(context.Background()).WithError(log.ErrHandlerWrite).Error("NESTED ERROR")
-	logger.WithNamespace("namespace-1").WithFields(
+	logger.WithNamespace("namespace-1").With(
 		log.M("map-1", log.F("nested-field-1", "nested-value-1")),
 		log.M("map-2", log.F("nested-field-2", "nested-value-2")),
 		log.F("root-field-01", "root-value-01"),

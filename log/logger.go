@@ -1,3 +1,4 @@
+//nolint:unparam,errcheck // These two are pretty useless in this file.
 package log
 
 import (
@@ -139,71 +140,6 @@ func (log Logger) WithError(err error) Logger {
 	return log
 }
 
-// write is an internal wrapper which writes event to log.Handler.
-// All other named levels and methods use this with some form or other.
-func (log Logger) write(level Level, message string, depth uint) {
-	// // logger must not be nil.
-	// if log.handler == nil {
-	// 	panic(ErrLoggerInvalid)
-	// }
-
-	// Skip if handler is not enabled on the level.
-	if !log.handler.Enabled(level) {
-		return
-	}
-
-	// build log Event
-	event := Event{
-		Level:   level,
-		Context: log.ctx,
-		Message: message,
-		Error:   log.err,
-		Time:    time.Now(),
-		Fields:  log.fields,
-	}
-
-	// log.handler.Write(event)
-
-	// // If caller tracing is disabled, skip caller info and write to handler.
-	if event.NoCallerTracing {
-		log.handler.Write(event)
-	}
-
-	// Caller Tracing
-
-	const maxStackLen = 50
-	pc := make([]uintptr, maxStackLen)
-
-	// Skip two extra frames to account for this function
-	// and runtime.Callers itself.
-	//nolint:gomnd // ignore this magic number.
-	n := runtime.Callers(int(depth+2), pc)
-	frames := runtime.CallersFrames(pc[:n])
-	for i := 0; i < maxStackLen; i++ {
-		frame, more := frames.Next()
-		_, helper := helpers.Map.Load(frame.Function)
-		// We ran out of frames (This implies bug in log package)
-		if !more {
-			event.Caller = CallerInfo{
-				Line: 0,
-				File: "INVALID_FRAME",
-				Func: "INVALID_FRAME",
-			}
-			break
-		}
-
-		if !helper {
-			event.Caller = CallerInfo{
-				Line: uint(frame.Line),
-				File: frame.File,
-				Func: frame.Function,
-			}
-			break
-		}
-	}
-	log.handler.Write(event)
-}
-
 // Write Log message with custom level, Usually you do not need this
 // unless you are using custom logging levels. Use one of the named log
 // levels instead.
@@ -271,4 +207,60 @@ func (log Logger) Fatal(message string) {
 	} else {
 		log.exit()
 	}
+}
+
+// write is an internal wrapper which writes event to log.Handler.
+// All other named levels and methods use this with some form or other.
+func (log Logger) write(level Level, message string, depth uint) {
+	// // logger must not be nil.
+	// if log.handler == nil {
+	// 	panic(ErrLoggerInvalid)
+	// }
+
+	// Skip if handler is not enabled on the level.
+	if !log.handler.Enabled(level) {
+		return
+	}
+
+	// build log Event
+	event := Event{
+		Level:   level,
+		Context: log.ctx,
+		Message: message,
+		Error:   log.err,
+		Time:    time.Now(),
+	}
+
+	// Caller Tracing
+	const maxStackLen = 50
+	pc := make([]uintptr, maxStackLen)
+
+	// Skip two extra frames to account for this function
+	// and runtime.Callers itself.
+	//nolint:gomnd // ignore this magic number.
+	n := runtime.Callers(int(depth+2), pc)
+	frames := runtime.CallersFrames(pc[:n])
+	for i := 0; i < maxStackLen; i++ {
+		frame, more := frames.Next()
+		_, helper := helpers.Map.Load(frame.Function)
+		// We ran out of frames (This implies bug in log package)
+		if !more {
+			event.Caller = CallerInfo{
+				Line: 0,
+				File: "INVALID_FRAME",
+				Func: "INVALID_FRAME",
+			}
+			break
+		}
+
+		if !helper {
+			event.Caller = CallerInfo{
+				Line: uint(frame.Line),
+				File: frame.File,
+				Func: frame.Function,
+			}
+			break
+		}
+	}
+	log.handler.Write(event)
 }
