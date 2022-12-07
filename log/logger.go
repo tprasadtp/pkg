@@ -107,16 +107,6 @@ func (log Logger) WithNamespace(namespace string) Logger {
 	return log
 }
 
-// With returns a new Logger with given key-value pair,
-// with optionally defined namespace. Namespace specified applies
-// to the kv field, not the logger. Use WithNamespace for namespaced logger.
-func (log Logger) With(fields ...Field) Logger {
-	fs := make([]Field, len(log.fields)+len(fields))
-	copy(fs, log.fields)
-	log.fields = fs
-	return log
-}
-
 // WithExitFunc returns a new Logger with specified exit function
 // This is especially useful when
 //   - Libraries use logger.Fatal in their
@@ -137,6 +127,16 @@ func (log Logger) WithExitFunc(fn func()) Logger {
 //	logger.WithError(err).Error("database connection lost")
 func (log Logger) WithError(err error) Logger {
 	log.err = err
+	return log
+}
+
+// With returns a new Logger with given key-value pair,
+// with optionally defined namespace. Namespace specified applies
+// to the kv field, not the logger. Use WithNamespace for namespaced logger.
+func (log Logger) With(fields ...Field) Logger {
+	fs := make([]Field, len(log.fields)+len(fields))
+	copy(fs, log.fields)
+	log.fields = fs
 	return log
 }
 
@@ -182,11 +182,6 @@ func (log Logger) Warning(message string) {
 	log.write(WarningLevel, message, 1)
 }
 
-// Log at WarningLevel (This is an alias for log.Warning).
-func (log Logger) Warn(message string) {
-	log.write(WarningLevel, message, 1)
-}
-
 // Log at ErrorLevel.
 func (log Logger) Error(message string) {
 	log.write(ErrorLevel, message, 1)
@@ -201,6 +196,70 @@ func (log Logger) Critical(message string) {
 // Log at FatalLevel AND flush the handler.
 func (log Logger) Fatal(message string) {
 	log.write(FatalLevel, message, 1)
+	log.handler.Flush()
+	if log.exit == nil {
+		os.Exit(1)
+	} else {
+		log.exit()
+	}
+}
+
+// Write Log message with custom level, Usually you do not need this,
+// unless you need custom logging levels.
+// Prefer using one of the named log levels instead.
+func (log Logger) Logf(level Level, format string, args ...any) {
+	log.write(level, fmt.Sprintf(format, args...), 1)
+}
+
+// Log at TraceLevel.
+func (log Logger) Tracef(format string, args ...any) {
+	log.write(TraceLevel, fmt.Sprintf(format, args...), 1)
+}
+
+// Log at DebugLevel.
+func (log Logger) Debugf(format string, args ...any) {
+	log.write(DebugLevel, fmt.Sprintf(format, args...), 1)
+}
+
+// Log at VerboseLevel.
+func (log Logger) Verbosef(format string, args ...any) {
+	log.write(VerboseLevel, fmt.Sprintf(format, args...), 1)
+}
+
+// Log at InfoLevel.
+func (log Logger) Infof(format string, args ...any) {
+	log.write(InfoLevel, fmt.Sprintf(format, args...), 1)
+}
+
+// Log at SuccessLevel.
+func (log Logger) Successf(format string, args ...any) {
+	log.write(SuccessLevel, fmt.Sprintf(format, args...), 1)
+}
+
+// Log at NoticeLevel.
+func (log Logger) Noticef(format string, args ...any) {
+	log.write(NoticeLevel, fmt.Sprintf(format, args...), 1)
+}
+
+// Log at WarningLevel.
+func (log Logger) Warningf(format string, args ...any) {
+	log.write(WarningLevel, fmt.Sprintf(format, args...), 1)
+}
+
+// Log at ErrorLevel.
+func (log Logger) Errorf(format string, args ...any) {
+	log.write(ErrorLevel, fmt.Sprintf(format, args...), 1)
+}
+
+// Log at CriticalLevel AND flush the handler.
+func (log Logger) Criticalf(format string, args ...any) {
+	log.write(CriticalLevel, fmt.Sprintf(format, args...), 1)
+	log.handler.Flush()
+}
+
+// Log at FatalLevel AND flush the handler.
+func (log Logger) Fatalf(format string, args ...any) {
+	log.write(FatalLevel, fmt.Sprintf(format, args...), 1)
 	log.handler.Flush()
 	if log.exit == nil {
 		os.Exit(1)

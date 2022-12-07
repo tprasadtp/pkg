@@ -63,7 +63,7 @@ type Event struct {
 
 	// Allocation optimization for fields
 	// Typically has around 10 fields.
-	Fields [50]Field
+	Fields []Field
 }
 
 // Returns a new Field.
