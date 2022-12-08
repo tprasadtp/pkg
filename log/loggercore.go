@@ -44,8 +44,10 @@ func (log Logger) write(level Level, message string, depth uint) {
 		Time:    time.Now(),
 	}
 
-	// Caller Tracing
-	caller := callerPool.Get().(*caller)
+	// // Caller Tracing
+	// caller := callerPool.Get().(*caller)
+	// defer callerPool.Put(caller)
+	caller := caller{}
 
 	// Skip two extra frames to account for this function
 	// and runtime.Callers itself.

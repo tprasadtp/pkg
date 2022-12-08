@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/tprasadtp/pkg/log"
-	"github.com/tprasadtp/pkg/log/handlers/internal/testdata"
 	"github.com/tprasadtp/pkg/log/handlers/multi"
+	"github.com/tprasadtp/pkg/log/internal/testdata"
 )
 
 func TestHandler(t *testing.T) {

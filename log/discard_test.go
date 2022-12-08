@@ -1,16 +1,15 @@
-package discard_test
+package log_test
 
 import (
 	"errors"
 	"testing"
 
 	"github.com/tprasadtp/pkg/log"
-	"github.com/tprasadtp/pkg/log/handlers/discard"
-	"github.com/tprasadtp/pkg/log/handlers/internal/testdata"
+	"github.com/tprasadtp/pkg/log/internal/testdata"
 )
 
 func TestDiscardHandler(t *testing.T) {
-	h := discard.New(log.InfoLevel)
+	h := log.NewNoOpHandler(log.InfoLevel)
 	var handleInvokeCount int
 	for _, e := range testdata.GetEvents() {
 		if h.Enabled(e.Level) {
