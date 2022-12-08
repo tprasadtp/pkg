@@ -6,10 +6,6 @@ import "fmt"
 // This will fail if MockHandler does not implement Handler interface.
 var _ Handler = &MockHandler{}
 
-// This MUST only be used in unit tests, as all log.Events
-// are simply appended to a slice, which can lead to
-// memory exhaustion.
-//
 // MockHandler is a mock handler which is used for tests.
 // This holds some counters for tracking state to be used in tests.
 // This handler lacks sync semantics aka this is not concurrent safe.
@@ -18,15 +14,11 @@ var _ Handler = &MockHandler{}
 type MockHandler struct {
 	// Number of times handler call invoked Write
 	// This is incremented even when methods return an error.
-	WriteCount int
+	WriteCalls uint
+	// Number of times handler successfully saved an event entry.
+	EventsWritten uint
 	// Always return an error on Flush and Write methods.
 	AlwaysErr bool
-	// Events slice stores all the events successfully processed
-	// but not yet flushed by the handler.
-	//  - Upon Flush(), this slice is cleared if AlwaysErr not set to true.
-	//  - If AlwaysErr is set to true, then it assumes that handler
-	//    failed to write the event, thus not added to the slice.
-	Events []Event
 	// Handler Level
 	Level Level
 	// Closed
@@ -43,14 +35,14 @@ func (m *MockHandler) Enabled(level Level) bool {
 // If AlwaysErr is true, then event is not saved it internal slice,
 // and method returns an error.
 func (m *MockHandler) Write(event Event) error {
-	m.WriteCount++
+	m.WriteCalls++
 	if m.closed {
 		return ErrHandlerClosed
 	}
 	if m.AlwaysErr {
 		return ErrHandlerWrite
 	}
-	m.Events = append(m.Events, event)
+	m.EventsWritten++
 	return nil
 }
 
@@ -64,7 +56,7 @@ func (m *MockHandler) Flush() error {
 	if m.AlwaysErr {
 		return ErrHandlerWrite
 	}
-	m.Events = []Event{}
+	m.EventsWritten = 0
 	return nil
 }
 
@@ -75,6 +67,6 @@ func (m *MockHandler) Close() error {
 		return fmt.Errorf("mock handler error: %w", ErrHandlerClosed)
 	}
 	m.closed = true
-	m.Events = []Event{}
+	m.EventsWritten = 0
 	return nil
 }

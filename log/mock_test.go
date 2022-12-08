@@ -83,17 +83,17 @@ func TestMockHandler(t *testing.T) {
 				}
 			}
 		}
-		if len(h.Events) != 12 {
-			t.Errorf("handler incorrect Events. expected=12, got=%d", len(h.Events))
+		if h.EventsWritten != 12 {
+			t.Errorf("handler incorrect Events. expected=12, got=%d", h.EventsWritten)
 		}
-		if h.WriteCount != 12 {
-			t.Errorf("handler incorrect WriteCount. expected=12, got=%d", h.WriteCount)
+		if h.WriteCalls != 12 {
+			t.Errorf("handler incorrect WriteCalls. expected=12, got=%d", h.WriteCalls)
 		}
 		// Flush Handler
 		if err := h.Flush(); err != nil {
 			t.Errorf("handler flush error(%e)", err)
 		}
-		if len(h.Events) != 0 {
+		if h.EventsWritten != 0 {
 			t.Errorf("handler did not flush events")
 		}
 
@@ -101,7 +101,7 @@ func TestMockHandler(t *testing.T) {
 		if err := h.Close(); err != nil {
 			t.Errorf("handler close error(%e)", err)
 		}
-		if len(h.Events) != 0 {
+		if h.EventsWritten != 0 {
 			t.Errorf("handler close not flush events")
 		}
 
@@ -116,14 +116,14 @@ func TestMockHandler(t *testing.T) {
 				}
 			}
 		}
-		if len(h.Events) != 0 {
+		if h.EventsWritten != 0 {
 			t.Errorf("handler(closed) incorrect events. expected=0, got=%d",
-				len(h.Events))
+				h.EventsWritten)
 		}
 		// Events are not written but handler is invoked.
-		if h.WriteCount != 24 {
-			t.Errorf("handler(closed) incorrect WriteCount. expected=24, got=%d",
-				h.WriteCount)
+		if h.WriteCalls != 24 {
+			t.Errorf("handler(closed) incorrect WriteCalls. expected=24, got=%d",
+				h.WriteCalls)
 		}
 
 		// Flush already closed Handler
@@ -158,12 +158,12 @@ func TestMockHandlerHandleAlwaysErr(t *testing.T) {
 			}
 		}
 	}
-	if h.WriteCount != 12 {
-		t.Errorf("handler incorrect WriteCount. expected=2, got=%d", h.WriteCount)
+	if h.WriteCalls != 12 {
+		t.Errorf("handler incorrect WriteCalls. expected=2, got=%d", h.WriteCalls)
 	}
 
-	if len(h.Events) != 0 {
-		t.Errorf("handler incorrect Events. expected=0, got=%d", len(h.Events))
+	if h.EventsWritten != 0 {
+		t.Errorf("handler incorrect Events. expected=0, got=%d", h.EventsWritten)
 	}
 
 	if err := h.Flush(); !errors.Is(err, log.ErrHandlerWrite) {

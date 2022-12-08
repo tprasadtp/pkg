@@ -5,11 +5,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"runtime"
 	"strings"
-	"time"
-
-	"github.com/tprasadtp/pkg/log/internal/helpers"
 )
 
 // New creates a new Logger with the given Handler.
@@ -56,18 +52,6 @@ func (log Logger) Enabled(level Level) bool {
 func (log Logger) Flush() error {
 	if err := log.handler.Flush(); err != nil {
 		return fmt.Errorf("log: failed to flush handler; %w", err)
-	}
-	return nil
-}
-
-// Write the event directly to the handler if it is enabled.
-// This should not be used by normal library users.
-//   - This is intended to be used by plugins.
-//   - For example stdlib plugin uses this to write
-//     Event generated to handler.
-func (log Logger) WriteEvent(event Event) error {
-	if log.handler.Enabled(event.Level) {
-		return log.handler.Write(event)
 	}
 	return nil
 }
@@ -266,60 +250,4 @@ func (log Logger) Fatalf(format string, args ...any) {
 	} else {
 		log.exit()
 	}
-}
-
-// write is an internal wrapper which writes event to log.Handler.
-// All other named levels and methods use this with some form or other.
-func (log Logger) write(level Level, message string, depth uint) {
-	// // logger must not be nil.
-	// if log.handler == nil {
-	// 	panic(ErrLoggerInvalid)
-	// }
-
-	// Skip if handler is not enabled on the level.
-	if !log.handler.Enabled(level) {
-		return
-	}
-
-	// build log Event
-	event := Event{
-		Level:   level,
-		Context: log.ctx,
-		Message: message,
-		Error:   log.err,
-		Time:    time.Now(),
-	}
-
-	// Caller Tracing
-	const maxStackLen = 50
-	pc := make([]uintptr, maxStackLen)
-
-	// Skip two extra frames to account for this function
-	// and runtime.Callers itself.
-	//nolint:gomnd // ignore this magic number.
-	n := runtime.Callers(int(depth+2), pc)
-	frames := runtime.CallersFrames(pc[:n])
-	for i := 0; i < maxStackLen; i++ {
-		frame, more := frames.Next()
-		_, helper := helpers.Map.Load(frame.Function)
-		// We ran out of frames (This implies bug in log package)
-		if !more {
-			event.Caller = CallerInfo{
-				Line: 0,
-				File: "INVALID_FRAME",
-				Func: "INVALID_FRAME",
-			}
-			break
-		}
-
-		if !helper {
-			event.Caller = CallerInfo{
-				Line: uint(frame.Line),
-				File: frame.File,
-				Func: frame.Function,
-			}
-			break
-		}
-	}
-	log.handler.Write(event)
 }

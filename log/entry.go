@@ -16,6 +16,8 @@ type Field struct {
 
 // Includes caller info if available.
 type CallerInfo struct {
+	// Defined represents whether caller entry is defined.
+	Defined bool
 	// Line number of the caller
 	// If not available, this is 0.
 	Line uint
@@ -24,8 +26,7 @@ type CallerInfo struct {
 	File string
 	// Function name of the caller.
 	// this includes full path of the package.
-	// except for main package. This is limitation
-	// of [runtime.FuncForPC]
+	// except for main package.
 	// This is empty if information is not available.
 	Func string
 }
