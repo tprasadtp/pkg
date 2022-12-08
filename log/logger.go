@@ -1,41 +1,30 @@
-//nolint:unparam,errcheck // These two are pretty useless in this file.
 package log
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"strings"
 )
 
+// fieldsBucketSize represents step size when growing capacity of
+// fields slice. Capacity of Fields slice is always a integer multiple
+// of this number.
+const fieldsBucketSize = 20
+
 // New creates a new Logger with the given Handler.
-// Its is recommended that namespaces start with
-// a letter and only include alphanumerics in snake case or
-// camel case.
-func New(handler Handler, namespaces ...string) Logger {
-	switch len(namespaces) {
-	case 0:
-		return Logger{
-			handler: handler,
-		}
-	case 1:
-		return Logger{
-			handler:   handler,
-			namespace: namespaces[0],
-		}
-	default:
-		return Logger{
-			handler:   handler,
-			namespace: strings.Join(namespaces, "."),
-		}
+func New(handler Handler) Logger {
+	return Logger{
+		handler: handler,
+		fields:  make([]Field, 0, fieldsBucketSize),
 	}
 }
 
-// Logger.
+// Logger. For optimization reasons use log.New to create a new logger,
+// as it pre-allocates storage for fields.
 type Logger struct {
 	// Non exported fields.
-	handler   Handler
-	ctx       context.Context
+	handler Handler
+	// ctx       context.Context
 	namespace string
 	err       error
 	fields    []Field
@@ -61,25 +50,13 @@ func (log Logger) Namespace() string {
 	return log.namespace
 }
 
-// Context returns Logger's context.
-// Use [github.com/tprasadtp/pkg/log/Logger.WithCtx]
-// for passing the context to the logger.
-func (log Logger) Context() context.Context {
-	return log.ctx
-}
-
-// WithCtx returns a new Logger with the same handler
-// as the receiver and the given attribute.
-func (log Logger) WithCtx(ctx context.Context) Logger {
-	log.ctx = ctx
-	return log
-}
-
 // WithNamespace returns a new Logger with given name segment
 // appended to its original Namespace. Segments are joined by periods.
 // This is useful if you want to pass the logger to a library, especially
 // the one which you don't control. This will always return a new logger
-// even when specified namespace is empty.
+// even when specified namespace is empty.Its is recommended that namespaces
+// start with a letter and only include alphanumerics in snake case or
+// camel case.
 func (log Logger) WithNamespace(namespace string) Logger {
 	if namespace != "" {
 		if log.namespace == "" {
@@ -108,25 +85,38 @@ func (log Logger) WithExitFunc(fn func()) Logger {
 // In most cases it should be used immediately with a
 // message or scoped to the context of the error.
 //
-//	logger.WithError(err).Error("database connection lost")
+//	logger.WithError(err).Error("package metadata database connection lost")
 func (log Logger) WithError(err error) Logger {
 	log.err = err
 	return log
 }
 
-// With returns a new Logger with given key-value pair,
-// with optionally defined namespace. Namespace specified applies
-// to the kv field, not the logger. Use WithNamespace for namespaced logger.
+// With returns a new Logger with given fields.
+// This will allocate if logger's underlying fields slice capacity is
+// smaller than required.
 func (log Logger) With(fields ...Field) Logger {
-	fs := make([]Field, len(log.fields)+len(fields))
-	copy(fs, log.fields)
-	log.fields = fs
+	m := len(log.fields)
+	n := m + len(fields)
+
+	// Check if fields slice can store all the fields.
+	// if not re-allocate in fieldsBucketSize increments.
+	if n > cap(log.fields) {
+		buckets := (n / fieldsBucketSize) + 1
+		newSlice := make([]Field, m, fieldsBucketSize*buckets)
+		// If log.fields has elements, copy them to new slice.
+		if m > 0 {
+			copy(newSlice[:m], log.fields)
+		}
+		log.fields = newSlice
+	}
+	// log.fields's backing array has enough capacity,
+	// append wont allocate.
+	log.fields = append(log.fields, fields...)
 	return log
 }
 
-// Write Log message with custom level, Usually you do not need this
-// unless you are using custom logging levels. Use one of the named log
-// levels instead.
+// Write Log message with custom level, Prefer using one of
+// the named log levels instead.
 func (log Logger) Log(level Level, message string) {
 	log.write(level, message, 1)
 }
@@ -180,70 +170,6 @@ func (log Logger) Critical(message string) {
 // Log at FatalLevel AND flush the handler.
 func (log Logger) Fatal(message string) {
 	log.write(FatalLevel, message, 1)
-	log.handler.Flush()
-	if log.exit == nil {
-		os.Exit(1)
-	} else {
-		log.exit()
-	}
-}
-
-// Write Log message with custom level, Usually you do not need this,
-// unless you need custom logging levels.
-// Prefer using one of the named log levels instead.
-func (log Logger) Logf(level Level, format string, args ...any) {
-	log.write(level, fmt.Sprintf(format, args...), 1)
-}
-
-// Log at TraceLevel.
-func (log Logger) Tracef(format string, args ...any) {
-	log.write(TraceLevel, fmt.Sprintf(format, args...), 1)
-}
-
-// Log at DebugLevel.
-func (log Logger) Debugf(format string, args ...any) {
-	log.write(DebugLevel, fmt.Sprintf(format, args...), 1)
-}
-
-// Log at VerboseLevel.
-func (log Logger) Verbosef(format string, args ...any) {
-	log.write(VerboseLevel, fmt.Sprintf(format, args...), 1)
-}
-
-// Log at InfoLevel.
-func (log Logger) Infof(format string, args ...any) {
-	log.write(InfoLevel, fmt.Sprintf(format, args...), 1)
-}
-
-// Log at SuccessLevel.
-func (log Logger) Successf(format string, args ...any) {
-	log.write(SuccessLevel, fmt.Sprintf(format, args...), 1)
-}
-
-// Log at NoticeLevel.
-func (log Logger) Noticef(format string, args ...any) {
-	log.write(NoticeLevel, fmt.Sprintf(format, args...), 1)
-}
-
-// Log at WarningLevel.
-func (log Logger) Warningf(format string, args ...any) {
-	log.write(WarningLevel, fmt.Sprintf(format, args...), 1)
-}
-
-// Log at ErrorLevel.
-func (log Logger) Errorf(format string, args ...any) {
-	log.write(ErrorLevel, fmt.Sprintf(format, args...), 1)
-}
-
-// Log at CriticalLevel AND flush the handler.
-func (log Logger) Criticalf(format string, args ...any) {
-	log.write(CriticalLevel, fmt.Sprintf(format, args...), 1)
-	log.handler.Flush()
-}
-
-// Log at FatalLevel AND flush the handler.
-func (log Logger) Fatalf(format string, args ...any) {
-	log.write(FatalLevel, fmt.Sprintf(format, args...), 1)
 	log.handler.Flush()
 	if log.exit == nil {
 		os.Exit(1)

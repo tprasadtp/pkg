@@ -2,7 +2,7 @@
 package multi
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/tprasadtp/pkg/log"
 )
@@ -39,13 +39,7 @@ func (m *Handler) Write(event log.Event) error {
 	var err error
 	for _, h := range m.handlers {
 		if h.Enabled(event.Level) {
-			if eloop := h.Write(event); eloop != nil {
-				if err != nil {
-					err = fmt.Errorf("%w", eloop)
-				} else {
-					err = eloop
-				}
-			}
+			err = errors.Join(err, h.Write(event))
 		}
 	}
 	return err
@@ -55,13 +49,7 @@ func (m *Handler) Write(event log.Event) error {
 func (m *Handler) Flush() error {
 	var err error
 	for _, h := range m.handlers {
-		if eloop := h.Flush(); eloop != nil {
-			if err != nil {
-				err = fmt.Errorf("%w", eloop)
-			} else {
-				err = eloop
-			}
-		}
+		err = errors.Join(err, h.Flush())
 	}
 	return err
 }
@@ -70,13 +58,7 @@ func (m *Handler) Flush() error {
 func (m *Handler) Close() error {
 	var err error
 	for _, h := range m.handlers {
-		if eloop := h.Close(); eloop != nil {
-			if err != nil {
-				err = fmt.Errorf("%w", eloop)
-			} else {
-				err = eloop
-			}
-		}
+		err = errors.Join(err, h.Close())
 	}
 	return err
 }

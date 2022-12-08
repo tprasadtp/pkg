@@ -39,7 +39,6 @@ func (log Logger) write(level Level, message string, depth uint) {
 	// build log Event
 	event := Event{
 		Level:   level,
-		Context: log.ctx,
 		Message: message,
 		Error:   log.err,
 		Time:    time.Now(),
