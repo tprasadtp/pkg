@@ -12,11 +12,12 @@ type Handler interface {
 	Enabled(l Level) bool
 
 	// Writes a Log Event.
-	//  - Depending on implementation, writes may be buffered/batched.
+	//  - Depending on implementation, writes may be buffered.
 	//  - Please note that this is ONLY called if Enabled(e.Level) returns true.
 	//  - Implementations SHOULD return error to when handler is
 	//    not initialized or closed.
 	//  - It is responsibility of the implementation to be concurrent safe.
+	//  - Upon return Event is discarded.
 	Write(e Event) error
 
 	// Writes pending entries in the buffer to disk/network.

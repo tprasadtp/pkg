@@ -9,8 +9,6 @@ var _ Handler = &MockHandler{}
 // MockHandler is a mock handler which is used for tests.
 // This holds some counters for tracking state to be used in tests.
 // This handler lacks sync semantics aka this is not concurrent safe.
-// If you are looking for handler to use with testing.TB, see
-// [github.com/tprasadtp/pkg/log/handlers/testlog.Handler].
 type MockHandler struct {
 	// Number of times handler call invoked Write
 	// This is incremented even when methods return an error.

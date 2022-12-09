@@ -4,8 +4,7 @@ import (
 	"time"
 )
 
-// Field is logger fields.
-// Value can be any (even another Field or []Field).
+// Field is logger fields. Logger contains a slice of [Fields]
 type Field struct {
 	Key   string
 	Value any
@@ -28,8 +27,13 @@ type CallerInfo struct {
 	Func string
 }
 
-// Event Represents a single Log event.
-// Marshalling this to JSON/Binary must have minimal allocations.
+// Event represents a single Log event. Event should be considered immutable.
+// Unlike many logging libraries this does not use [sync.Pool]
+// as handler is an interface, and it would have to depend on implementation
+// to release the Event back to the pool. Instead, it uses a pre-allocated
+// fixed size array which should be sufficient for most cases.
+// However, in cases where a log event has more than 20 fields,
+// this will allocate.
 type Event struct {
 	// Event Namespace
 	Namespace string
@@ -50,8 +54,11 @@ type Event struct {
 	Caller CallerInfo
 
 	// Allocation optimization for fields
-	// Typically has around 10 fields.
-	Fields []Field
+	// Typically has less than 20 or  so fields.
+	fieldsPrealloc     [fieldsBucketSize]Field
+	fileldsPreallocLen uint
+
+	fieldsOverflow []Field
 }
 
 // Returns a new Field.

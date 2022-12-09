@@ -19,17 +19,17 @@ const (
 // handlerError error.
 type handlerError string
 
-// Implements Error() interface on handlerError.
-func (m handlerError) Error() string {
-	return string(m)
+// Implements Error() interface for handlerError.
+func (h handlerError) Error() string {
+	return string(h)
 }
 
 // loggerError error.
 type loggerError string
 
-// Implements Error() interface on handlerError.
-func (m loggerError) Error() string {
-	return string(m)
+// Implements Error() interface for handlerError.
+func (l loggerError) Error() string {
+	return string(l)
 }
 
 // var (

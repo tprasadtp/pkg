@@ -7,6 +7,7 @@ import (
 func BenchmarkMini(b *testing.B) {
 	logger := New(NewNoOpHandler(TraceLevel))
 	b.ReportAllocs()
+	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		// l2 := logger.With(
 		// 	M("map-01", F("nested-field-01", "value-01")))
@@ -24,9 +25,9 @@ func BenchmarkDiscardDisabledLevel(b *testing.B) {
 			F("root-key-01", "root-value-01"),
 			F("root-key-02", "root-value-02"),
 			F("root-key-03", "root-value-03"),
-			M("map-01", F("map-01-key-01", "map-01-value-01")),
-			M("map-02", F("map-02-key-01", "map-02-value-01")),
-			M("map-03", F("map-03-key-01", "map-03-value-01")),
+			// M("map-01", F("map-01-key-01", "map-01-value-01")),
+			// M("map-02", F("map-02-key-01", "map-02-value-01")),
+			// M("map-03", F("map-03-key-01", "map-03-value-01")),
 			M("map-04",
 				F("map-04-key-01", "map-04-value-01"),
 				F("map-04-key-02", "map-04-value-02"),
