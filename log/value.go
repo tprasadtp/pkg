@@ -273,6 +273,7 @@ func AnyValue(v any) Value {
 			any: StringKind,
 		}
 	// objects implementing stringer will be transformed to StringKind
+	// not all stringer implementations have zero garbage.
 	case fmt.Stringer:
 		return Value{
 			str: v.String(),
