@@ -7,7 +7,7 @@ import (
 // Field is logger fields. Logger contains a slice of [Fields]
 type Field struct {
 	Key   string
-	Value any
+	Value Value
 }
 
 // Includes caller info if available.
@@ -65,7 +65,7 @@ type Event struct {
 func F(key string, value any) Field {
 	return Field{
 		Key:   key,
-		Value: value,
+		Value: AnyValue(value),
 	}
 }
 
@@ -73,6 +73,6 @@ func F(key string, value any) Field {
 func M(key string, fields ...Field) Field {
 	return Field{
 		Key:   key,
-		Value: fields,
+		Value: AnyValue(fields),
 	}
 }
