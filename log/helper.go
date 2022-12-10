@@ -14,11 +14,12 @@ import (
 func Helper() {
 	pc, _, _, ok := runtime.Caller(1)
 	if ok {
-		f := runtime.FuncForPC(pc).Name()
+		frames := runtime.CallersFrames([]uintptr{pc})
+		frame, _ := frames.Next()
 		// Ignore if called from main().
-		if f != "main.main" {
+		if frame.Function != "main.main" && frame.Function != "" {
 			// We just want the function to be stored, make value as nil.
-			helpers.Map.LoadOrStore(f, nil)
+			helpers.Map.LoadOrStore(frame.Function, nil)
 		}
 	}
 }

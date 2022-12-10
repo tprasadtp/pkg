@@ -73,6 +73,9 @@ func ToValue(v any) Value {
 			k:     BoolKind,
 		}
 	case *bool:
+		if v == nil {
+			return Value{k: NullKind}
+		}
 		store := uint64(0)
 		if *v {
 			store = 1
@@ -89,7 +92,7 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			str: *v,
+			s:   *v,
 			any: StringKind,
 		}
 	case int:
@@ -277,7 +280,7 @@ func ToValue(v any) Value {
 	// Complex
 	case complex64:
 		return Value{
-			str: strconv.FormatComplex(complex128(v), 4, 'g', 64),
+			s:   strconv.FormatComplex(complex128(v), 4, 'g', 64),
 			any: StringKind,
 		}
 	case *complex64:
@@ -287,12 +290,12 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			str: strconv.FormatComplex(complex128(*v), 4, 'g', 64),
+			s:   strconv.FormatComplex(complex128(*v), 4, 'g', 64),
 			any: StringKind,
 		}
 	case complex128:
 		return Value{
-			str: strconv.FormatComplex(complex128(v), 4, 'g', 128),
+			s:   strconv.FormatComplex(complex128(v), 4, 'g', 128),
 			any: StringKind,
 		}
 	case *complex128:
@@ -302,7 +305,7 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			str: strconv.FormatComplex(complex128(*v), 4, 'g', 128),
+			s:   strconv.FormatComplex(complex128(*v), 4, 'g', 128),
 			any: StringKind,
 		}
 	// Objects implementing stringer will be transformed to StringKind.
@@ -310,7 +313,7 @@ func ToValue(v any) Value {
 	// fmt.Sprintf under the hood, which allocates.
 	case fmt.Stringer:
 		return Value{
-			str: v.String(),
+			s:   v.String(),
 			any: StringKind,
 		}
 	// time.Time

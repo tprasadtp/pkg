@@ -17,10 +17,10 @@ const (
 	DefaultTimeKey = "timestamp"
 
 	// Default Trace ID key for Entry encoder.
-	DefaultTraceKey = "trace_id"
+	DefaultTraceKey = "traceID"
 
 	// Default Span Key for Entry encoder.
-	DefaultSpanKey = "span_id"
+	DefaultSpanKey = "spanID"
 
 	// Default Caller function key for for Entry encoder.
 	DefaultCallerFileKey = "file"

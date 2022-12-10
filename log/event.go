@@ -2,17 +2,8 @@ package log
 
 import (
 	"strings"
-	"sync"
 	"time"
 )
-
-var eventPool = sync.Pool{
-	New: func() any {
-		return &Event{
-			Fields: make([]Field, 0, fieldsBucketSize),
-		}
-	},
-}
 
 // Field is logger fields. Logger contains a slice of [Fields]
 // Optionally with a namespace.
@@ -23,7 +14,7 @@ type Field struct {
 }
 
 // Includes caller info if available.
-type CallerInfo struct {
+type Caller struct {
 	// Defined represents whether caller entry is defined.
 	Defined bool
 	// Line number of the caller
@@ -39,9 +30,8 @@ type CallerInfo struct {
 	Func string
 }
 
-// Event represents a single Log event. Event should be considered immutable.
-// If underlying handler pools events it must store it in storage backed by
-// its own pool or arrays. Logger will release the event back to the pool
+// Event represents a single Log event.
+// Event should be considered immutable.
 type Event struct {
 	// Namespace is namespace of the logger that generated this event.
 	Namespace string
@@ -59,7 +49,7 @@ type Event struct {
 	Error error
 
 	// Caller
-	Caller CallerInfo
+	Caller Caller
 
 	Fields []Field
 }

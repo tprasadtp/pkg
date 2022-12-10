@@ -13,5 +13,8 @@ the context to allow handlers to populate contextual fields like Span and Trace.
 this is translated to list of attributes in `Event`.
 - Hooks? hooks are nothing but a custom handlers, if you want a custom hook, simply implement log.Handler interface. For simple hooks, you can simple wrap an existing handler in your custom handler implementation.
 - Don't be afraid of dependencies like aws/sdk, google cloud sdk, journald etc. in the mod file, they are only pulled if you use their respective handlers or use `handlers.AutoConfigure` (Requires g 1.17 or later)
+- Why Fields have no deep nesting? Most logging solutions are columnar stores and nested fields are bad.
+Especially for ELK flat json is better for storage as well as index/query performance.
+
 
 [wire]: https://github.com/google/wire
