@@ -1,7 +1,6 @@
 package log
 
 import (
-	"fmt"
 	"os"
 	"strings"
 )
@@ -12,6 +11,7 @@ import (
 const fieldsBucketSize = 20
 
 // New creates a new Logger with the given Handler.
+// This pre allocates some storage for storing fields.
 func New(handler Handler) Logger {
 	return Logger{
 		handler: handler,
@@ -19,12 +19,9 @@ func New(handler Handler) Logger {
 	}
 }
 
-// Logger. For optimization reasons use log.New to create a new logger,
-// as it pre-allocates storage for fields.
+// Logger
 type Logger struct {
-	// Non exported fields.
-	handler Handler
-	// ctx       context.Context
+	handler   Handler
 	namespace string
 	err       error
 	fields    []Field
@@ -33,21 +30,18 @@ type Logger struct {
 
 // Enabled checks if underlying handler is enabled
 // at the specified log level.
-func (log Logger) Enabled(level Level) bool {
-	return log.handler.Enabled(level)
-}
-
-// Flush flushes Logger's Handler.
-func (log Logger) Flush() error {
-	if err := log.handler.Flush(); err != nil {
-		return fmt.Errorf("log: failed to flush handler; %w", err)
-	}
-	return nil
+func (log Logger) Handler(level Level) Handler {
+	return log.handler
 }
 
 // Namespace returns Logger's Namespace.
 func (log Logger) Namespace() string {
 	return log.namespace
+}
+
+// Fields returns Logger's current fields context.
+func (log Logger) Fields() []Field {
+	return log.fields
 }
 
 // WithNamespace returns a new Logger with given name segment
@@ -68,25 +62,21 @@ func (log Logger) WithNamespace(namespace string) Logger {
 	return log
 }
 
-// WithExitFunc returns a new Logger with specified exit function
-// This is especially useful when
-//   - Libraries use logger.Fatal in their
-//     code where they should not or when you do not wish a dependency
-//     calling logger.Fatal to exit.
-//   - You wish to specify a specific exit code so that a service manager
-//     like systemd can handle it properly.
-//   - You wish to perform some tasks before program exits
+// WithExitFunc returns a new Logger with specified exit function.
+// By default logger uses [os.Exit](1).
 func (log Logger) WithExitFunc(fn func()) Logger {
 	log.exit = fn
 	return log
 }
 
-// WithError returns a new Logger with given error.
+// WithErr returns a new Logger with given error.
 // In most cases it should be used immediately with a
 // message or scoped to the context of the error.
+// If logger already contains an error, it is replaced.
+// It is job of the package author to wrap error not the logger.
 //
 //	logger.WithError(err).Error("package metadata database connection lost")
-func (log Logger) WithError(err error) Logger {
+func (log Logger) WithErr(err error) Logger {
 	log.err = err
 	return log
 }
@@ -110,67 +100,67 @@ func (log Logger) With(fields ...Field) Logger {
 		log.fields = newSlice
 	}
 	// log.fields's backing array has enough capacity,
-	// append wont allocate.
+	// so append wont allocate.
 	log.fields = append(log.fields, fields...)
 	return log
 }
 
-// Write Log message with custom level, Prefer using one of
-// the named log levels instead.
+// Write Log message with custom level.
+// Prefer using one of the named log levels instead.
 func (log Logger) Log(level Level, message string) {
 	log.write(level, message, 1)
 }
 
 // Log at TraceLevel.
 func (log Logger) Trace(message string) {
-	log.write(TraceLevel, message, 1)
+	log.write(LevelTrace, message, 1)
 }
 
 // Log at DebugLevel.
 func (log Logger) Debug(message string) {
-	log.write(DebugLevel, message, 1)
+	log.write(LevelDebug, message, 1)
 }
 
 // Log at VerboseLevel.
 func (log Logger) Verbose(message string) {
-	log.write(VerboseLevel, message, 1)
+	log.write(LevelVerbose, message, 1)
 }
 
 // Log at InfoLevel.
 func (log Logger) Info(message string) {
-	log.write(InfoLevel, message, 1)
+	log.write(LevelInfo, message, 1)
 }
 
 // Log at SuccessLevel.
 func (log Logger) Success(message string) {
-	log.write(SuccessLevel, message, 1)
+	log.write(LevelSuccess, message, 1)
 }
 
 // Log at NoticeLevel.
 func (log Logger) Notice(message string) {
-	log.write(NoticeLevel, message, 1)
+	log.write(LevelNotice, message, 1)
 }
 
 // Log at WarningLevel.
 func (log Logger) Warning(message string) {
-	log.write(WarningLevel, message, 1)
+	log.write(LevelWarning, message, 1)
 }
 
 // Log at ErrorLevel.
 func (log Logger) Error(message string) {
-	log.write(ErrorLevel, message, 1)
+	log.write(LevelError, message, 1)
 }
 
 // Log at CriticalLevel AND flush the handler.
 func (log Logger) Critical(message string) {
-	log.write(CriticalLevel, message, 1)
+	log.write(LevelCritical, message, 1)
 	log.handler.Flush()
 }
 
-// Log at FatalLevel AND flush the handler.
+// Log at FatalLevel flush and close the handler.
 func (log Logger) Fatal(message string) {
-	log.write(FatalLevel, message, 1)
-	log.handler.Flush()
+	log.write(LevelFatal, message, 1)
+	log.handler.Close()
 	if log.exit == nil {
 		os.Exit(1)
 	} else {

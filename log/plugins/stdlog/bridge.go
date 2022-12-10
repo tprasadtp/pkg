@@ -24,7 +24,7 @@ var _ io.Writer = &bridge{}
 
 // default bridge.
 var defaultBridge = bridge{
-	level:  log.InfoLevel,
+	level:  log.LevelInfo,
 	logger: nil,
 }
 

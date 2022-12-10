@@ -10,7 +10,7 @@ import (
 
 func TestMockHandlerEnabled(t *testing.T) {
 	h := log.MockHandler{
-		Level: log.InfoLevel,
+		Level: log.LevelInfo,
 	}
 
 	type testCase struct {
@@ -22,42 +22,42 @@ func TestMockHandlerEnabled(t *testing.T) {
 	tt := []testCase{
 		{
 			Name:   "DebugLevel",
-			Level:  log.DebugLevel,
+			Level:  log.LevelDebug,
 			Expect: false,
 		},
 		{
 			Name:   "VerboseLevel",
-			Level:  log.VerboseLevel,
+			Level:  log.LevelVerbose,
 			Expect: false,
 		},
 		{
 			Name:   "InfoLevel",
-			Level:  log.InfoLevel,
+			Level:  log.LevelInfo,
 			Expect: true,
 		},
 		{
 			Name:   "SuccessLevel",
-			Level:  log.SuccessLevel,
+			Level:  log.LevelSuccess,
 			Expect: true,
 		},
 		{
 			Name:   "NoticeLevel",
-			Level:  log.NoticeLevel,
+			Level:  log.LevelNotice,
 			Expect: true,
 		},
 		{
 			Name:   "WarningLevel",
-			Level:  log.WarningLevel,
+			Level:  log.LevelWarning,
 			Expect: true,
 		},
 		{
 			Name:   "ErrorLevel",
-			Level:  log.ErrorLevel,
+			Level:  log.LevelError,
 			Expect: true,
 		},
 		{
 			Name:   "CriticalLevel",
-			Level:  log.CriticalLevel,
+			Level:  log.LevelCritical,
 			Expect: true,
 		},
 	}
@@ -74,7 +74,7 @@ func TestMockHandlerEnabled(t *testing.T) {
 func TestMockHandler(t *testing.T) {
 	t.Run("InfoLevel", func(t *testing.T) {
 		h := log.MockHandler{
-			Level: log.InfoLevel,
+			Level: log.LevelInfo,
 		}
 		// Write to handler
 		for _, e := range testdata.GetEvents() {
@@ -147,7 +147,7 @@ func TestMockHandler(t *testing.T) {
 
 func TestMockHandlerHandleAlwaysErr(t *testing.T) {
 	h := log.MockHandler{
-		Level:     log.InfoLevel,
+		Level:     log.LevelInfo,
 		AlwaysErr: true,
 	}
 

@@ -11,11 +11,11 @@ import (
 
 func TestHandler(t *testing.T) {
 	h1 := log.MockHandler{
-		Level: log.InfoLevel,
+		Level: log.LevelInfo,
 	}
 
 	h2 := log.MockHandler{
-		Level: log.ErrorLevel,
+		Level: log.LevelError,
 	}
 
 	m := multi.New(&h1, &h2)
@@ -57,17 +57,17 @@ func TestHandler(t *testing.T) {
 
 func TestHandlerClose(t *testing.T) {
 	h1 := log.MockHandler{
-		Level: log.InfoLevel,
+		Level: log.LevelInfo,
 	}
 
 	h2 := log.MockHandler{
-		Level: log.ErrorLevel,
+		Level: log.LevelError,
 	}
 
 	m := multi.New(&h1, &h2)
 
 	e := log.Event{
-		Level:   log.InfoLevel,
+		Level:   log.LevelInfo,
 		Message: "TestEvent",
 	}
 
@@ -94,11 +94,11 @@ func TestHandlerClose(t *testing.T) {
 
 func TestOneAlreadyClosedHandler(t *testing.T) {
 	h1 := log.MockHandler{
-		Level: log.InfoLevel,
+		Level: log.LevelInfo,
 	}
 
 	h2 := log.MockHandler{
-		Level: log.ErrorLevel,
+		Level: log.LevelError,
 	}
 
 	h1.Close()
@@ -144,16 +144,16 @@ func TestOneAlreadyClosedHandler(t *testing.T) {
 
 func TestMultiHandlerWithError(t *testing.T) {
 	h1 := log.MockHandler{
-		Level: log.InfoLevel,
+		Level: log.LevelInfo,
 	}
 
 	h2 := log.MockHandler{
-		Level:     log.ErrorLevel,
+		Level:     log.LevelError,
 		AlwaysErr: true,
 	}
 
 	h3 := log.MockHandler{
-		Level:     log.VerboseLevel,
+		Level:     log.LevelVerbose,
 		AlwaysErr: true,
 	}
 

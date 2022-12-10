@@ -1,13 +1,25 @@
 package log
 
 import (
+	"strings"
+	"sync"
 	"time"
 )
 
+var eventPool = sync.Pool{
+	New: func() any {
+		return &Event{
+			Fields: make([]Field, 0, fieldsBucketSize),
+		}
+	},
+}
+
 // Field is logger fields. Logger contains a slice of [Fields]
+// Optionally with a namespace.
 type Field struct {
-	Key   string
-	Value Value
+	Namespace string
+	Key       string
+	Value     any
 }
 
 // Includes caller info if available.
@@ -28,14 +40,10 @@ type CallerInfo struct {
 }
 
 // Event represents a single Log event. Event should be considered immutable.
-// Unlike many logging libraries this does not use [sync.Pool]
-// as handler is an interface, and it would have to depend on implementation
-// to release the Event back to the pool. Instead, it uses a pre-allocated
-// fixed size array which should be sufficient for most cases.
-// However, in cases where a log event has more than 20 fields,
-// this will allocate.
+// If underlying handler pools events it must store it in storage backed by
+// its own pool or arrays. Logger will release the event back to the pool
 type Event struct {
-	// Event Namespace
+	// Namespace is namespace of the logger that generated this event.
 	Namespace string
 
 	// Time (Global)
@@ -53,26 +61,28 @@ type Event struct {
 	// Caller
 	Caller CallerInfo
 
-	// Allocation optimization for fields
-	// Typically has less than 20 or  so fields.
-	fieldsPrealloc     [fieldsBucketSize]Field
-	fileldsPreallocLen uint
-
-	fieldsOverflow []Field
+	Fields []Field
 }
 
-// Returns a new Field.
-func F(key string, value any) Field {
-	return Field{
-		Key:   key,
-		Value: AnyValue(value),
-	}
-}
-
-// Returns a new Map field.
-func M(key string, fields ...Field) Field {
-	return Field{
-		Key:   key,
-		Value: AnyValue(fields),
+// Returns a new Field optionally with a namespace.
+func F(key string, value any, namespace ...string) Field {
+	switch len(namespace) {
+	case 0:
+		return Field{
+			Key:   key,
+			Value: ToValue(value),
+		}
+	case 1:
+		return Field{
+			Namespace: namespace[0],
+			Key:       key,
+			Value:     ToValue(value),
+		}
+	default:
+		return Field{
+			Namespace: strings.Join(namespace, "."),
+			Key:       key,
+			Value:     ToValue(value),
+		}
 	}
 }

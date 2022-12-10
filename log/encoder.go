@@ -14,16 +14,13 @@ const (
 	DefaultErrorKey = "error"
 
 	// Default time key (timestamp) for Entry encoder.
-	DefaultTimeKey = "time"
+	DefaultTimeKey = "timestamp"
 
 	// Default Trace ID key for Entry encoder.
 	DefaultTraceKey = "trace_id"
 
 	// Default Span Key for Entry encoder.
 	DefaultSpanKey = "span_id"
-
-	// Default app Version Key for Entry encoder.
-	DefaultVersionKey = "version"
 
 	// Default Caller function key for for Entry encoder.
 	DefaultCallerFileKey = "file"
@@ -33,9 +30,6 @@ const (
 
 	// Default Caller function key for for Entry encoder.
 	DefaultCallerLineKey = "line"
-
-	// Default Stacktrace key for for Entry encoder.
-	DefaultStacktraceKey = "stacktrace"
 )
 
 // EncoderConfig is encode configuration for encoder.

@@ -8,12 +8,14 @@ var (
 
 const (
 	// Error returned when logger is invalid.
-	ErrLoggerInvalid = loggerError("logger is invalid or nil")
+	ErrLoggerInvalid = loggerError("log: logger is invalid or nil")
+	// LoggerInvalidKind
+	ErrInvalidKind = loggerError("log: kind mismatch")
 	// Error returned when write or flush methods fail.
-	ErrHandlerWrite = handlerError("handler write failed")
+	ErrHandlerWrite = handlerError("log: handler write failed")
 	// Error returned when writing, flushing or closing an
 	// already closed handler.
-	ErrHandlerClosed = handlerError("handler is closed")
+	ErrHandlerClosed = handlerError("log: handler is closed")
 )
 
 // handlerError error.

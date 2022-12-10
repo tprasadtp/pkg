@@ -11,48 +11,49 @@ type Level int
 const (
 	// Trace level logs include very low level logs.
 	// Stuff like raw packet dumps.
-	TraceLevel Level = -30
+	LevelTrace Level = -30
 
-	// DebugLevel is lowest named level and typically used for debugging.
-	DebugLevel Level = -20
+	// Debug Level is lowest named level and typically used for debugging.
+	LevelDebug Level = -20
 
-	// VerboseLevel is used when you need more insights on inner workings
+	// LevelVerbose is used when you need more insights on inner workings
 	// of a program/application. This typically includes just enough information
 	// for debugging stuff like network issues. For low level application
 	// internals use DebugLevel or TraceLevel.
-	VerboseLevel Level = -10
+	LevelVerbose Level = -10
 
-	// InfoLevel is typical level where application logs its events. This is includes
-	// stuff like request logs, and user presentable information.
-	// This is set to 0 so that zero value of Level is valid and most commonly used
-	// level.
-	InfoLevel Level = 0
+	// LevelInfo is typical level where application logs its events.
+	// This is includes stuff like access logs, and user presentable
+	// information. This is set to 0 so that zero value of Level is
+	// valid and most commonly used level.
+	LevelInfo Level = 0
 
-	// SuccessLevel is mostly tailored for CLI applications,
+	// LevelSuccess is mostly tailored for CLI applications,
 	// and usually you do not need it in a web/server application.
-	SuccessLevel Level = 10
+	LevelSuccess Level = 10
 
-	// NoticeLevel is something important like application
-	// live reload or any other significant events.
-	NoticeLevel Level = 20
+	// LevelNotice is something important like application
+	// live reload, configuration change or any other significant events.
+	LevelNotice Level = 20
 
-	// WarningLevel is for errors or events which application
-	// handled gracefully by using a fallback experience or retries.
-	WarningLevel Level = 30
+	// LevelWarning is for errors or events which are not optimal/ideal,
+	// but application handled gracefully by using a fallback experience
+	// or in case of remote resources retries.
+	LevelWarning Level = 30
 
-	// ErrorLevel is for application level errors.
+	// LevelError is for application level errors.
 	// These should trigger an alert in your APM solution.
-	ErrorLevel Level = 40
+	LevelError Level = 40
 
-	// CriticalLevel is for errors which have the potential to disrupt the application
+	// LevelCritical is for errors which have the potential to disrupt the application,
 	// but for the moment application can handle it. panic/recover flow can log at
 	// this level. Stuff like running on low disk space, nearing API quota etc.
-	CriticalLevel Level = 50
+	LevelCritical Level = 50
 
-	// FatalLevel is for errors which lead to application crashes and application
-	// cannot recover from this type of error.
-	// If event is logged at this level, Logger will invoke Flush method on its
-	// handler to avoid losing log data. However, this is not guaranteed.
-	// Logger.Fatal() will invoke defined exit function. (defaults to [os.Exit]).
-	FatalLevel Level = 90
+	// LevelFatal is for errors which lead to application crashes and application
+	// cannot recover from this type of error. If event is logged at this level,
+	// Logger will flush and close the Handler to avoid losing logs.
+	// However, this is not guaranteed.  Logger.Fatal() will invoke defined exit function.
+	// (defaults to [os.Exit](1)).
+	LevelFatal Level = 90
 )

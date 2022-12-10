@@ -4,67 +4,67 @@ import "github.com/tprasadtp/pkg/log"
 
 var events = []log.Event{
 	{
-		Level:   log.DebugLevel,
+		Level:   log.LevelDebug,
 		Message: "Debug-01",
 	},
 	// 2 VERBOSE
 	{
-		Level:   log.VerboseLevel,
+		Level:   log.LevelVerbose,
 		Message: "Verbose-01",
 	},
 	{
-		Level:   log.VerboseLevel,
+		Level:   log.LevelVerbose,
 		Message: "Verbose-02",
 	},
 	// 3 INFO
 	{
-		Level:   log.InfoLevel,
+		Level:   log.LevelInfo,
 		Message: "Info-01",
 	},
 	{
-		Level:   log.InfoLevel,
+		Level:   log.LevelInfo,
 		Message: "Info-02",
 	},
 	{
-		Level:   log.InfoLevel,
+		Level:   log.LevelInfo,
 		Message: "Info-03",
 	},
 	// 4 WARNING
 	{
-		Level:   log.WarningLevel,
+		Level:   log.LevelWarning,
 		Message: "Warning-01",
 	},
 	{
-		Level:   log.WarningLevel,
+		Level:   log.LevelWarning,
 		Message: "Warning-02",
 	},
 	{
-		Level:   log.WarningLevel,
+		Level:   log.LevelWarning,
 		Message: "Warning-03",
 	},
 	{
-		Level:   log.WarningLevel,
+		Level:   log.LevelWarning,
 		Message: "Warning-04",
 	},
 	// 5 ERROR
 	{
-		Level:   log.ErrorLevel,
+		Level:   log.LevelError,
 		Message: "Error-01",
 	},
 	{
-		Level:   log.ErrorLevel,
+		Level:   log.LevelError,
 		Message: "Error-02",
 	},
 	{
-		Level:   log.ErrorLevel,
+		Level:   log.LevelError,
 		Message: "Error-03",
 	},
 	{
-		Level:   log.ErrorLevel,
+		Level:   log.LevelError,
 		Message: "Error-04",
 	},
 	{
-		Level:   log.ErrorLevel,
+		Level:   log.LevelError,
 		Message: "Error-05",
 	},
 }

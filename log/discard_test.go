@@ -9,7 +9,7 @@ import (
 )
 
 func TestDiscardHandler(t *testing.T) {
-	h := log.NewNoOpHandler(log.InfoLevel)
+	h := log.NewNoOpHandler(log.LevelInfo)
 	var handleInvokeCount int
 	for _, e := range testdata.GetEvents() {
 		if h.Enabled(e.Level) {
@@ -34,7 +34,7 @@ func TestDiscardHandler(t *testing.T) {
 	}
 
 	// write to closed handler must error
-	if err := h.Write(log.Event{Level: log.InfoLevel}); !errors.Is(err, log.ErrHandlerClosed) {
+	if err := h.Write(log.Event{Level: log.LevelInfo}); !errors.Is(err, log.ErrHandlerClosed) {
 		t.Errorf("write on closed handler returned unexpected error (%v)", err)
 	}
 
