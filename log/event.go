@@ -51,12 +51,13 @@ type Event struct {
 	// Caller
 	Caller Caller
 
-	Fields []Field
+	preAllocFs [fieldsBucketSize]Field
+	overflowFs []Field
 }
 
 // Returns a new Field optionally with a namespace.
-func F(key string, value any, namespace ...string) Field {
-	switch len(namespace) {
+func F(key string, value any, namespaces ...string) Field {
+	switch len(namespaces) {
 	case 0:
 		return Field{
 			Key:   key,
@@ -64,13 +65,13 @@ func F(key string, value any, namespace ...string) Field {
 		}
 	case 1:
 		return Field{
-			Namespace: namespace[0],
+			Namespace: namespaces[0],
 			Key:       key,
 			Value:     ToValue(value),
 		}
 	default:
 		return Field{
-			Namespace: strings.Join(namespace, "."),
+			Namespace: strings.Join(namespaces, "."),
 			Key:       key,
 			Value:     ToValue(value),
 		}

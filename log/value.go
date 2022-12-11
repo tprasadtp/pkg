@@ -2,9 +2,6 @@ package log
 
 import (
 	"fmt"
-	"math"
-	"strconv"
-	"time"
 )
 
 // ValueKind represents Kind of the value.
@@ -20,6 +17,8 @@ import (
 //     may not seem optimal, but most logging solutions convert
 //     all field values to json or string anyway so it does not affect much
 //     in applications.
+//
+//go:generate stringer -type=Kind -output value_string.go
 type Kind int
 
 const (
@@ -31,324 +30,38 @@ const (
 	Float64Kind
 	DurationKind
 	TimeKind
+
 	NullKind = 255
 )
 
-// Value can store any value, but for most common cases it does not allocate.
+const (
+	StringSliceKind Kind = iota + 1<<12
+)
+
+// Value can store any value, but for most common cases,
+// it does not allocate. Inspired by slog proposal.
 type Value struct {
-	store uint64
-	s     string
-	k     Kind
-	any   any
+	num uint64
+	s   string
+	k   Kind
+	val any
 }
 
+// Kind returns Kind of the Value.
 func (v Value) Kind() Kind {
 	return v.k
 }
 
 func (v Value) Int64() (int64, error) {
 	if v.Kind() == Int64Kind {
-		return int64(v.store), nil
+		return int64(v.num), nil
 	}
-	return 0, ErrInvalidKind
+	return 0, fmt.Errorf("log: Kind is %s, not Int64Kind", v.Kind().String())
 }
 
-func (v Value) String() (int64, error) {
-	if v.Kind() == Int64Kind {
-		return int64(v.store), nil
+func (v Value) Uint64() (uint64, error) {
+	if v.Kind() == Uint64Kind {
+		return v.num, nil
 	}
-	return 0, ErrInvalidKind
-}
-
-// Converts to Value
-func ToValue(v any) Value {
-	switch v := v.(type) {
-	case bool:
-		store := uint64(0)
-		if v {
-			store = 1
-		}
-		return Value{
-			store: store,
-			k:     BoolKind,
-		}
-	case *bool:
-		if v == nil {
-			return Value{k: NullKind}
-		}
-		store := uint64(0)
-		if *v {
-			store = 1
-		}
-		return Value{store: store, k: BoolKind}
-	case string:
-		return Value{
-			any: StringKind,
-		}
-	case *string:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			s:   *v,
-			any: StringKind,
-		}
-	case int:
-		return Value{
-			store: uint64(v),
-			any:   Int64Kind,
-		}
-	case *int:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Int64Kind,
-		}
-	case int8:
-		return Value{
-			store: uint64(v),
-			any:   Int64Kind,
-		}
-	case *int8:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Int64Kind,
-		}
-	case int16:
-		return Value{
-			store: uint64(v),
-			any:   Int64Kind,
-		}
-	case *int16:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Int64Kind,
-		}
-	case int32:
-		return Value{
-			store: uint64(v),
-			any:   Int64Kind,
-		}
-	case *int32:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Int64Kind,
-		}
-	case int64:
-		return Value{
-			store: uint64(v),
-			any:   Int64Kind,
-		}
-	case *int64:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Int64Kind,
-		}
-	// Unsigned integers
-	case uint:
-		return Value{
-			store: uint64(v),
-			any:   Uint64Kind,
-		}
-	case *uint:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Uint64Kind,
-		}
-	case uint8:
-		return Value{
-			store: uint64(v),
-			any:   Uint64Kind,
-		}
-	case *uint8:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Int64Kind,
-		}
-	case uint16:
-		return Value{
-			store: uint64(v),
-			any:   Uint64Kind,
-		}
-	case *uint16:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Uint64Kind,
-		}
-	case uint32:
-		return Value{
-			store: uint64(v),
-			any:   Uint64Kind,
-		}
-	case *uint32:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Uint64Kind,
-		}
-	case uint64:
-		return Value{
-			store: uint64(v),
-			any:   Uint64Kind,
-		}
-	case *uint64:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(*v),
-			any:   Int64Kind,
-		}
-	// Floats
-	case float32:
-		return Value{
-			store: math.Float64bits(float64(v)),
-			any:   Float64Kind,
-		}
-	case *float32:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: math.Float64bits(float64(*v)),
-			any:   Int64Kind,
-		}
-	case float64:
-		return Value{
-			store: math.Float64bits(float64(v)),
-			any:   Float64Kind,
-		}
-	case *float64:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: math.Float64bits(float64(*v)),
-			any:   Int64Kind,
-		}
-	// Complex
-	case complex64:
-		return Value{
-			s:   strconv.FormatComplex(complex128(v), 4, 'g', 64),
-			any: StringKind,
-		}
-	case *complex64:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			s:   strconv.FormatComplex(complex128(*v), 4, 'g', 64),
-			any: StringKind,
-		}
-	case complex128:
-		return Value{
-			s:   strconv.FormatComplex(complex128(v), 4, 'g', 128),
-			any: StringKind,
-		}
-	case *complex128:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			s:   strconv.FormatComplex(complex128(*v), 4, 'g', 128),
-			any: StringKind,
-		}
-	// Objects implementing stringer will be transformed to StringKind.
-	// Not all stringer implementations have zero garbage. Many use
-	// fmt.Sprintf under the hood, which allocates.
-	case fmt.Stringer:
-		return Value{
-			s:   v.String(),
-			any: StringKind,
-		}
-	// time.Time
-	case time.Duration:
-		return Value{
-			store: uint64(v.Nanoseconds()),
-			any:   DurationKind,
-		}
-	case *time.Duration:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(v.Nanoseconds()),
-			any:   DurationKind,
-		}
-	case time.Time:
-		return Value{
-			store: uint64(v.UnixNano()),
-		}
-	case *time.Time:
-		if v == nil {
-			return Value{
-				any: NullKind,
-			}
-		}
-		return Value{
-			store: uint64(v.UnixNano()),
-			any:   DurationKind,
-		}
-	default:
-		return Value{
-			any: v,
-		}
-	}
+	return 0, fmt.Errorf("log: Kind is %s, not Int64Kind", v.Kind().String())
 }

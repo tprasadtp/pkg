@@ -1,14 +1,17 @@
 package log
 
 import (
-	"net"
 	"time"
 )
 
 type RequestInfo struct {
 	Valid bool
 
-	RemoteAddr net.IP
+	TraceSampled bool
+	SpanID       string
+	TraceID      string
+
+	RemoteAddr string
 
 	Proto string
 
@@ -22,10 +25,5 @@ type RequestInfo struct {
 	RequestSize  uint64
 	ResponseCode uint64
 	ResponseSize int64
-
-	Latency time.Duration
-
-	SpanID       string
-	TraceID      string
-	TraceSampled bool
+	Latency      time.Duration
 }
