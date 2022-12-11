@@ -9,7 +9,10 @@ import (
 	"unsafe"
 )
 
-// Converts to Value
+const complexStringFmt byte = 'G'
+const complexPrecision = 4
+
+// Converts to Value.
 func ToValue(v any) Value {
 	switch v := v.(type) {
 	case bool:
@@ -183,7 +186,7 @@ func ToValue(v any) Value {
 		}
 	case uint64:
 		return Value{
-			num: uint64(v),
+			num: v,
 			k:   Uint64Kind,
 		}
 	case *uint64:
@@ -193,7 +196,7 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
+			num: *v,
 			k:   Int64Kind,
 		}
 	// Floats
@@ -214,7 +217,7 @@ func ToValue(v any) Value {
 		}
 	case float64:
 		return Value{
-			num: math.Float64bits(float64(v)),
+			num: math.Float64bits(v),
 			k:   Float64Kind,
 		}
 	case *float64:
@@ -224,13 +227,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: math.Float64bits(float64(*v)),
+			num: math.Float64bits(*v),
 			k:   Int64Kind,
 		}
 	// Complex
 	case complex64:
 		return Value{
-			s: strconv.FormatComplex(complex128(v), 4, 'g', 64),
+			s: strconv.FormatComplex(complex128(v), complexStringFmt, complexPrecision, 64),
 			k: StringKind,
 		}
 	case *complex64:
@@ -240,12 +243,12 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			s: strconv.FormatComplex(complex128(*v), 4, 'g', 64),
+			s: strconv.FormatComplex(complex128(*v), complexStringFmt, complexPrecision, 64),
 			k: StringKind,
 		}
 	case complex128:
 		return Value{
-			s: strconv.FormatComplex(complex128(v), 4, 'g', 128),
+			s: strconv.FormatComplex(v, complexStringFmt, complexPrecision, 128),
 			k: StringKind,
 		}
 	case *complex128:
@@ -255,7 +258,7 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			s: strconv.FormatComplex(complex128(*v), 4, 'g', 128),
+			s: strconv.FormatComplex(*v, complexStringFmt, complexPrecision, 128),
 			k: StringKind,
 		}
 	// time.Time

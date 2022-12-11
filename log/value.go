@@ -1,9 +1,5 @@
 package log
 
-import (
-	"fmt"
-)
-
 // ValueKind represents Kind of the value.
 // This similar to reflect.Kinds, but does not attempt
 // to preserve exact types.
@@ -52,16 +48,19 @@ func (v Value) Kind() Kind {
 	return v.k
 }
 
-func (v Value) Int64() (int64, error) {
-	if v.Kind() == Int64Kind {
-		return int64(v.num), nil
+// Returns a new Field. (Without any field namespace).
+func F(key string, value any) Field {
+	return Field{
+		Key:   key,
+		Value: ToValue(value),
 	}
-	return 0, fmt.Errorf("log: Kind is %s, not Int64Kind", v.Kind().String())
 }
 
-func (v Value) Uint64() (uint64, error) {
-	if v.Kind() == Uint64Kind {
-		return v.num, nil
+// Returns a new Field with a Namespace.
+func FN(key string, value any, namespace string) Field {
+	return Field{
+		Namespace: namespace,
+		Key:       key,
+		Value:     ToValue(value),
 	}
-	return 0, fmt.Errorf("log: Kind is %s, not Int64Kind", v.Kind().String())
 }

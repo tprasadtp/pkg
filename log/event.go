@@ -1,7 +1,6 @@
 package log
 
 import (
-	"strings"
 	"time"
 )
 
@@ -53,27 +52,4 @@ type Event struct {
 
 	preAllocFs [fieldsBucketSize]Field
 	overflowFs []Field
-}
-
-// Returns a new Field optionally with a namespace.
-func F(key string, value any, namespaces ...string) Field {
-	switch len(namespaces) {
-	case 0:
-		return Field{
-			Key:   key,
-			Value: ToValue(value),
-		}
-	case 1:
-		return Field{
-			Namespace: namespaces[0],
-			Key:       key,
-			Value:     ToValue(value),
-		}
-	default:
-		return Field{
-			Namespace: strings.Join(namespaces, "."),
-			Key:       key,
-			Value:     ToValue(value),
-		}
-	}
 }

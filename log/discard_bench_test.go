@@ -1,6 +1,7 @@
 package log
 
 import (
+	"math"
 	"testing"
 )
 
@@ -9,10 +10,23 @@ func BenchmarkMini(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		// l2 := logger.With(
-		// 	M("map-01", F("nested-field-01", "value-01")))
-		l2 := logger.With(F("nested-field-01", "value-01"))
+		l2 := logger.With(
+			F("testing.go.key-01", "string"),
+			F("testing.go.key-02", uint8(1)),
+			F("testing.go.key-03", int64(math.MaxInt64)),
+		)
 		l2.Info("INFO L2")
+	}
+}
+
+func Benchmark1(b *testing.B) {
+	// logger := New(NewNoOpHandler(LevelTrace))
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		F("testing.go.key-01", "string")
+		F("testing.go.key-02", uint8(1))
+		F("testing.go.key-03", int64(math.MaxInt64))
 	}
 }
 

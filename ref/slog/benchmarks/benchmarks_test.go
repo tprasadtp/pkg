@@ -139,3 +139,10 @@ func BenchmarkAttrs(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkXxx(b *testing.B) {
+	b.ReportAllocs()
+	for n := 0; n < b.N; n++ {
+		slog.Any("k", "string")
+	}
+}
