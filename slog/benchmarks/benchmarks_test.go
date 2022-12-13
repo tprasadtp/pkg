@@ -9,7 +9,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/tprasadtp/pkg/ref/slog"
+	"github.com/tprasadtp/pkg/slog"
 )
 
 // We pass Attrs (or zap.Fields) inline because it affects allocations: building

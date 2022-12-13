@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tprasadtp/pkg/ref/slog/internal/buffer"
+	"github.com/tprasadtp/pkg/slog/internal/buffer"
 	"golang.org/x/exp/slices"
 )
 

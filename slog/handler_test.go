@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tprasadtp/pkg/ref/slog/internal/buffer"
+	"github.com/tprasadtp/pkg/slog/internal/buffer"
 )
 
 func TestDefaultHandle(t *testing.T) {

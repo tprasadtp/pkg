@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/tprasadtp/pkg/ref/slog"
-	"github.com/tprasadtp/pkg/ref/slog/internal/buffer"
+	"github.com/tprasadtp/pkg/slog"
+	"github.com/tprasadtp/pkg/slog/internal/buffer"
 )
 
 // A fastTextHandler writes a Record to an io.Writer in a format similar to

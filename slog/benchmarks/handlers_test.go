@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/tprasadtp/pkg/ref/slog"
+	"github.com/tprasadtp/pkg/slog"
 	"golang.org/x/exp/slices"
 )
 

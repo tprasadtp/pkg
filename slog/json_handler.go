@@ -14,7 +14,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/tprasadtp/pkg/ref/slog/internal/buffer"
+	"github.com/tprasadtp/pkg/slog/internal/buffer"
 )
 
 // JSONHandler is a Handler that writes Records to an io.Writer as
