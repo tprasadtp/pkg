@@ -37,6 +37,9 @@ type bridge struct {
 
 // Write implements io.Writer.
 func (br *bridge) Write(b []byte) (int, error) {
+	br.mu.Lock()
+	defer br.mu.Unlock()
+
 	if br.logger == nil {
 		return len(b), nil
 	}

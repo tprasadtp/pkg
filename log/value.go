@@ -1,5 +1,7 @@
 package log
 
+import "strings"
+
 // ValueKind represents Kind of the value.
 // This similar to reflect.Kinds, but does not attempt
 // to preserve exact types.
@@ -43,19 +45,41 @@ type Value struct {
 	any any
 }
 
-// Returns a new Field. (Without any field namespace).
-func F(key string, value any) Field {
-	return Field{
-		Key:   key,
-		Value: ToValue(value),
-	}
-}
+// // Returns a new Field. (Without any field namespace).
+// func F(key string, value any) Field {
+// 	return Field{
+// 		Key:   key,
+// 		Value: ToValue(value),
+// 	}
+// }
 
-// Returns a new Field with a Namespace.
-func FN(key string, value any, namespace string) Field {
-	return Field{
-		Namespace: namespace,
-		Key:       key,
-		Value:     ToValue(value),
+// // Returns a new Field with a Namespace.
+// func FN(key string, value any, namespace string) Field {
+// 	return Field{
+// 		Namespace: namespace,
+// 		Key:       key,
+// 		Value:     ToValue(value),
+// 	}
+// }
+
+func F(key string, value any, namespaces ...string) Field {
+	switch len(namespaces) {
+	case 0:
+		return Field{
+			Key:   key,
+			Value: ToValue(value),
+		}
+	case 1:
+		return Field{
+			Namespace: namespaces[0],
+			Key:       key,
+			Value:     ToValue(value),
+		}
+	default:
+		return Field{
+			Namespace: strings.Join(namespaces, "."),
+			Key:       key,
+			Value:     ToValue(value),
+		}
 	}
 }

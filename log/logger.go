@@ -19,7 +19,7 @@ func New(handler Handler) Logger {
 	}
 }
 
-// Logger
+// Logger.
 type Logger struct {
 	handler   Handler
 	namespace string

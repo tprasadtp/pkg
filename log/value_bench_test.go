@@ -30,9 +30,9 @@ func BenchmarkF(b *testing.B) {
 		F("testing.go.key-02", uint8(1))
 		F("testing.go.key-02", math.MaxInt64)
 		F("testing.go.key-02", math.MaxFloat64)
-		FN("testing.go.key-01", &s, "A")
-		FN("testing.go.key-02", uint8(1), "A")
-		FN("testing.go.key-02", math.MaxInt64, "A")
-		FN("testing.go.key-02", math.MaxFloat64, "A")
+		F("testing.go.key-01", &s, "A")
+		F("testing.go.key-02", uint8(1), "A")
+		F("testing.go.key-02", math.MaxInt64, "A")
+		F("testing.go.key-02", math.MaxFloat64, "A")
 	}
 }

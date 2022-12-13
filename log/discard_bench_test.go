@@ -5,14 +5,22 @@ import (
 	"testing"
 )
 
+// Common Value types.
+var (
+	stringPtr = "stringPtr"
+)
+
 func BenchmarkMini(b *testing.B) {
 	logger := New(NewNoOpHandler(LevelTrace))
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		l2 := logger.With(
-			F("a", "value"),
-			F("b", "value"),
+			F("string", "value"),
+			F("stringPtr", &stringPtr, "http"),
+			F("uint", math.MaxUint/2),
+			F("uint8", math.MaxUint8),
+			F("uint16", math.MaxUint16),
 		)
 		l2.Info("INFO L2")
 	}

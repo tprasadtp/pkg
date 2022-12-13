@@ -4,8 +4,9 @@ import (
 	"time"
 )
 
-// Field is logger fields. Logger contains a slice of [Fields]
-// Optionally with a namespace.
+// Field is logger fields. Optionally with a namespace.
+// Namespace is distinct from Logger's namespace.
+// Handler MUST consider both logger's and Field's namespaces.
 type Field struct {
 	Namespace string
 	Key       string
@@ -50,6 +51,7 @@ type Event struct {
 	// Caller
 	Caller Caller
 
+	// Fields
 	preAllocFs [fieldsBucketSize]Field
-	overflowFs []Field
+	overflows  []Field
 }
