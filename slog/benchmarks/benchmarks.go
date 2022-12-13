@@ -34,7 +34,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/tprasadtp/pkg/ref/slog"
+	"github.com/tprasadtp/pkg/slog"
 )
 
 // The symbols in this file are exported so that the Zap benchmarks can use them.

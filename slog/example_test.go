@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/tprasadtp/pkg/ref/slog"
+	"github.com/tprasadtp/pkg/slog"
 )
 
 func ExampleGroup() {

@@ -7,7 +7,7 @@ package slog_test
 import (
 	"os"
 
-	"github.com/tprasadtp/pkg/ref/slog"
+	"github.com/tprasadtp/pkg/slog"
 )
 
 // A LevelHandler wraps a Handler with an Enabled method

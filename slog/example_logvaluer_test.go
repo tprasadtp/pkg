@@ -5,7 +5,7 @@
 package slog_test
 
 import (
-	"github.com/tprasadtp/pkg/ref/slog"
+	"github.com/tprasadtp/pkg/slog"
 )
 
 type Name struct {
