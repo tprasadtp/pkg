@@ -9,7 +9,7 @@ import (
 type Field struct {
 	Namespace string
 	Key       string
-	Value     any
+	Value     Value
 }
 
 // Includes caller info if available.
