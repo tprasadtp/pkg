@@ -7,24 +7,24 @@ import (
 	"runtime"
 )
 
-// Can override these at compile time
+// Can override these at compile time.
 var (
 	// version is usually the git tag. MUST be semver compatible.
 	//
 	// You can override at build time using
 	// 		-X github.com/pkg/version.version = "your-desired-version"
-	version string = "v0.0.0+undefined"
+	version = "v0.0.0+undefined"
 	// commit is git commit sha1 hash
 	//
 	// You can override at build time using
 	// 		-X github.com/pkg/version.commit = "a-commit-hash"
-	commit string = ""
+	commit = ""
 	// buildDate is build date.
 	// For reproducible builds, set this to source epoch or commit date.
 	//
 	// You can override at build time using
 	// 		-X github.com/pkg/version.buildDate = "build-date-in-format"
-	buildDate string = "1970-01-01T00:00+00:00"
+	buildDate = "1970-01-01T00:00+00:00"
 )
 
 // Info describes the build, revision and runtime information.
@@ -67,7 +67,7 @@ func Get() Info {
 	}
 }
 
-// GetShort returns just the version information
+// GetShort returns just the version information.
 func GetShort() string {
 	return version
 }

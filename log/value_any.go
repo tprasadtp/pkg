@@ -58,12 +58,6 @@ func ToValue(v any) Value {
 			k:   StringKind,
 			any: nil,
 		}
-	case []string:
-		return Value{
-			k:   StringSliceKind,
-			s:   ,
-			any: nil,
-		}
 	case int:
 		return Value{
 			num: uint64(v),

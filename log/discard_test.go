@@ -9,7 +9,7 @@ import (
 )
 
 func TestDiscardHandler(t *testing.T) {
-	h := log.NewNoOpHandler(log.LevelInfo)
+	h := log.NewDiscardHandler(log.LevelInfo)
 	var handleInvokeCount int
 	for _, e := range testdata.GetEvents() {
 		if h.Enabled(e.Level) {

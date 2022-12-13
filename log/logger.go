@@ -38,13 +38,13 @@ func (log Logger) Namespace() string {
 	return log.namespace
 }
 
-// Fields returns Logger's fields context.
-func (log Logger) Fields() []Field {
+// Err returns Logger's error context.
+func (log Logger) Err() []Field {
 	return log.fields
 }
 
-// Err returns Logger's error context.
-func (log Logger) Err() []Field {
+// Fields returns Logger's fields context.
+func (log Logger) Fields() []Field {
 	return log.fields
 }
 

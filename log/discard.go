@@ -3,29 +3,29 @@ package log
 // Compile time check for handler.
 // This will fail if discard.Handler does not
 // implement Handler interface.
-var _ Handler = &NoOpHandler{}
+var _ Handler = &DiscardHandler{}
 
 // Discard Handler.
-type NoOpHandler struct {
+type DiscardHandler struct {
 	level  Level
 	closed bool
 }
 
 // New  returns a a new discard Handler. Unlike most handler constructors,
 // this DOES NOT have a [io.Writer] as argument.
-func NewNoOpHandler(l Level) *NoOpHandler {
-	return &NoOpHandler{
+func NewDiscardHandler(l Level) *DiscardHandler {
+	return &DiscardHandler{
 		level: l,
 	}
 }
 
 // Enabled Checks if given level is enabled.
-func (h *NoOpHandler) Enabled(level Level) bool {
+func (h *DiscardHandler) Enabled(level Level) bool {
 	return level >= h.level
 }
 
 // Write the Event.
-func (h *NoOpHandler) Write(event Event) error {
+func (h *DiscardHandler) Write(event Event) error {
 	if h.closed {
 		return ErrHandlerClosed
 	}
@@ -33,7 +33,7 @@ func (h *NoOpHandler) Write(event Event) error {
 }
 
 // Flushes the handler.
-func (h *NoOpHandler) Flush() error {
+func (h *DiscardHandler) Flush() error {
 	if h.closed {
 		return ErrHandlerClosed
 	}
@@ -41,7 +41,7 @@ func (h *NoOpHandler) Flush() error {
 }
 
 // Closes the handler.
-func (h *NoOpHandler) Close() error {
+func (h *DiscardHandler) Close() error {
 	if h.closed {
 		return ErrHandlerClosed
 	}

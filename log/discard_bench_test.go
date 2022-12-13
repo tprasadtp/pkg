@@ -3,118 +3,36 @@ package log
 import (
 	"math"
 	"testing"
-)
-
-// Common Value types.
-var (
-	stringPtr = "stringPtr"
+	"time"
 )
 
 func BenchmarkMini(b *testing.B) {
-	logger := New(NewNoOpHandler(LevelTrace))
+	logger := New(NewDiscardHandler(LevelTrace))
+	t := time.Duration(1)
+	// cpx := complex(1.0, 0.5)
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		l2 := logger.With(
 			F("string", "value"),
-			F("stringPtr", &stringPtr, "http"),
 			F("uint", math.MaxUint/2),
 			F("uint8", math.MaxUint8),
 			F("uint16", math.MaxUint16),
+			F("uint32", math.MaxUint32),
+			F("uint64", math.MaxUint64/2),
+
+			F("int", math.MaxInt),
+			F("int8", math.MaxInt8),
+			F("int16", math.MaxInt16),
+			F("int32", math.MaxInt32),
+			F("int64", math.MaxInt64),
+
+			F("bool", false),
+
+			F("float32", math.MaxFloat32),
+			F("float64", math.MaxFloat64),
+			F("time.Time", t),
 		)
 		l2.Info("INFO L2")
 	}
 }
-
-func Benchmark1(b *testing.B) {
-	// logger := New(NewNoOpHandler(LevelTrace))
-	b.ReportAllocs()
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		F("testing.go.key-01", "string")
-		F("testing.go.key-02", uint8(1))
-		F("testing.go.key-03", int64(math.MaxInt64))
-	}
-}
-
-func BenchmarkDiscardDisabledLevel(b *testing.B) {
-	b.ReportAllocs()
-	logger := New(NewNoOpHandler(LevelError))
-	for n := 0; n < b.N; n++ {
-		l2 := logger.WithNamespace("namespace-01").WithErr(ErrHandlerClosed)
-		l2.With(
-			F("root-key-01", "root-value-01"),
-			F("root-key-02", "root-value-02"),
-			F("root-key-03", "root-value-03"),
-		).Info("INFO L2")
-	}
-}
-
-func BenchmarkDiscardEnabled(b *testing.B) {
-	b.ReportAllocs()
-	logger := New(NewNoOpHandler(LevelTrace))
-	for n := 0; n < b.N; n++ {
-		l2 := logger.WithNamespace("namespace-01").WithErr(ErrHandlerClosed)
-		l2.With(
-			F("root-key-01", "root-value-01"),
-			F("root-key-02", "root-value-02"),
-			F("root-key-03", "root-value-03"),
-			F("root-key-04", "root-value-04"),
-			F("root-key-05", "root-value-05"),
-			F("root-key-06", "root-value-06"),
-			F("root-key-07", "root-value-07"),
-			F("root-key-08", "root-value-08"),
-			F("root-key-09", "root-value-09"),
-			F("root-key-10", "root-value-10"),
-			F("root-key-01", "root-value-01"),
-			F("root-key-02", "root-value-02"),
-			F("root-key-03", "root-value-03"),
-			F("root-key-04", "root-value-04"),
-			F("root-key-05", "root-value-05"),
-			F("root-key-06", "root-value-06"),
-			F("root-key-07", "root-value-07"),
-			F("root-key-08", "root-value-08"),
-			F("root-key-09", "root-value-09"),
-			F("root-key-10", "root-value-10"),
-			F("root-key-01", "root-value-01"),
-			F("root-key-02", "root-value-02"),
-			F("root-key-03", "root-value-03"),
-			F("root-key-04", "root-value-04"),
-			F("root-key-05", "root-value-05"),
-		// 	F("root-key-06", "root-value-06"),
-		// 	F("root-key-07", "root-value-07"),
-		// 	F("root-key-08", "root-value-08"),
-		// 	F("root-key-09", "root-value-09"),
-		// 	F("root-key-10", "root-value-10"),
-		).Info("INFO L2")
-	}
-}
-
-// func BenchmarkDiscardEnabledF(b *testing.B) {
-// 	b.ReportAllocs()
-// 	logger := New(discard.New(TraceLevel))
-// 	for n := 0; n < b.N; n++ {
-// 		l2 := logger.WithNamespace("namespace-01").WithError(ErrHandlerClosed)
-// 		l2.With(
-// 			F("root-key-01", "root-value-01"),
-// 			F("root-key-02", "root-value-02"),
-// 			F("root-key-03", "root-value-03"),
-// 			M("map-01", F("map-01-key-01", "map-01-value-01")),
-// 			M("map-02", F("map-02-key-01", "map-02-value-01")),
-// 			M("map-03", F("map-03-key-01", "map-03-value-01")),
-// 			M("map-04",
-// 				F("map-04-key-01", "map-04-value-01"),
-// 				F("map-04-key-02", "map-04-value-02"),
-// 				F("map-04-key-03", "map-04-value-03"),
-// 				F("map-04-key-04", "map-04-value-04"),
-// 				F("map-04-key-05", "map-04-value-05"),
-// 				F("map-04-key-06", "map-04-value-06"),
-// 				F("map-04-key-07", "map-04-value-07"),
-// 				F("map-04-key-08", "map-04-value-08"),
-// 				F("map-04-key-09", "map-04-value-09"),
-// 				F("map-04-key-10", "map-04-value-10"),
-// 				F("map-04-key-11", "map-04-value-11"),
-// 				F("map-04-key-12", "map-04-value-12")),
-// 		).Logf(InfoLevel, "INFO L2 %d", 1)
-// 	}
-// }

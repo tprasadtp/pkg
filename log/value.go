@@ -45,23 +45,6 @@ type Value struct {
 	any any
 }
 
-// // Returns a new Field. (Without any field namespace).
-// func F(key string, value any) Field {
-// 	return Field{
-// 		Key:   key,
-// 		Value: ToValue(value),
-// 	}
-// }
-
-// // Returns a new Field with a Namespace.
-// func FN(key string, value any, namespace string) Field {
-// 	return Field{
-// 		Namespace: namespace,
-// 		Key:       key,
-// 		Value:     ToValue(value),
-// 	}
-// }
-
 func F(key string, value any, namespaces ...string) Field {
 	switch len(namespaces) {
 	case 0:
