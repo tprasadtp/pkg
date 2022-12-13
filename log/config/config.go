@@ -7,7 +7,7 @@ import (
 )
 
 // Options.
-type AutomaticOptions struct {
+type Options struct {
 	// Windows Eventlog name
 	WinEventLogName string
 
@@ -60,7 +60,7 @@ type AutomaticOptions struct {
 //     This will use default journald socket and is not configurable,
 //     use journald handler directly, if you need more customization options.
 //  4. On Windows, EventLog if running as a windows service (eventlog)
-//     This requires you to define WinEventLogName in your handler options
+//     This requires you to define [Options.WinEventLogName],
 //     or this handler is ignored.
 //  5. If LogFile is specified (it is not by default) with support for
 //     log rotation via plugin (jsonfile, plugins/logrotate)
@@ -69,19 +69,16 @@ type AutomaticOptions struct {
 //     containers might expose host system's journal.
 //     This has lower priority than file, because containers
 //     often mount volumes and host/cluster will handle the logs.
-//     If a TTY is attached output to stderr in pretty print format (console)
+//     If a TTY is attached output to stderr in colored pretty print format.
 //
 // BUG(tprasadtp): On Linux, if journal socket is in-accessible and systemd unit
 // attaches a tty via [StandardError=] and [TTYPath=] directives, logs may be
 // written to stderr in pretty print format, which include ANSI escape
 // codes and cause issues.
-
-// BUG(tprasadtp): On Windows, if WinEventLogName AND LogFile both are not specified,
-// and if running as a Windows service, this will fail to return any valid handler.
 //
 // [StandardError=]: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#StandardError=
 // [TTYPath=]: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#TTYPath=
-func Automatic(o AutomaticOptions) (*log.Logger, error) {
+func Automatic(o Options) (*log.Logger, error) {
 	if o.MetaLogWriter == nil {
 		o.MetaLogWriter = io.Discard
 	}
