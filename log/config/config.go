@@ -61,7 +61,7 @@ type AutomaticOptions struct {
 //     use journald handler directly, if you need more customization options.
 //  4. On Windows, EventLog if running as a windows service (eventlog)
 //     This requires you to define WinEventLogName in your handler options
-//     or this will be ignored.
+//     or this handler is ignored.
 //  5. If LogFile is specified (it is not by default) with support for
 //     log rotation via plugin (jsonfile, plugins/logrotate)
 //  6. If running in container, logs to stderr.
@@ -71,10 +71,13 @@ type AutomaticOptions struct {
 //     often mount volumes and host/cluster will handle the logs.
 //     If a TTY is attached output to stderr in pretty print format (console)
 //
-// BUG(tprasadtp): If journal socket is in-accessible and systemd unit
+// BUG(tprasadtp): On Linux, if journal socket is in-accessible and systemd unit
 // attaches a tty via [StandardError=] and [TTYPath=] directives, logs may be
 // written to stderr in pretty print format, which include ANSI escape
 // codes and cause issues.
+
+// BUG(tprasadtp): On Windows, if WinEventLogName AND LogFile both are not specified,
+// and if running as a Windows service, this will fail to return any valid handler.
 //
 // [StandardError=]: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#StandardError=
 // [TTYPath=]: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#TTYPath=
