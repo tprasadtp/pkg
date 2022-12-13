@@ -15,7 +15,7 @@ var _ log.Handler = &ConsoleHandler{}
 
 func NewConsole() *ConsoleHandler {
 	return &ConsoleHandler{
-		level: log.DebugLevel,
+		level: log.LevelTrace,
 	}
 }
 
@@ -98,24 +98,7 @@ func main() {
 		log.F("root-key-07", "root-value-07"),
 		log.F("root-key-08", "root-value-08"),
 		log.F("root-key-09", "root-value-09"),
-		log.F("root-key-10", "root-value-10"),
-		log.M("map-01", log.F("map-01-key-01", "map-01-value-01")),
-		log.M("map-02", log.F("map-02-key-01", "map-02-value-01")),
-		log.M("map-03", log.F("map-03-key-01", "map-03-value-01")),
-		log.M("map-04",
-			log.F("map-04-key-01", "map-04-value-01"),
-			log.F("map-04-key-02", "map-04-value-02"),
-			log.F("map-04-key-03", "map-04-value-03"),
-			log.F("map-04-key-04", "map-04-value-04"),
-			log.F("map-04-key-05", "map-04-value-05"),
-			log.F("map-04-key-06", "map-04-value-06"),
-			log.F("map-04-key-07", "map-04-value-07"),
-			log.F("map-04-key-08", "map-04-value-08"),
-			log.F("map-04-key-09", "map-04-value-09"),
-			log.F("map-04-key-10", "map-04-value-10"),
-			log.F("map-04-key-11", "map-04-value-11"),
-			log.F("map-04-key-12", "map-04-value-12")),
-	)
+		log.F("root-key-10", "root-value-10"))
 	l3 := l2.With(
 		log.F("must-fit-in-buf-01", 1),
 		log.F("must-fit-in-buf-02", "root-value-02"))

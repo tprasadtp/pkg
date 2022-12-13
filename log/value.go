@@ -39,13 +39,7 @@ const (
 type Value struct {
 	num uint64
 	s   string
-	k   Kind
-	val any
-}
-
-// Kind returns Kind of the Value.
-func (v Value) Kind() Kind {
-	return v.k
+	any any
 }
 
 // Returns a new Field. (Without any field namespace).
