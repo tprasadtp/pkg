@@ -58,6 +58,7 @@ cloud.google.com/go/iot v1.4.0 h1:Y9+oZT9jD4GUZzORXTU45XsnQrhxmDT+TFbPil6pRVQ=
 cloud.google.com/go/kms v1.6.0 h1:OWRZzrPmOZUzurjI2FBGtgY2mB1WaJkqhw6oIwSj0Yg=
 cloud.google.com/go/language v1.8.0 h1:3Wa+IUMamL4JH3Zd3cDZUHpwyqplTACt6UZKRD2eCL4=
 cloud.google.com/go/lifesciences v0.6.0 h1:tIqhivE2LMVYkX0BLgG7xL64oNpDaFFI7teunglt1tI=
+cloud.google.com/go/logging v1.6.1 h1:ZBsZK+JG+oCDT+vaxwqF2egKNRjz8soXiS6Xv79benI=
 cloud.google.com/go/managedidentities v1.4.0 h1:3Kdajn6X25yWQFhFCErmKSYTSvkEd3chJROny//F1A0=
 cloud.google.com/go/mediatranslation v0.6.0 h1:qAJzpxmEX+SeND10Y/4868L5wfZpo4Y3BIEnIieP4dk=
 cloud.google.com/go/memcache v1.7.0 h1:yLxUzJkZVSH2kPaHut7k+7sbIBFpvSh1LW9qjM2JDjA=

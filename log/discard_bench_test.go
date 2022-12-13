@@ -10,8 +10,12 @@ func BenchmarkMini(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		l2 := logger.With(Field{Key: "foo", Value: ToValue("a")})
-		l2.Info("INFO L2")
+		// l2 := logger.With(
+		// 	F("a", "value"),
+		// 	F("b", "value"),
+		// )
+		// l2.Info("INFO L2")
+		logger.KV("s", "v")
 	}
 }
 

@@ -105,6 +105,26 @@ func (log Logger) With(fields ...Field) Logger {
 	return log
 }
 
+func (log Logger) KV(key string, value any) Logger {
+	m := len(log.fields)
+
+	// Check if fields slice can store all the fields.
+	// if not re-allocate in fieldsBucketSize increments.
+	if m+1 > cap(log.fields) {
+		buckets := (m + 1/fieldsBucketSize) + 1
+		newSlice := make([]Field, m, fieldsBucketSize*buckets)
+		// If log.fields has elements, copy them to new slice.
+		if m > 0 {
+			copy(newSlice[:m], log.fields)
+		}
+		log.fields = newSlice
+	}
+	// log.fields's backing array has enough capacity,
+	// so append wont allocate.
+	log.fields = append(log.fields, F(key, value))
+	return log
+}
+
 // Write Log message with custom level.
 // Prefer using one of the named log levels instead.
 func (log Logger) Log(level Level, message string) {

@@ -39,6 +39,7 @@ const (
 type Value struct {
 	num uint64
 	s   string
+	k   Kind
 	any any
 }
 
