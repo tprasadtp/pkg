@@ -81,11 +81,11 @@ func BenchmarkDiscardEnabled(b *testing.B) {
 			F("root-key-03", "root-value-03"),
 			F("root-key-04", "root-value-04"),
 			F("root-key-05", "root-value-05"),
-			F("root-key-06", "root-value-06"),
-			F("root-key-07", "root-value-07"),
-			F("root-key-08", "root-value-08"),
-			F("root-key-09", "root-value-09"),
-			F("root-key-10", "root-value-10"),
+		// 	F("root-key-06", "root-value-06"),
+		// 	F("root-key-07", "root-value-07"),
+		// 	F("root-key-08", "root-value-08"),
+		// 	F("root-key-09", "root-value-09"),
+		// 	F("root-key-10", "root-value-10"),
 		).Info("INFO L2")
 	}
 }

@@ -8,7 +8,7 @@ import (
 // fieldsBucketSize represents step size when growing capacity of
 // fields slice. Capacity of Fields slice is always a integer multiple
 // of this number.
-const fieldsBucketSize = 20
+const fieldsBucketSize = 25
 
 // New creates a new Logger with the given Handler.
 // This pre allocates some storage for storing fields.
@@ -28,8 +28,7 @@ type Logger struct {
 	exit      func()
 }
 
-// Enabled checks if underlying handler is enabled
-// at the specified log level.
+// Handler exposes the underlying handler.
 func (log Logger) Handler(level Level) Handler {
 	return log.handler
 }
@@ -39,8 +38,13 @@ func (log Logger) Namespace() string {
 	return log.namespace
 }
 
-// Fields returns Logger's current fields context.
+// Fields returns Logger's fields context.
 func (log Logger) Fields() []Field {
+	return log.fields
+}
+
+// Err returns Logger's error context.
+func (log Logger) Err() []Field {
 	return log.fields
 }
 
@@ -63,7 +67,7 @@ func (log Logger) WithNamespace(namespace string) Logger {
 }
 
 // WithExitFunc returns a new Logger with specified exit function.
-// By default logger uses [os.Exit](1).
+// By default logger uses [os.Exit](1) if exit function is not specified or nil.
 func (log Logger) WithExitFunc(fn func()) Logger {
 	log.exit = fn
 	return log
@@ -105,27 +109,7 @@ func (log Logger) With(fields ...Field) Logger {
 	return log
 }
 
-func (log Logger) KV(key string, value any) Logger {
-	m := len(log.fields)
-
-	// Check if fields slice can store all the fields.
-	// if not re-allocate in fieldsBucketSize increments.
-	if m+1 > cap(log.fields) {
-		buckets := (m + 1/fieldsBucketSize) + 1
-		newSlice := make([]Field, m, fieldsBucketSize*buckets)
-		// If log.fields has elements, copy them to new slice.
-		if m > 0 {
-			copy(newSlice[:m], log.fields)
-		}
-		log.fields = newSlice
-	}
-	// log.fields's backing array has enough capacity,
-	// so append wont allocate.
-	log.fields = append(log.fields, F(key, value))
-	return log
-}
-
-// Write Log message with custom level.
+// Write a log message with custom level.
 // Prefer using one of the named log levels instead.
 func (log Logger) Log(level Level, message string) {
 	log.write(level, message, 1)

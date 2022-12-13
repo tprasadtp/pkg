@@ -1,6 +1,7 @@
 package log
 
-// Ensures all custom errors implement the error interface.
+// Compiler check which ensures all custom errors
+// implement the error interface.
 var (
 	_ error = handlerError("")
 	_ error = loggerError("")
@@ -9,7 +10,7 @@ var (
 const (
 	// Error returned when logger is invalid.
 	ErrLoggerInvalid = loggerError("log: logger is invalid or nil")
-	// LoggerInvalidKind
+	// LoggerInvalidKind when fields  invalid kind.
 	ErrInvalidKind = loggerError("log: kind mismatch")
 	// Error returned when write or flush methods fail.
 	ErrHandlerWrite = handlerError("log: handler write failed")
@@ -33,13 +34,3 @@ type loggerError string
 func (l loggerError) Error() string {
 	return string(l)
 }
-
-// var (
-// 	// Error returned when logger is invalid.
-// 	ErrLoggerInvalid = errors.New("logger is invalid or nil")
-// 	// Error returned when write or flush methods fail.
-// 	ErrHandlerWrite = errors.New("handler write failed")
-// 	// Error returned when writing, flushing or closing an
-// 	// already closed handler.
-// 	ErrHandlerClosed = errors.New("handler is closed")
-// )

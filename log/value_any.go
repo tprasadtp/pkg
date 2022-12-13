@@ -11,7 +11,7 @@ const complexPrecision = 4
 
 // Converts to Value.
 //
-//nolint:funlen,gocognit,gocyclo,cyclop // Avoiding these leads to function sprawl.
+//nolint:funlen,gocognit,gocyclo,cyclop // Avoiding this leads to function sprawl.
 func ToValue(v any) Value {
 	switch v := v.(type) {
 	case bool:
@@ -56,6 +56,12 @@ func ToValue(v any) Value {
 		return Value{
 			s:   *v,
 			k:   StringKind,
+			any: nil,
+		}
+	case []string:
+		return Value{
+			k:   StringSliceKind,
+			s:   ,
 			any: nil,
 		}
 	case int:
@@ -242,6 +248,7 @@ func ToValue(v any) Value {
 		}
 	// Complex
 	case complex64:
+		//nolint:gomnd // Linter, you are useless here.
 		return Value{
 			s: strconv.FormatComplex(
 				complex128(v), complexStringFmt,
