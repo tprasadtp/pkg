@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"math"
 	"strconv"
 	"time"
@@ -318,6 +319,11 @@ func ToValue(v any) Value {
 			num: uint64(v.UnixNano()),
 			s:   v.Location().String(),
 			k:   TimeKind,
+		}
+	case fmt.Stringer:
+		return Value{
+			s: v.String(),
+			k: StringKind,
 		}
 	default:
 		return Value{

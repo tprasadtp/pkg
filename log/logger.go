@@ -112,58 +112,58 @@ func (log Logger) With(fields ...Field) Logger {
 // Write a log message with custom level.
 // Prefer using one of the named log levels instead.
 func (log Logger) Log(level Level, message string) {
-	log.write(level, message, 1)
+	log.write(level, message)
 }
 
 // Log at TraceLevel.
 func (log Logger) Trace(message string) {
-	log.write(LevelTrace, message, 1)
+	log.write(LevelTrace, message)
 }
 
 // Log at DebugLevel.
 func (log Logger) Debug(message string) {
-	log.write(LevelDebug, message, 1)
+	log.write(LevelDebug, message)
 }
 
 // Log at VerboseLevel.
 func (log Logger) Verbose(message string) {
-	log.write(LevelVerbose, message, 1)
+	log.write(LevelVerbose, message)
 }
 
 // Log at InfoLevel.
 func (log Logger) Info(message string) {
-	log.write(LevelInfo, message, 1)
+	log.write(LevelInfo, message)
 }
 
 // Log at SuccessLevel.
 func (log Logger) Success(message string) {
-	log.write(LevelSuccess, message, 1)
+	log.write(LevelSuccess, message)
 }
 
 // Log at NoticeLevel.
 func (log Logger) Notice(message string) {
-	log.write(LevelNotice, message, 1)
+	log.write(LevelNotice, message)
 }
 
 // Log at WarningLevel.
 func (log Logger) Warning(message string) {
-	log.write(LevelWarning, message, 1)
+	log.write(LevelWarning, message)
 }
 
 // Log at ErrorLevel.
 func (log Logger) Error(message string) {
-	log.write(LevelError, message, 1)
+	log.write(LevelError, message)
 }
 
 // Log at CriticalLevel AND flush the handler.
 func (log Logger) Critical(message string) {
-	log.write(LevelCritical, message, 1)
+	log.write(LevelCritical, message)
 	log.handler.Flush()
 }
 
 // Log at FatalLevel flush and close the handler.
 func (log Logger) Fatal(message string) {
-	log.write(LevelFatal, message, 1)
+	log.write(LevelFatal, message)
 	log.handler.Close()
 	if log.exit == nil {
 		os.Exit(1)
