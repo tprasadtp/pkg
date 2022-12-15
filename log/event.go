@@ -14,7 +14,7 @@ type Field struct {
 }
 
 // Includes caller info if available.
-type Caller struct {
+type CallerInfo struct {
 	// Defined represents whether caller entry is defined.
 	Defined bool
 	// Line number of the caller
@@ -49,9 +49,12 @@ type Event struct {
 	Error error
 
 	// Caller
-	Caller Caller
+	Caller CallerInfo
 
 	// Fields
-	preAllocFs [fieldsBucketSize]Field
-	overflows  []Field
+	preAllocFa  [fieldsBucketSize]Field
+	overflowsFs []Field
+}
+
+func (e *Event) Fields(f func()) {
 }

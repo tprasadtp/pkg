@@ -6,17 +6,53 @@ import (
 	"time"
 )
 
-var framesPool = sync.Pool{
+// Pooled callers for alloc optimization.
+var callerPool = sync.Pool{
 	New: func() any {
+		println("CREATE - CALLERS_POOL")
 		return &caller{
-			pcs: make([]uintptr, 20),
+			pcs:    nil,
+			frames: nil,
 		}
 	},
 }
 
+// caller holds runtime.Frames and slice of program counters
+// to determine caller of the log function. This is pooled,
+// to reduce allocations, as [runtime.Callers] returns a pointer.
 type caller struct {
-	frames *runtime.Frames
-	pcs    []uintptr
+	pcs     []uintptr // program counters, always a sub-slice of storage.
+	storage [10]uintptr
+	frames  *runtime.Frames
+}
+
+// Reset resets pointer to be eligible for pool.
+// Allocation is still is in the heap.
+func (c *caller) Reset() {
+	c.frames = nil
+	c.pcs = nil
+}
+
+func getCallerInfo(depth int) CallerInfo {
+	//nolint:errcheck // This linter is useless here.
+	caller := callerPool.Get().(*caller)
+	caller.pcs = caller.storage[:1]
+	defer func() {
+		caller.Reset()
+		callerPool.Put(caller)
+		println("PUT - CALLERS_POOL")
+	}()
+	//nolint:gomnd // Skips runtime.Callers, and this function.
+	runtime.Callers(depth+2, caller.pcs)
+	caller.frames = runtime.CallersFrames(caller.pcs)
+	frame, _ := caller.frames.Next()
+
+	return CallerInfo{
+		Defined: true,
+		Line:    uint(frame.Line),
+		Func:    frame.Function,
+		File:    frame.File,
+	}
 }
 
 // write is an internal wrapper which writes event to log.Handler.
@@ -40,17 +76,6 @@ func (log Logger) write(level Level, message string) error {
 		Message: message,
 		Error:   log.err,
 		Time:    time.Now(),
-	}
-
-	// Caller Tracing
-	var pcs [1]uintptr
-	const depth = 3
-	runtime.Callers(depth, pcs[:])
-	frames, _ := runtime.CallersFrames(pcs[:]).Next()
-	event.Caller = Caller{
-		Line: uint(frames.Line),
-		File: frames.File,
-		Func: frames.Function,
 	}
 
 	return log.handler.Write(event)
