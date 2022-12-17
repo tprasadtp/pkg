@@ -4,11 +4,11 @@ import (
 	"testing"
 )
 
-func TestCaller(t *testing.T) {
+func TestAllocsCaller(t *testing.T) {
 	a := testing.AllocsPerRun(10, func() {
 		getCallerInfo(1)
 	})
-	if a != 0 {
-		t.Errorf("Allocs =%f, Expected=0", a)
+	if a != float64(1) {
+		t.Errorf("Allocs =%f, Expected=1", a)
 	}
 }

@@ -199,7 +199,6 @@ linters:
     - wastedassign # finds wasted assignment statements
     - whitespace # detects leading and trailing whitespace
     - gci # controls golang package import order and makes it always deterministic
-    - ireturn # accept interfaces, return concrete types
     - decorder # checks declaration order and count of types, constants, variables and functions
     - prealloc #  finds slice declarations that could potentially be preallocated
     - interfacebloat # checks the number of methods inside an interface
@@ -211,6 +210,7 @@ linters:
     #- varnamelen # checks that the length of a variable's name matches its scope
 
     ## disabled
+    #- ireturn # accept interfaces, return concrete types
     #- exhaustruct # [mostly useless] checks if all structure fields are initialized
     #- gochecknoglobals # [useless, unless you are a beginner] checks that no global variables exist
     #- wrapcheck # [mostly useless] checks that errors returned from external packages are wrapped

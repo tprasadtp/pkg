@@ -11,6 +11,9 @@ type Options struct {
 	// Windows Eventlog name
 	WinEventLogName string
 
+	// Bridge invokes log.Bridge on the logger before returning it.
+	Bridge bool
+
 	// Log file
 	FileName string
 
@@ -71,7 +74,7 @@ type Options struct {
 //     often mount volumes and host/cluster will handle the logs.
 //     If a TTY is attached output to stderr in colored pretty print format.
 //
-// BUG(tprasadtp): On Linux, if journal socket is in-accessible and systemd unit
+// BUG(tprasadtp): On Linux, if journald socket is in-accessible and systemd unit
 // attaches a tty via [StandardError=] and [TTYPath=] directives, logs may be
 // written to stderr in pretty print format, which include ANSI escape
 // codes and cause issues.

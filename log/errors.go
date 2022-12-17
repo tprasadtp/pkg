@@ -1,6 +1,6 @@
 package log
 
-// Compiler check which ensures all custom errors
+// Compiler checks which ensure all custom errors
 // implement the error interface.
 var (
 	_ error = handlerError("")

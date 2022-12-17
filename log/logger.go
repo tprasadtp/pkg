@@ -25,7 +25,7 @@ type Logger struct {
 	namespace string
 	err       error
 	fields    []Field
-	exit      func()
+	caller    bool
 }
 
 // Handler exposes the underlying handler.
@@ -48,6 +48,26 @@ func (log Logger) Fields() []Field {
 	return log.fields
 }
 
+// Caller returns whether of not caller tracing is enabled.
+func (log Logger) Caller() bool {
+	return log.caller
+}
+
+// WithCaller enables tracing caller info like,
+// file name and line number. This costs 1 allocation
+// (when logger is enabled) due to [runtime.Frames] implementation,
+// which this depends on.
+func (log Logger) WithCaller() Logger {
+	log.caller = true
+	return log
+}
+
+// WithCaller disables tracing caller info (this is the default).
+func (log Logger) WithoutCaller() Logger {
+	log.caller = false
+	return log
+}
+
 // WithNamespace returns a new Logger with given name segment
 // appended to its original Namespace. Segments are joined by periods.
 // This is useful if you want to pass the logger to a library, especially
@@ -63,13 +83,6 @@ func (log Logger) WithNamespace(namespace string) Logger {
 			log.namespace = strings.Join([]string{log.namespace, namespace}, ".")
 		}
 	}
-	return log
-}
-
-// WithExitFunc returns a new Logger with specified exit function.
-// By default logger uses [os.Exit](1) if exit function is not specified or nil.
-func (log Logger) WithExitFunc(fn func()) Logger {
-	log.exit = fn
 	return log
 }
 
@@ -161,13 +174,10 @@ func (log Logger) Critical(message string) {
 	log.handler.Flush()
 }
 
-// Log at FatalLevel flush and close the handler.
+// Log at FatalLevel and exit.
 func (log Logger) Fatal(message string) {
 	log.write(LevelFatal, message)
+	log.handler.Flush()
 	log.handler.Close()
-	if log.exit == nil {
-		os.Exit(1)
-	} else {
-		log.exit()
-	}
+	os.Exit(1)
 }

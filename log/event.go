@@ -51,10 +51,10 @@ type Event struct {
 	// Caller
 	Caller CallerInfo
 
-	// Fields
-	preAllocFa  [fieldsBucketSize]Field
-	overflowsFs []Field
-}
-
-func (e *Event) Fields(f func()) {
+	// Fields is preallocated fields.
+	// This typically enough for all the field attributes
+	// This is an allocation optimization.
+	Fields [fieldsBucketSize]Field
+	// FieldsOverflow is same as Fields, but unlike Fields is not of fixed length.
+	FieldsOverflow []Field
 }

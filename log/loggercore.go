@@ -9,10 +9,8 @@ import (
 // Pooled callers for alloc optimization.
 var callerPool = sync.Pool{
 	New: func() any {
-		println("CREATE - CALLERS_POOL")
 		return &caller{
-			pcs:    nil,
-			frames: nil,
+			pcs: nil,
 		}
 	},
 }
@@ -29,7 +27,6 @@ type caller struct {
 // Reset resets pointer to be eligible for pool.
 // Allocation is still is in the heap.
 func (c *caller) Reset() {
-	c.frames = nil
 	c.pcs = nil
 }
 
@@ -40,7 +37,6 @@ func getCallerInfo(depth int) CallerInfo {
 	defer func() {
 		caller.Reset()
 		callerPool.Put(caller)
-		println("PUT - CALLERS_POOL")
 	}()
 	//nolint:gomnd // Skips runtime.Callers, and this function.
 	runtime.Callers(depth+2, caller.pcs)
@@ -59,7 +55,7 @@ func getCallerInfo(depth int) CallerInfo {
 // All other named levels and methods use this with some form or other.
 // this must be called directly by the method logging an event and not some
 // wrapper as caller info might be wrong if done so.
-func (log Logger) write(level Level, message string) error {
+func (log Logger) write(level Level, message string) {
 	// logger handler must not be nil.
 	if log.handler == nil {
 		panic(ErrLoggerInvalid)
@@ -67,7 +63,7 @@ func (log Logger) write(level Level, message string) error {
 
 	// return if handler is not enabled
 	if !log.handler.Enabled(level) {
-		return nil
+		return
 	}
 
 	// build log Event
@@ -78,5 +74,11 @@ func (log Logger) write(level Level, message string) error {
 		Time:    time.Now(),
 	}
 
-	return log.handler.Write(event)
+	if log.caller {
+		event.Caller = getCallerInfo(1)
+	}
+
+	if err := log.handler.Write(event); err != nil {
+		panic(err)
+	}
 }
