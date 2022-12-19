@@ -1,15 +1,16 @@
-package log_test
+package mock_test
 
 import (
 	"errors"
 	"testing"
 
 	"github.com/tprasadtp/pkg/log"
+	"github.com/tprasadtp/pkg/log/handlers/internal/mock"
 	"github.com/tprasadtp/pkg/log/internal/testdata"
 )
 
 func TestMockHandlerEnabled(t *testing.T) {
-	h := log.MockHandler{
+	h := mock.Handler{
 		Level: log.LevelInfo,
 	}
 
@@ -73,7 +74,7 @@ func TestMockHandlerEnabled(t *testing.T) {
 
 func TestMockHandler(t *testing.T) {
 	t.Run("InfoLevel", func(t *testing.T) {
-		h := log.MockHandler{
+		h := mock.Handler{
 			Level: log.LevelInfo,
 		}
 		// Write to handler
@@ -146,7 +147,7 @@ func TestMockHandler(t *testing.T) {
 }
 
 func TestMockHandlerHandleAlwaysErr(t *testing.T) {
-	h := log.MockHandler{
+	h := mock.Handler{
 		Level:     log.LevelInfo,
 		AlwaysErr: true,
 	}

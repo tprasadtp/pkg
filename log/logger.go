@@ -28,7 +28,7 @@ type Logger struct {
 	caller    bool
 }
 
-// Handler exposes the underlying handler.
+// Handler exposes logger's underlying handler.
 func (log Logger) Handler(level Level) Handler {
 	return log.handler
 }
@@ -39,8 +39,8 @@ func (log Logger) Namespace() string {
 }
 
 // Err returns Logger's error context.
-func (log Logger) Err() []Field {
-	return log.fields
+func (log Logger) Err() error {
+	return log.err
 }
 
 // Fields returns Logger's fields context.
@@ -62,7 +62,9 @@ func (log Logger) WithCaller() Logger {
 	return log
 }
 
-// WithCaller disables tracing caller info (this is the default).
+// WithoutCaller disables tracing caller info. (default).
+// This is typically used to disable caller tracing,
+// which can be bit expensive and costs an allocation.
 func (log Logger) WithoutCaller() Logger {
 	log.caller = false
 	return log

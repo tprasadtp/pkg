@@ -1,8 +1,8 @@
 package log
 
 // Level represents log level.
-// Zero value of Level represents InfoLevel, which
-// is what most people would expect.
+// Zero value of Level represents LevelInfo,
+// which is what most people would expect.
 type Level int
 
 // Named Log Levels. Level Constants do not really matter,
@@ -53,7 +53,7 @@ const (
 	// LevelFatal is for errors which lead to application crashes and application
 	// cannot recover from this type of error. If event is logged at this level,
 	// Logger will flush and close the Handler to avoid losing logs.
-	// However, this is not guaranteed.  Logger.Fatal() will invoke defined exit function.
+	// However, this is not guaranteed. Logger.Fatal() will invoke defined exit function.
 	// (defaults to [os.Exit](1)).
 	LevelFatal Level = 90
 )

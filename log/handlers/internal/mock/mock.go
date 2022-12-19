@@ -1,15 +1,19 @@
-package log
+package mock
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/tprasadtp/pkg/log"
+)
 
 // Compile time check for handler.
-// This will fail if MockHandler does not implement Handler interface.
-var _ Handler = &MockHandler{}
+// This will fail if MockHandler does not implement log.Handler interface.
+var _ log.Handler = &Handler{}
 
 // MockHandler is a mock handler which is used for tests.
 // This holds some counters for tracking state to be used in tests.
 // This handler lacks sync semantics aka this is not concurrent safe.
-type MockHandler struct {
+type Handler struct {
 	// Number of times handler call invoked Write
 	// This is incremented even when methods return an error.
 	WriteCalls uint
@@ -18,27 +22,27 @@ type MockHandler struct {
 	// Always return an error on Flush and Write methods.
 	AlwaysErr bool
 	// Handler Level
-	Level Level
+	Level log.Level
 	// Closed
 	closed bool
 }
 
 // Enabled can be replaced with a custom function.
 // If EnabledFunc is set to nil, this will return true.
-func (m *MockHandler) Enabled(level Level) bool {
+func (m *Handler) Enabled(level log.Level) bool {
 	return level >= m.Level
 }
 
 // Handle simply saves the event in to Events slice.
 // If AlwaysErr is true, then event is not saved it internal slice,
 // and method returns an error.
-func (m *MockHandler) Write(event Event) error {
+func (m *Handler) Write(event log.Event) error {
 	m.WriteCalls++
 	if m.closed {
-		return ErrHandlerClosed
+		return log.ErrHandlerClosed
 	}
 	if m.AlwaysErr {
-		return ErrHandlerWrite
+		return log.ErrHandlerWrite
 	}
 	m.EventsWritten++
 	return nil
@@ -47,12 +51,12 @@ func (m *MockHandler) Write(event Event) error {
 // Flush clears its internal Events slice.
 // If AlwaysErr is true, then Events is not cleared
 // and method returns an error.
-func (m *MockHandler) Flush() error {
+func (m *Handler) Flush() error {
 	if m.closed {
-		return ErrHandlerClosed
+		return log.ErrHandlerClosed
 	}
 	if m.AlwaysErr {
-		return ErrHandlerWrite
+		return log.ErrHandlerWrite
 	}
 	m.EventsWritten = 0
 	return nil
@@ -60,9 +64,9 @@ func (m *MockHandler) Flush() error {
 
 // Close clears its internal Events slice.
 // and closes writing to this handler.
-func (m *MockHandler) Close() error {
+func (m *Handler) Close() error {
 	if m.closed {
-		return fmt.Errorf("mock handler error: %w", ErrHandlerClosed)
+		return fmt.Errorf("mock handler error: %w", log.ErrHandlerClosed)
 	}
 	m.closed = true
 	m.EventsWritten = 0

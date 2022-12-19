@@ -20,7 +20,7 @@ var callerPool = sync.Pool{
 // to reduce allocations, as [runtime.Callers] returns a pointer.
 type caller struct {
 	pcs     []uintptr // program counters, always a sub-slice of storage.
-	storage [10]uintptr
+	storage [1]uintptr
 	frames  *runtime.Frames
 }
 
@@ -28,8 +28,10 @@ type caller struct {
 // Allocation is still is in the heap.
 func (c *caller) Reset() {
 	c.pcs = nil
+	c.frames = nil
 }
 
+// Get caller info. This costs an allocation.
 func getCallerInfo(depth int) CallerInfo {
 	//nolint:errcheck // This linter is useless here.
 	caller := callerPool.Get().(*caller)
@@ -51,9 +53,9 @@ func getCallerInfo(depth int) CallerInfo {
 	}
 }
 
-// write is an internal wrapper which writes event to log.Handler.
+// write is an internal method which writes event to log.Handler.
 // All other named levels and methods use this with some form or other.
-// this must be called directly by the method logging an event and not some
+// This must be called directly by the method logging an event and not some
 // wrapper as caller info might be wrong if done so.
 func (log Logger) write(level Level, message string) {
 	// logger handler must not be nil.
@@ -66,7 +68,7 @@ func (log Logger) write(level Level, message string) {
 		return
 	}
 
-	// build log Event
+	// Build log Event
 	event := Event{
 		Level:   level,
 		Message: message,

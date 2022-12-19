@@ -1,22 +1,22 @@
 package log
 
-// Compile time check for handler.
-// This will fail if discard.Handler does not
-// implement Handler interface.
+import "sync"
+
+// Compile time check for DiscardHandler.
 var _ Handler = &DiscardHandler{}
 
-// Discard Handler.
-type DiscardHandler struct {
-	level  Level
-	closed bool
-}
-
-// New  returns a a new discard Handler. Unlike most handler constructors,
-// this DOES NOT have a [io.Writer] as argument.
+// NewDiscardHandler returns a a new discard Handler.
 func NewDiscardHandler(l Level) *DiscardHandler {
 	return &DiscardHandler{
 		level: l,
 	}
+}
+
+// Discard Handler discards all events written to it.
+type DiscardHandler struct {
+	mu     sync.Mutex
+	level  Level
+	closed bool
 }
 
 // Enabled Checks if given level is enabled.
@@ -26,6 +26,8 @@ func (h *DiscardHandler) Enabled(level Level) bool {
 
 // Write the Event.
 func (h *DiscardHandler) Write(event Event) error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	if h.closed {
 		return ErrHandlerClosed
 	}
@@ -34,6 +36,8 @@ func (h *DiscardHandler) Write(event Event) error {
 
 // Flushes the handler.
 func (h *DiscardHandler) Flush() error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	if h.closed {
 		return ErrHandlerClosed
 	}
@@ -42,6 +46,8 @@ func (h *DiscardHandler) Flush() error {
 
 // Closes the handler.
 func (h *DiscardHandler) Close() error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	if h.closed {
 		return ErrHandlerClosed
 	}

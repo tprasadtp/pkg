@@ -5,16 +5,17 @@ import (
 	"testing"
 
 	"github.com/tprasadtp/pkg/log"
+	"github.com/tprasadtp/pkg/log/handlers/internal/mock"
 	"github.com/tprasadtp/pkg/log/handlers/multi"
 	"github.com/tprasadtp/pkg/log/internal/testdata"
 )
 
 func TestHandler(t *testing.T) {
-	h1 := log.MockHandler{
+	h1 := mock.Handler{
 		Level: log.LevelInfo,
 	}
 
-	h2 := log.MockHandler{
+	h2 := mock.Handler{
 		Level: log.LevelError,
 	}
 
@@ -56,11 +57,11 @@ func TestHandler(t *testing.T) {
 }
 
 func TestHandlerClose(t *testing.T) {
-	h1 := log.MockHandler{
+	h1 := mock.Handler{
 		Level: log.LevelInfo,
 	}
 
-	h2 := log.MockHandler{
+	h2 := mock.Handler{
 		Level: log.LevelError,
 	}
 
@@ -93,11 +94,11 @@ func TestHandlerClose(t *testing.T) {
 }
 
 func TestOneAlreadyClosedHandler(t *testing.T) {
-	h1 := log.MockHandler{
+	h1 := mock.Handler{
 		Level: log.LevelInfo,
 	}
 
-	h2 := log.MockHandler{
+	h2 := mock.Handler{
 		Level: log.LevelError,
 	}
 
@@ -143,16 +144,16 @@ func TestOneAlreadyClosedHandler(t *testing.T) {
 }
 
 func TestMultiHandlerWithError(t *testing.T) {
-	h1 := log.MockHandler{
+	h1 := mock.Handler{
 		Level: log.LevelInfo,
 	}
 
-	h2 := log.MockHandler{
+	h2 := mock.Handler{
 		Level:     log.LevelError,
 		AlwaysErr: true,
 	}
 
-	h3 := log.MockHandler{
+	h3 := mock.Handler{
 		Level:     log.LevelVerbose,
 		AlwaysErr: true,
 	}

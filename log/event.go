@@ -15,7 +15,7 @@ type Field struct {
 
 // Includes caller info if available.
 type CallerInfo struct {
-	// Defined represents whether caller entry is defined.
+	// Defined represents whether caller info is defined.
 	Defined bool
 	// Line number of the caller
 	// If not available, this is 0.

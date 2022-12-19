@@ -6,7 +6,7 @@ package log
 type Handler interface {
 	// Checks if handler is enabled at the specified Level.
 	//  - This does not necessarily mean logs above this level are logged.
-	//    Handler may chose to only log a single level,
+	//    Handler may chose to only log a single level.
 	//	- Enabled is called early, before any arguments are processed,
 	//    to save effort if the log event should be discarded.
 	Enabled(l Level) bool
@@ -23,7 +23,7 @@ type Handler interface {
 	// Writes pending entries in the buffer to disk/network.
 	//  - If handler is a network handler it MUST write all pending entries to
 	//    network endpoint.
-	//  - If handler is a file handle, it MUST flush entries to disk AND call fsync.
+	//  - If handler is a buffered file handle, it MUST flush.
 	//  - Its up to the handler to implement timeouts,
 	//    However it is highly encouraged to do so.
 	//  - Panic/Panicf and method on the Logger will call this automatically.
