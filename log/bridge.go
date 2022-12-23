@@ -7,7 +7,7 @@ import (
 )
 
 // Compile time check for bridge.
-// this ensures that bridge implements io.Writer.
+// This ensures that bridge implements [io.Writer] interface.
 var _ io.Writer = &bridge{}
 
 // default bridge.
@@ -47,7 +47,7 @@ func (br *bridge) Write(b []byte) (int, error) {
 }
 
 // Bridges standard library's default logger to given
-// Logger at specified log Level.
+// Logger at specified Level.
 //   - This can only map all events from stdlib logger to a single Level.
 //   - This cannot prevent standard library logger from calling panic
 //     on Panic/Panicf/Panicln events.

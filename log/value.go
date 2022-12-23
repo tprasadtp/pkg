@@ -32,10 +32,6 @@ const (
 	NullKind = 255
 )
 
-const (
-	StringSliceKind Kind = iota + 1<<12
-)
-
 // Value can store any value, but for most common cases,
 // it does not allocate. Inspired by slog proposal.
 type Value struct {
@@ -45,6 +41,11 @@ type Value struct {
 	any any
 }
 
+// Creates a new Field optionally with specified namespace segments.
+// Namespace segments are joined by '.', Ideally namespace segments
+// should be alphanumeric and start with a letter. Namespace on field
+// is distinct from namespaces in logger. Handler MUST consider both
+// namespaces.
 func F(key string, value any, namespaces ...string) Field {
 	switch len(namespaces) {
 	case 0:

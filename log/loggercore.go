@@ -81,8 +81,10 @@ func (log Logger) write(level Level, message string) {
 	//nolint:errcheck // This linter is useless here.
 	event := eventPool.Get().(*Event)
 	defer func() {
+		// Avoid large objects from poisoning the pool.
 		// See https://golang.org/issue/23199
 		if cap(event.Fields) < maxFieldsPooledCap {
+			event.clear()
 			eventPool.Put(event)
 		}
 	}()

@@ -3,8 +3,6 @@ package log
 import (
 	"context"
 	"time"
-
-	_ "go.opentelemetry.io/otel/trace"
 )
 
 // Field is logger fields. Optionally with a namespace.
@@ -51,7 +49,7 @@ type Event struct {
 	// Error (Global)
 	Error error
 
-	// Context
+	// Context Cancelling this context has no effect.
 	Ctx context.Context
 
 	// Caller
@@ -59,4 +57,9 @@ type Event struct {
 
 	// Fields
 	Fields []Field
+}
+
+// clear event slice to be eligible for pool.
+func (e *Event) clear() {
+	e.Fields = (e.Fields)[:0]
 }
