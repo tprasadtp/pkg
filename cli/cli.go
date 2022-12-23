@@ -14,13 +14,11 @@ import (
 // 'docs' and 'completion' to generate man pages, documentation and
 // shell completion scripts. Its best to let go generate
 // generate these. You can use snippet below in you 'main.go' file.
-// Please ensure to have directories already created, sub commands
-// will not do it fo you.
 //
 //	// go:generate go run -tags dev main.go completion bash completion/<name>.bash
 //	// go:generate go run -tags dev main.go completion fish completion/<name>.fish
 //	// go:generate go run -tags dev main.go completion zsh completion/<name>.zsh
-//	// go:generate go run -tags dev main.go completion powershell completion/<name>.ps1
+//	// go:generate go run -tags dev main.go completion pwsh completion/<name>.ps1
 //	// go:generate go run -tags dev main.go docs man pages
 //	// go:generate go run -tags dev main.go docs markdown docs/content/manual
 func New(name, shortDesc, longDesc string, commands ...*cobra.Command) *cobra.Command {

@@ -10,7 +10,7 @@ var (
 const (
 	// Error returned when logger is invalid.
 	ErrLoggerInvalid = loggerError("log: logger is invalid or nil")
-	// LoggerInvalidKind when fields  invalid kind.
+	// ErrInvalidKind when fields  invalid kind.
 	ErrInvalidKind = loggerError("log: kind mismatch")
 	// Error returned when write or flush methods fail.
 	ErrHandlerWrite = handlerError("log: handler write failed")

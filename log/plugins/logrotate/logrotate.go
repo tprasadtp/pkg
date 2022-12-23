@@ -1,6 +1,7 @@
 package logrotate
 
 import (
+	"io"
 	"os"
 	"sync"
 )
@@ -9,7 +10,7 @@ import (
 // implements Write Closer.
 // This will fail if multi.Handler does not
 // implement log.Handler interface.
-// var _ io.WriteCloser = &File{}
+var _ io.WriteCloser = &File{}
 
 type File struct {
 	// Filename is the file to write logs to.
@@ -30,16 +31,32 @@ type File struct {
 	// rotated. It defaults to 100 MB.
 	MaxSizeMB uint
 	// underlying file
-	osFile *os.File
-	mu     sync.Mutex
+	file *os.File
+	mu   sync.Mutex
 }
 
 // Implements io.Writer.
 func (f *File) Write(b []byte) (int, error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
-	if f.osFile != nil {
-		return f.osFile.Write(b)
+	if f.file != nil {
+		return 0, os.ErrInvalid
 	}
-	return 0, os.ErrNotExist
+	return f.file.Write(b)
+}
+
+// Implements io.Closer.
+func (f *File) Close() error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if f.file == nil {
+		return os.ErrInvalid
+	}
+	return f.file.Close()
+}
+
+func (f *File) Rotate() error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	return nil
 }
