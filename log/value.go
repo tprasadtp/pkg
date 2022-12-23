@@ -16,20 +16,19 @@ import "strings"
 //     all field values to json or string anyway so it does not affect much
 //     in applications.
 //
-//go:generate stringer -type=Kind -output value_string.go
+//go:generate stringer -type=Kind -output value_kind_string.go -trimprefix=Kind
 type Kind int
 
 const (
-	AnyKind Kind = iota
-	BoolKind
-	StringKind
-	Int64Kind
-	Uint64Kind
-	Float64Kind
-	DurationKind
-	TimeKind
-
-	NullKind = 255
+	KindAny Kind = iota
+	KindBool
+	KindString
+	KindInt64
+	KindUint64
+	KindFloat64
+	KindDuration
+	KindTime
+	KindNull = 255
 )
 
 // Value can store any value, but for most common cases,

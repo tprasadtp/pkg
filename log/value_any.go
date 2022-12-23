@@ -22,13 +22,13 @@ func ToValue(v any) Value {
 		}
 		return Value{
 			num: store,
-			k:   BoolKind,
+			k:   KindBool,
 			any: nil,
 		}
 	case *bool:
 		if v == nil {
 			return Value{
-				k:   NullKind,
+				k:   KindNull,
 				any: nil,
 			}
 		}
@@ -38,208 +38,208 @@ func ToValue(v any) Value {
 		}
 		return Value{
 			num: store,
-			k:   BoolKind,
+			k:   KindBool,
 			any: nil,
 		}
 	case string:
 		return Value{
-			k:   StringKind,
+			k:   KindString,
 			s:   v,
 			any: nil,
 		}
 	case *string:
 		if v == nil {
 			return Value{
-				k:   NullKind,
+				k:   KindNull,
 				any: nil,
 			}
 		}
 		return Value{
 			s:   *v,
-			k:   StringKind,
+			k:   KindString,
 			any: nil,
 		}
 	case int:
 		return Value{
 			num: uint64(v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	case *int:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(*v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	case int8:
 		return Value{
 			num: uint64(v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	case *int8:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(*v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	case int16:
 		return Value{
 			num: uint64(v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	case *int16:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(*v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	case int32:
 		return Value{
 			num: uint64(v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	case *int32:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(*v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	case int64:
 		return Value{
 			num: uint64(v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	case *int64:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(*v),
-			k:   Int64Kind,
+			k:   KindInt64,
 		}
 	// Unsigned integers
 	case uint:
 		return Value{
 			num: uint64(v),
-			k:   Uint64Kind,
+			k:   KindUint64,
 		}
 	case *uint:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(*v),
-			k:   Uint64Kind,
+			k:   KindUint64,
 		}
 	case uint8:
 		return Value{
 			num: uint64(v),
-			k:   Uint64Kind,
+			k:   KindUint64,
 		}
 	case *uint8:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(*v),
-			k:   Int64Kind,
+			k:   KindUint64,
 		}
 	case uint16:
 		return Value{
 			num: uint64(v),
-			k:   Uint64Kind,
+			k:   KindUint64,
 		}
 	case *uint16:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(*v),
-			k:   Uint64Kind,
+			k:   KindUint64,
 		}
 	case uint32:
 		return Value{
 			num: uint64(v),
-			k:   Uint64Kind,
+			k:   KindUint64,
 		}
 	case *uint32:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(*v),
-			k:   Uint64Kind,
+			k:   KindUint64,
 		}
 	case uint64:
 		return Value{
 			num: v,
-			k:   Uint64Kind,
+			k:   KindUint64,
 		}
 	case *uint64:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: *v,
-			k:   Int64Kind,
+			k:   KindUint64,
 		}
 	// Floats
 	case float32:
 		return Value{
 			num: math.Float64bits(float64(v)),
-			k:   Float64Kind,
+			k:   KindFloat64,
 		}
 	case *float32:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: math.Float64bits(float64(*v)),
-			k:   Int64Kind,
+			k:   KindFloat64,
 		}
 	case float64:
 		return Value{
 			num: math.Float64bits(v),
-			k:   Float64Kind,
+			k:   KindFloat64,
 		}
 	case *float64:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: math.Float64bits(*v),
-			k:   Int64Kind,
+			k:   KindFloat64,
 		}
 	// Complex
 	case complex64:
@@ -249,12 +249,12 @@ func ToValue(v any) Value {
 				complex128(v), complexStringFmt,
 				complexPrecision, 64,
 			),
-			k: StringKind,
+			k: KindString,
 		}
 	case *complex64:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		//nolint:gomnd // Linter, you are useless here.
@@ -263,7 +263,7 @@ func ToValue(v any) Value {
 				complex128(*v), complexStringFmt,
 				complexPrecision, 64,
 			),
-			k: StringKind,
+			k: KindString,
 		}
 	case complex128:
 		//nolint:gomnd // Linter, you are useless here.
@@ -272,12 +272,12 @@ func ToValue(v any) Value {
 				v, complexStringFmt,
 				complexPrecision, 128,
 			),
-			k: StringKind,
+			k: KindString,
 		}
 	case *complex128:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		//nolint:gomnd // Linter, you are useless here.
@@ -285,49 +285,49 @@ func ToValue(v any) Value {
 			s: strconv.FormatComplex(
 				*v, complexStringFmt,
 				complexPrecision, 128),
-			k: StringKind,
+			k: KindString,
 		}
 	// time.Time
 	case time.Duration:
 		return Value{
 			num: uint64(v.Nanoseconds()),
-			k:   DurationKind,
+			k:   KindDuration,
 		}
 	case *time.Duration:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(v.Nanoseconds()),
-			k:   DurationKind,
+			k:   KindDuration,
 		}
 	case time.Time:
 		return Value{
 			num: uint64(v.UnixNano()),
 			s:   v.Location().String(),
-			k:   TimeKind,
+			k:   KindTime,
 		}
 	case *time.Time:
 		if v == nil {
 			return Value{
-				k: NullKind,
+				k: KindNull,
 			}
 		}
 		return Value{
 			num: uint64(v.UnixNano()),
 			s:   v.Location().String(),
-			k:   TimeKind,
+			k:   KindTime,
 		}
 	case fmt.Stringer:
 		return Value{
 			s: v.String(),
-			k: StringKind,
+			k: KindString,
 		}
 	default:
 		return Value{
-			k:   AnyKind,
+			k:   KindAny,
 			any: v,
 		}
 	}

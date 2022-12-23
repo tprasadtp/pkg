@@ -49,7 +49,7 @@ type Event struct {
 	// Error (Global)
 	Error error
 
-	// Context Cancelling this context has no effect.
+	// Context Cancelling this context has no effect on the logging operations.
 	Ctx context.Context
 
 	// Caller

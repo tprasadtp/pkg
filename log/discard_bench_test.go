@@ -10,6 +10,7 @@ import (
 func BenchmarkMini(b *testing.B) {
 	logger := New(NewDiscardHandler(LevelTrace))
 	t := time.Duration(1)
+	// stringSlice := []string{"a", "b"}
 	// cpx := complex(1.0, 0.5)
 	b.ReportAllocs()
 	b.ResetTimer()

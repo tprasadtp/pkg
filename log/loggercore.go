@@ -6,9 +6,6 @@ import (
 	"time"
 )
 
-// Sets maximum pooled fields capacity.
-const eventsPoolFieldsCap = 1 << 16 // 64KiB
-
 // Pooled events for alloc optimization.
 var eventPool = sync.Pool{
 	New: func() any {
@@ -20,10 +17,10 @@ var eventPool = sync.Pool{
 
 // Get caller info.
 func getCallerInfo(depth int) CallerInfo {
-	pcs := [1]uintptr{}
+	pcs := make([]uintptr, 1)
 	//nolint:gomnd // Skips runtime.Callers, and this function.
-	runtime.Callers(depth+2, pcs[:])
-	frames := runtime.CallersFrames(pcs[:])
+	runtime.Callers(depth+2, pcs)
+	frames := runtime.CallersFrames(pcs)
 	frame, _ := frames.Next()
 
 	return CallerInfo{
@@ -54,7 +51,8 @@ func (log Logger) write(level Level, message string) {
 	defer func() {
 		// Avoid large objects from poisoning the pool.
 		// See https://golang.org/issue/23199
-		if cap(event.Fields) < eventsPoolFieldsCap {
+		const maxCap = 1 << 16
+		if cap(event.Fields) < maxCap {
 			event.Fields = event.Fields[:0]
 			eventPool.Put(event)
 		}

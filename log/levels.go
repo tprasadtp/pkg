@@ -3,6 +3,8 @@ package log
 // Level represents log level.
 // Zero value of Level represents LevelInfo,
 // which is what most people would expect.
+//
+//go:generate stringer -type=Level -output level_string.go -trimprefix=Level
 type Level int
 
 // Named Log Levels. Level Constants do not really matter,
