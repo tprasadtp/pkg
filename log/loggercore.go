@@ -3,18 +3,11 @@ package log
 import (
 	"runtime"
 	"sync"
+	"time"
 )
 
-// Pooled callers for alloc optimization.
-var callerPool = sync.Pool{
-	New: func() any {
-		return &caller{
-			pcs: nil,
-		}
-	},
-}
-
-const maxFieldsPooledCap = 1 << 16 // 64KiB
+// Sets maximum pooled fields capacity.
+const eventsPoolFieldsCap = 1 << 16 // 64KiB
 
 // Pooled events for alloc optimization.
 var eventPool = sync.Pool{
@@ -25,35 +18,13 @@ var eventPool = sync.Pool{
 	},
 }
 
-// caller holds runtime.Frames and slice of program counters
-// to determine caller of the log function. This is pooled,
-// to reduce allocations, as [runtime.Callers] returns a pointer.
-type caller struct {
-	pcs     []uintptr // program counters, always a sub-slice of storage.
-	storage [1]uintptr
-	frames  *runtime.Frames
-}
-
-// Reset resets pointer to be eligible for pool.
-// Allocation is still is in the heap.
-func (c *caller) Reset() {
-	c.pcs = nil
-	c.frames = nil
-}
-
-// Get caller info. This costs an allocation.
+// Get caller info.
 func getCallerInfo(depth int) CallerInfo {
-	//nolint:errcheck // This linter is useless here.
-	caller := callerPool.Get().(*caller)
-	caller.pcs = caller.storage[:1]
-	defer func() {
-		caller.Reset()
-		callerPool.Put(caller)
-	}()
+	pcs := [1]uintptr{}
 	//nolint:gomnd // Skips runtime.Callers, and this function.
-	runtime.Callers(depth+2, caller.pcs)
-	caller.frames = runtime.CallersFrames(caller.pcs)
-	frame, _ := caller.frames.Next()
+	runtime.Callers(depth+2, pcs[:])
+	frames := runtime.CallersFrames(pcs[:])
+	frame, _ := frames.Next()
 
 	return CallerInfo{
 		Defined: true,
@@ -83,11 +54,28 @@ func (log Logger) write(level Level, message string) {
 	defer func() {
 		// Avoid large objects from poisoning the pool.
 		// See https://golang.org/issue/23199
-		if cap(event.Fields) < maxFieldsPooledCap {
-			event.clear()
+		if cap(event.Fields) < eventsPoolFieldsCap {
+			event.Fields = event.Fields[:0]
 			eventPool.Put(event)
 		}
 	}()
+
+	// Build an event
+	event.Namespace = log.namespace
+	event.Ctx = log.ctx
+	event.Error = log.err
+	// Check if pool backed slice has enough capacity if not reallocate
+	// in fieldsBucketSize increments.
+	n := len(log.fields)
+	if n > cap(event.Fields) {
+		buckets := (n / fieldsBucketSize) + 1
+		event.Fields = make([]Field, fieldsBucketSize*buckets)
+	}
+	copy(event.Fields, log.fields)
+
+	event.Time = time.Now()
+	event.Level = level
+	event.Message = message
 
 	if log.caller {
 		event.Caller = getCallerInfo(1)

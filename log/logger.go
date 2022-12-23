@@ -61,9 +61,8 @@ func (log Logger) Ctx() context.Context {
 }
 
 // WithCaller enables tracing caller info like,
-// file name and line number. This costs 1 allocation
-// (when logger is enabled) due to [runtime.Frames] implementation,
-// which this depends on.
+// file name and line number. This costs 2 allocations (when logger is enabled)
+// due to [runtime.Frames] implementation, which this depends on.
 func (log Logger) WithCaller() Logger {
 	log.caller = true
 	return log

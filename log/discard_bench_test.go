@@ -33,7 +33,7 @@ func BenchmarkMini(b *testing.B) {
 			F("float32", math.MaxFloat32),
 			F("float64", math.MaxFloat64),
 			F("time.Time", t),
-		)
-		l2.WithCtx(context.Background()).WithErr(ErrInvalidKind).Info("INFO L2")
+		).WithCtx(context.Background()).WithErr(ErrInvalidKind)
+		l2.Info("INFO L2")
 	}
 }

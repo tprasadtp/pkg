@@ -58,8 +58,3 @@ type Event struct {
 	// Fields
 	Fields []Field
 }
-
-// clear event slice to be eligible for pool.
-func (e *Event) clear() {
-	e.Fields = (e.Fields)[:0]
-}
