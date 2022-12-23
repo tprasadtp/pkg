@@ -35,7 +35,7 @@ func (m *Handler) Enabled(level log.Level) bool {
 }
 
 // Passes the event to all the handlers and let them handle it.
-func (m *Handler) Write(event log.Event) error {
+func (m *Handler) Write(event *log.Event) error {
 	var err error
 	for _, h := range m.handlers {
 		if h.Enabled(event.Level) {

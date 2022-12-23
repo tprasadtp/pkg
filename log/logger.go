@@ -1,6 +1,7 @@
 package log
 
 import (
+	"context"
 	"os"
 	"strings"
 )
@@ -23,6 +24,7 @@ func New(handler Handler) Logger {
 type Logger struct {
 	handler   Handler
 	namespace string
+	ctx       context.Context
 	err       error
 	fields    []Field
 	caller    bool
@@ -51,6 +53,11 @@ func (log Logger) Fields() []Field {
 // Caller returns whether of not caller tracing is enabled.
 func (log Logger) Caller() bool {
 	return log.caller
+}
+
+// Fields returns Loggers embedded context.
+func (log Logger) Ctx() context.Context {
+	return log.ctx
 }
 
 // WithCaller enables tracing caller info like,
@@ -97,6 +104,16 @@ func (log Logger) WithNamespace(namespace string) Logger {
 //	logger.WithError(err).Error("package metadata database connection lost")
 func (log Logger) WithErr(err error) Logger {
 	log.err = err
+	return log
+}
+
+// WithCtx returns a new logger with specified context embedded.
+// This is useful for handlers which process the context directly
+// and enrich log entries. Cancelling this context has no effect
+// whatsoever on the log entry. Context might include
+// request scoped information and tracing data.
+func (log Logger) WithCtx(ctx context.Context) Logger {
+	log.ctx = ctx
 	return log
 }
 

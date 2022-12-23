@@ -1,6 +1,10 @@
 package log
 
-import "sync"
+import (
+	"sync"
+
+	"go.opentelemetry.io/otel/trace"
+)
 
 // Compile time check for DiscardHandler.
 var _ Handler = &DiscardHandler{}
@@ -25,9 +29,12 @@ func (h *DiscardHandler) Enabled(level Level) bool {
 }
 
 // Write the Event.
-func (h *DiscardHandler) Write(event Event) error {
+func (h *DiscardHandler) Write(event *Event) error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
+
+	_ = trace.SpanContextFromContext(event.Ctx)
+
 	if h.closed {
 		return ErrHandlerClosed
 	}

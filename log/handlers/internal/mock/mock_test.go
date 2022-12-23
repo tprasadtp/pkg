@@ -80,7 +80,7 @@ func TestMockHandler(t *testing.T) {
 		// Write to handler
 		for _, e := range testdata.GetEvents() {
 			if h.Enabled(e.Level) {
-				if err := h.Write(e); err != nil {
+				if err := h.Write(&e); err != nil {
 					t.Errorf("handler returned error(%e), event=%+v", err, e)
 				}
 			}
@@ -110,7 +110,7 @@ func TestMockHandler(t *testing.T) {
 		// Write to already closed handler
 		for _, e := range testdata.GetEvents() {
 			if h.Enabled(e.Level) {
-				if err := h.Write(e); !errors.Is(err, log.ErrHandlerClosed) {
+				if err := h.Write(&e); !errors.Is(err, log.ErrHandlerClosed) {
 					t.Errorf("handler(closed) invalid error => got=(%s), expected=(%s)",
 						err,
 						log.ErrHandlerClosed,
@@ -154,7 +154,7 @@ func TestMockHandlerHandleAlwaysErr(t *testing.T) {
 
 	for _, e := range testdata.GetEvents() {
 		if h.Enabled(e.Level) {
-			if err := h.Write(e); !errors.Is(err, log.ErrHandlerWrite) {
+			if err := h.Write(&e); !errors.Is(err, log.ErrHandlerWrite) {
 				t.Errorf("handler.Handle() AlwaysErr=true did not return %s error",
 					log.ErrHandlerWrite)
 			}

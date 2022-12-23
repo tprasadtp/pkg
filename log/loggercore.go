@@ -3,7 +3,6 @@ package log
 import (
 	"runtime"
 	"sync"
-	"time"
 )
 
 // Pooled callers for alloc optimization.
@@ -11,6 +10,17 @@ var callerPool = sync.Pool{
 	New: func() any {
 		return &caller{
 			pcs: nil,
+		}
+	},
+}
+
+const maxFieldsPooledCap = 1 << 16 // 64KiB
+
+// Pooled events for alloc optimization.
+var eventPool = sync.Pool{
+	New: func() any {
+		return &Event{
+			Fields: make([]Field, 0, fieldsBucketSize),
 		}
 	},
 }
@@ -68,13 +78,14 @@ func (log Logger) write(level Level, message string) {
 		return
 	}
 
-	// Build log Event
-	event := Event{
-		Level:   level,
-		Message: message,
-		Error:   log.err,
-		Time:    time.Now(),
-	}
+	//nolint:errcheck // This linter is useless here.
+	event := eventPool.Get().(*Event)
+	defer func() {
+		// See https://golang.org/issue/23199
+		if cap(event.Fields) < maxFieldsPooledCap {
+			eventPool.Put(event)
+		}
+	}()
 
 	if log.caller {
 		event.Caller = getCallerInfo(1)

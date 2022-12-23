@@ -23,7 +23,7 @@ func TestHandler(t *testing.T) {
 
 	for _, e := range testdata.GetEvents() {
 		if m.Enabled(e.Level) {
-			if err := m.Write(e); err != nil {
+			if err := m.Write(&e); err != nil {
 				t.Errorf("handler returned error(%e), event=%s", err, e.Message)
 			}
 		}
@@ -78,7 +78,7 @@ func TestHandlerClose(t *testing.T) {
 	}
 
 	// Write to closed handler should error
-	if err := m.Write(e); !errors.Is(err, log.ErrHandlerClosed) {
+	if err := m.Write(&e); !errors.Is(err, log.ErrHandlerClosed) {
 		t.Errorf("write on closed handler returned unexpected error (%v)", err)
 	}
 
@@ -108,7 +108,7 @@ func TestOneAlreadyClosedHandler(t *testing.T) {
 
 	for _, e := range testdata.GetEvents() {
 		if m.Enabled(e.Level) {
-			if err := m.Write(e); !errors.Is(err, log.ErrHandlerClosed) {
+			if err := m.Write(&e); !errors.Is(err, log.ErrHandlerClosed) {
 				t.Errorf("h1(closed) invalid error => got=(%s), expected=(%s)",
 					err,
 					log.ErrHandlerClosed,
@@ -162,7 +162,7 @@ func TestMultiHandlerWithError(t *testing.T) {
 
 	for _, e := range testdata.GetEvents() {
 		if m.Enabled(e.Level) {
-			if err := m.Write(e); !errors.Is(err, log.ErrHandlerWrite) {
+			if err := m.Write(&e); !errors.Is(err, log.ErrHandlerWrite) {
 				t.Errorf(
 					"handle error mismatch (@%s) => expected=%s, got=%s",
 					e.Message,

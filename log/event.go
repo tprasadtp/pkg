@@ -1,7 +1,10 @@
 package log
 
 import (
+	"context"
 	"time"
+
+	_ "go.opentelemetry.io/otel/trace"
 )
 
 // Field is logger fields. Optionally with a namespace.
@@ -48,13 +51,12 @@ type Event struct {
 	// Error (Global)
 	Error error
 
+	// Context
+	Ctx context.Context
+
 	// Caller
 	Caller CallerInfo
 
-	// Fields is preallocated fields.
-	// This typically enough for all the field attributes
-	// This is an allocation optimization.
-	Fields [fieldsBucketSize]Field
-	// FieldsOverflow is same as Fields, but unlike Fields is not of fixed length.
-	FieldsOverflow []Field
+	// Fields
+	Fields []Field
 }

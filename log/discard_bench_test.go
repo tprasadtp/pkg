@@ -1,6 +1,7 @@
 package log
 
 import (
+	"context"
 	"math"
 	"testing"
 	"time"
@@ -33,6 +34,6 @@ func BenchmarkMini(b *testing.B) {
 			F("float64", math.MaxFloat64),
 			F("time.Time", t),
 		)
-		l2.Info("INFO L2")
+		l2.WithCtx(context.Background()).WithErr(ErrInvalidKind).Info("INFO L2")
 	}
 }

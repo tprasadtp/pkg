@@ -18,7 +18,7 @@ type Handler interface {
 	//    not initialized or closed.
 	//  - It is responsibility of the implementation to be concurrent safe.
 	//  - Upon return Event is discarded.
-	Write(e Event) error
+	Write(e *Event) error
 
 	// Writes pending entries in the buffer to disk/network.
 	//  - If handler is a network handler it MUST write all pending entries to

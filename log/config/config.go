@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"io"
 
 	"github.com/tprasadtp/pkg/log"
@@ -56,7 +57,7 @@ type Options struct {
 //
 // Handler search order or priority is given below,
 //
-//  1. Google Stackdriver (stackriver).
+//  1. Google Stackdriver (stackdriver).
 //     This uses google-cloud-sdk for authentication.
 //  2. AWS CloudWatch (cloudwatch) This uses aws-sdk for authentication.
 //  3. On Linux, Journald if running as a systemd unit or user unit. (journald)
@@ -85,5 +86,5 @@ func Automatic(o Options) (*log.Logger, error) {
 	if o.MetaLogWriter == nil {
 		o.MetaLogWriter = io.Discard
 	}
-	return nil, log.ErrLoggerInvalid
+	return nil, errors.New("log.config: failed to select any log handler")
 }

@@ -36,7 +36,7 @@ func (m *Handler) Enabled(level log.Level) bool {
 // Handle simply saves the event in to Events slice.
 // If AlwaysErr is true, then event is not saved it internal slice,
 // and method returns an error.
-func (m *Handler) Write(event log.Event) error {
+func (m *Handler) Write(event *log.Event) error {
 	m.WriteCalls++
 	if m.closed {
 		return log.ErrHandlerClosed
