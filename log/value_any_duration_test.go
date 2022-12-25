@@ -83,24 +83,48 @@ func TestToValueDurationPtr(t *testing.T) {
 			name: "<time.DurationPtr>-positive-value",
 			input: func() *time.Duration {
 				i := new(time.Duration)
-				*i = 10
+				*i = time.Second
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k:   KindDuration,
+				num: 1000000000,
+			},
+		},
+		{
+			name: "<time.Duration>-negative-value",
+			input: func() *time.Duration {
+				i := new(time.Duration)
+				*i = -time.Second
+				return i
+			}(),
+			expect: Value{
+				k:   KindDuration,
+				num: 0xffffffffc4653600,
 			},
 		},
 		{
 			name: "<time.DurationPtr>-max-value",
 			input: func() *time.Duration {
 				i := new(time.Duration)
-				*i = math.MaxInt64
+				*i = time.Duration(math.MaxInt64)
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint,
+				k:   KindDuration,
+				num: math.MaxInt,
+			},
+		},
+		{
+			name: "<time.Duration>-min-value",
+			input: func() *time.Duration {
+				i := new(time.Duration)
+				*i = math.MinInt64
+				return i
+			}(),
+			expect: Value{
+				k:   KindDuration,
+				num: 0x8000000000000000,
 			},
 		},
 	}
