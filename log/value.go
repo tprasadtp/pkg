@@ -1,7 +1,5 @@
 package log
 
-import "strings"
-
 // ValueKind represents Kind of the value.
 // This similar to reflect.Kinds, but does not attempt
 // to preserve exact types.
@@ -38,31 +36,4 @@ type Value struct {
 	s   string
 	k   Kind
 	any any
-}
-
-// Creates a new Field optionally with specified namespace segments.
-// Namespace segments are joined by '.', Ideally namespace segments
-// should be alphanumeric and start with a letter. Namespace on field
-// is distinct from namespaces in logger. Handler MUST consider both
-// namespaces.
-func F(key string, value any, namespaces ...string) Field {
-	switch len(namespaces) {
-	case 0:
-		return Field{
-			Key:   key,
-			Value: ToValue(value),
-		}
-	case 1:
-		return Field{
-			Namespace: namespaces[0],
-			Key:       key,
-			Value:     ToValue(value),
-		}
-	default:
-		return Field{
-			Namespace: strings.Join(namespaces, "."),
-			Key:       key,
-			Value:     ToValue(value),
-		}
-	}
 }

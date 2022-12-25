@@ -98,7 +98,6 @@ func (log Logger) WithNamespace(namespace string) Logger {
 // In most cases it should be used immediately with a
 // message or scoped to the context of the error.
 // If logger already contains an error, it is replaced.
-// It is job of the package author to wrap error not the logger.
 //
 //	logger.WithError(err).Error("package metadata database connection lost")
 func (log Logger) WithErr(err error) Logger {
@@ -111,6 +110,7 @@ func (log Logger) WithErr(err error) Logger {
 // and enrich log entries. Cancelling this context has no effect
 // whatsoever on the log entry. Context might include
 // request scoped information and tracing data.
+// If logger already contains an context, it is replaced.
 func (log Logger) WithCtx(ctx context.Context) Logger {
 	log.ctx = ctx
 	return log

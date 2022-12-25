@@ -44,9 +44,6 @@ func TestToValueUint(t *testing.T) {
 			if got.any != nil {
 				t.Errorf("Value.any non nil for Uint(%d)", tc.input)
 			}
-			if got.s != "" {
-				t.Errorf("Value.s non empty for Uint(%d)", tc.input)
-			}
 			if got.k != KindUint64 {
 				t.Errorf("Value.kind expected=%s got=%s", tc.expect.k.String(), got.k.String())
 			}

@@ -55,3 +55,17 @@ func (e Event) Encode(c EncoderConfig) ([]byte, error) {
 func (e Event) MarshalJSON() ([]byte, error) {
 	return nil, nil
 }
+
+// func (enc *jsonEncoder) appendFloat(val float64, bitSize int) {
+// 	enc.addElementSeparator()
+// 	switch {
+// 	case math.IsNaN(val):
+// 		enc.buf.AppendString(`"NaN"`)
+// 	case math.IsInf(val, 1):
+// 		enc.buf.AppendString(`"+Inf"`)
+// 	case math.IsInf(val, -1):
+// 		enc.buf.AppendString(`"-Inf"`)
+// 	default:
+// 		enc.buf.AppendFloat(val, bitSize)
+// 	}
+// }

@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"strings"
 	"time"
 )
 
@@ -57,4 +58,31 @@ type Event struct {
 
 	// Fields
 	Fields []Field
+}
+
+// Creates a new Field. Optionally with specified namespace segments.
+// Namespace segments are joined by '.', Ideally namespace segments
+// should be alphanumeric and start with a letter. Namespace on fields
+// are distinct from namespaces in logger. Handler MUST consider both
+// namespaces.
+func F(key string, value any, namespaces ...string) Field {
+	switch len(namespaces) {
+	case 0:
+		return Field{
+			Key:   key,
+			Value: ToValue(value),
+		}
+	case 1:
+		return Field{
+			Namespace: namespaces[0],
+			Key:       key,
+			Value:     ToValue(value),
+		}
+	default:
+		return Field{
+			Namespace: strings.Join(namespaces, "."),
+			Key:       key,
+			Value:     ToValue(value),
+		}
+	}
 }

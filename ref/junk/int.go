@@ -4,14 +4,14 @@ package main
 
 import (
 	"fmt"
-	"math"
+	"time"
 )
 
 func main() {
 	var stored uint64
-	var value = func() float64 {
-		return 0
+	var value = func() int64 {
+		return int64(-time.Second)
 	}()
-	stored = math.Float64bits(value)
+	stored = uint64(value)
 	fmt.Printf("%#v", stored)
 }
