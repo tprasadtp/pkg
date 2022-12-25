@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+// Test ref values.
+//
 // max   float32 bits = 0x47efffffe0000000
 // max   float64 bits = 0x7fefffffffffffff
 // -inf  float64 bits = 0xfff0000000000000

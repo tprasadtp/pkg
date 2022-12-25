@@ -33,7 +33,7 @@ func getCallerInfo(depth int) CallerInfo {
 
 // write is an internal method which writes event to log.Handler.
 // All other named levels and methods use this with some form or other.
-// This must be called directly by the method logging an event and not some
+// This must be called directly by the method emitting an event and not some
 // wrapper as caller info might be wrong if done so.
 func (log Logger) write(level Level, message string) {
 	// logger handler must not be nil.
