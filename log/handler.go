@@ -13,7 +13,7 @@ type Handler interface {
 
 	// Writes a Log Event.
 	//  - Depending on implementation, writes may be buffered.
-	//  - Please note that this is ONLY called if Enabled(e.Level) returns true.
+	//  - Please note that this is ONLY called if Enabled(Level) returns true.
 	//  - Implementations SHOULD return error to when handler is
 	//    not initialized or closed.
 	//  - It is responsibility of the implementation to be concurrent safe.
@@ -24,8 +24,7 @@ type Handler interface {
 	//  - If handler is a network handler it MUST write all pending entries to
 	//    network endpoint.
 	//  - If handler is a buffered file handle, it MUST flush.
-	//  - Its up to the handler to implement timeouts,
-	//    However it is highly encouraged to do so.
+	//  - Its up to the handler to implement timeouts.
 	//  - Panic/Panicf and method on the Logger will call this automatically.
 	Flush() error
 
@@ -33,8 +32,7 @@ type Handler interface {
 	// writing pending entries in the buffer to file/network.
 	//  - Logger will not invoke Flush method on the handler,
 	//    it is up to the handler to flush its buffers before closing stream.
-	//  - It is up to the handler to implement timeouts,
-	//    However it is highly encouraged to do so.
+	//  - It is up to the handler to implement timeouts.
 	//  - Any calls to Handle() or Flush() after calling this MUST result in error.
 	//  - Multiple calls to Close() MUST return an error.
 	Close() error

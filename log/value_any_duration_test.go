@@ -2,6 +2,7 @@ package log
 
 import (
 	"math"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -56,16 +57,9 @@ func TestToValueDuration(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-
-			if got.any != nil {
-				t.Errorf("Value.any non nil for time.Duration(%d)", tc.input)
-			}
-			if got.k != KindDuration {
-				t.Errorf("Value.kind expected=%s got=%s", tc.expect.k.String(), got.k.String())
-			}
-			if got.num != tc.expect.num {
-				t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -112,25 +106,9 @@ func TestToValueDurationPtr(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-			if got.any != nil {
-				t.Errorf("Value.any not nil for time.Duration(%d)", tc.input)
-			}
-
-			if tc.input == nil {
-				if got.k != KindNull {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
-				if got.num != 0 {
-					t.Errorf("Value.num expect=0 got=%d", got.num)
-				}
-			} else {
-				if got.num != tc.expect.num {
-					t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
-				}
-				if got.k != KindDuration {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}

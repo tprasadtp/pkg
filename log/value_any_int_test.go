@@ -2,6 +2,7 @@ package log
 
 import (
 	"math"
+	"reflect"
 	"testing"
 )
 
@@ -64,7 +65,7 @@ func TestToValueInt(t *testing.T) {
 				t.Errorf("Value.kind expected=%s got=%s", tc.expect.k.String(), got.k.String())
 			}
 			if got.num != tc.expect.num {
-				t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
+				t.Errorf("Value.num expect=%#v got=%#v", tc.expect.num, got.num)
 			}
 		})
 	}
@@ -149,7 +150,7 @@ func TestToValueIntPtr(t *testing.T) {
 				}
 			} else {
 				if got.num != tc.expect.num {
-					t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
+					t.Errorf("Value.num expect=%#v got=%#v", tc.expect.num, got.num)
 				}
 				if got.k != KindInt64 {
 					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
@@ -209,16 +210,9 @@ func TestToValueInt8(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-
-			if got.any != nil {
-				t.Errorf("Value.any non nil for Int(%d)", tc.input)
-			}
-			if got.k != KindInt64 {
-				t.Errorf("Value.kind expected=%s got=%s", tc.expect.k.String(), got.k.String())
-			}
-			if got.num != tc.expect.num {
-				t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -289,25 +283,9 @@ func TestToValueInt8Ptr(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-			if got.any != nil {
-				t.Errorf("Value.any not nil for integer(%d)", tc.input)
-			}
-
-			if tc.input == nil {
-				if got.k != KindNull {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
-				if got.num != 0 {
-					t.Errorf("Value.num expect=0 got=%d", got.num)
-				}
-			} else {
-				if got.num != tc.expect.num {
-					t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
-				}
-				if got.k != KindInt64 {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -363,16 +341,9 @@ func TestToValueInt16(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-
-			if got.any != nil {
-				t.Errorf("Value.any non nil for Int(%d)", tc.input)
-			}
-			if got.k != KindInt64 {
-				t.Errorf("Value.kind expected=%s got=%s", tc.expect.k.String(), got.k.String())
-			}
-			if got.num != tc.expect.num {
-				t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -443,25 +414,9 @@ func TestToValueInt16Ptr(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-			if got.any != nil {
-				t.Errorf("Value.any not nil for integer(%d)", tc.input)
-			}
-
-			if tc.input == nil {
-				if got.k != KindNull {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
-				if got.num != 0 {
-					t.Errorf("Value.num expect=0 got=%d", got.num)
-				}
-			} else {
-				if got.num != tc.expect.num {
-					t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
-				}
-				if got.k != KindInt64 {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -517,16 +472,9 @@ func TestToValueInt32(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-
-			if got.any != nil {
-				t.Errorf("Value.any non nil for Int(%d)", tc.input)
-			}
-			if got.k != KindInt64 {
-				t.Errorf("Value.kind expected=%s got=%s", tc.expect.k.String(), got.k.String())
-			}
-			if got.num != tc.expect.num {
-				t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -597,25 +545,9 @@ func TestToValueInt32Ptr(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-			if got.any != nil {
-				t.Errorf("Value.any not nil for integer(%d)", tc.input)
-			}
-
-			if tc.input == nil {
-				if got.k != KindNull {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
-				if got.num != 0 {
-					t.Errorf("Value.num expect=0 got=%d", got.num)
-				}
-			} else {
-				if got.num != tc.expect.num {
-					t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
-				}
-				if got.k != KindInt64 {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -671,16 +603,9 @@ func TestToValueInt64(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-
-			if got.any != nil {
-				t.Errorf("Value.any non nil for Int(%d)", tc.input)
-			}
-			if got.k != KindInt64 {
-				t.Errorf("Value.kind expected=%s got=%s", tc.expect.k.String(), got.k.String())
-			}
-			if got.num != tc.expect.num {
-				t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -751,25 +676,9 @@ func TestToValueInt64Ptr(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-			if got.any != nil {
-				t.Errorf("Value.any not nil for integer(%d)", tc.input)
-			}
-
-			if tc.input == nil {
-				if got.k != KindNull {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
-				if got.num != 0 {
-					t.Errorf("Value.num expect=0 got=%d", got.num)
-				}
-			} else {
-				if got.num != tc.expect.num {
-					t.Errorf("Value.num expect=%d got=%d", tc.expect.num, got.num)
-				}
-				if got.k != KindInt64 {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}

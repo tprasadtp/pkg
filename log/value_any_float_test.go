@@ -2,6 +2,7 @@ package log
 
 import (
 	"math"
+	"reflect"
 	"testing"
 )
 
@@ -71,16 +72,9 @@ func TestToValueFloat32(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-
-			if got.any != nil {
-				t.Errorf("Value.any non nil for Float32(%f)", tc.input)
-			}
-			if got.k != KindFloat64 {
-				t.Errorf("Value.kind expected=%s got=%s", tc.expect.k.String(), got.k.String())
-			}
-			if got.num != tc.expect.num {
-				t.Errorf("Value.num expect=%#v got=%#v", tc.expect.num, got.num)
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -165,25 +159,9 @@ func TestToValueFloat32Ptr(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-			if got.any != nil {
-				t.Errorf("Value.any not nil for Float32(%d)", tc.input)
-			}
-
-			if tc.input == nil {
-				if got.k != KindNull {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
-				if got.num != 0 {
-					t.Errorf("Value.num expect=0 got=%d", got.num)
-				}
-			} else {
-				if got.num != tc.expect.num {
-					t.Errorf("Value.num expect=%#v got=%#v", tc.expect.num, got.num)
-				}
-				if got.k != KindFloat64 {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -246,16 +224,9 @@ func TestToValueFloat64(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-
-			if got.any != nil {
-				t.Errorf("Value.any non nil for Float64(%f)", tc.input)
-			}
-			if got.k != KindFloat64 {
-				t.Errorf("Value.kind expected=%s got=%s", tc.expect.k.String(), got.k.String())
-			}
-			if got.num != tc.expect.num {
-				t.Errorf("Value.num expect=%#v got=%#v", tc.expect.num, got.num)
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -340,25 +311,9 @@ func TestToValueFloat64Ptr(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ToValue(tc.input)
-			if got.any != nil {
-				t.Errorf("Value.any not nil for Float64(%d)", tc.input)
-			}
-
-			if tc.input == nil {
-				if got.k != KindNull {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
-				if got.num != 0 {
-					t.Errorf("Value.num expect=0 got=%d", got.num)
-				}
-			} else {
-				if got.num != tc.expect.num {
-					t.Errorf("Value.num expect=%#v got=%#v", tc.expect.num, got.num)
-				}
-				if got.k != KindFloat64 {
-					t.Errorf("Value.k expected=%s got=%s", tc.expect.k.String(), got.k.String())
-				}
+			actual := ToValue(tc.input)
+			if !reflect.DeepEqual(tc.expect, actual) {
+				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
