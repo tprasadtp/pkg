@@ -4,6 +4,8 @@ import (
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/tprasadtp/pkg/log/internal/helpers"
 )
 
 // Pooled events for alloc optimization.
@@ -17,18 +19,40 @@ var eventPool = sync.Pool{
 
 // Get caller info.
 func getCallerInfo(depth int) CallerInfo {
+	const maxHelpers = 10
 	pcs := make([]uintptr, 1)
-	//nolint:gomnd // Skips runtime.Callers, and this function.
-	runtime.Callers(depth+2, pcs)
-	frames := runtime.CallersFrames(pcs)
-	frame, _ := frames.Next()
+	caller := CallerInfo{}
+	// Skip two extra frames to account for this function
+	// and runtime.Callers itself.
+	//nolint:gomnd // ignore this magic number.
+	n := runtime.Callers(int(depth+2), pcs[:])
+	frames := runtime.CallersFrames(pcs[:n])
+	for i := 0; i < maxHelpers; i++ {
+		frame, more := frames.Next()
+		_, helper := helpers.Map.Load(frame.Function)
+		// We ran out of frames (This implies bug in log package)
+		if !more {
+			caller = CallerInfo{
+				Defined: true,
+				Line:    0,
+				File:    "INVALID_FRAME",
+				Func:    "INVALID_FRAME",
+			}
+			break
+		}
 
-	return CallerInfo{
-		Defined: true,
-		Line:    uint(frame.Line),
-		Func:    frame.Function,
-		File:    frame.File,
+		if !helper {
+			caller = CallerInfo{
+				Defined: true,
+				Line:    uint(frame.Line),
+				File:    frame.File,
+				Func:    frame.Function,
+			}
+			break
+		}
 	}
+
+	return caller
 }
 
 // write is an internal method which writes event to log.Handler.
