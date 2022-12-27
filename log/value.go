@@ -6,8 +6,9 @@ package log
 //   - Uint64Kind represents uint, uint8, uint32 and uint64.
 //   - Int64Kind represents int, int8, int32, and int64
 //   - Float64Kind represents float32 and float64
-//   - complex64 and complex128 are converted to their string representation.
-//   - [time.Time] is saved as TimeKind, but loses time.Time
+//   - KindComplex128 represents complex64 and complex128.
+//   - [time.Time] is saved as TimeKind, but loses time.Time monotonic value.
+//   - [time.Duration] is saved as DurationKind.
 //   - Pointers to all the values are dereferenced unless they are nil.
 //     In case of a nil pointer, type information is lost. This
 //     may not seem optimal, but most logging solutions convert
@@ -15,7 +16,7 @@ package log
 //     in applications.
 //
 //go:generate stringer -type=Kind -output value_kind_string.go -trimprefix=Kind
-type Kind int
+type Kind uint8
 
 const (
 	KindAny Kind = iota
@@ -26,13 +27,15 @@ const (
 	KindFloat64
 	KindDuration
 	KindTime
+	KindIPAddr
+	KindIPPrefix
 	KindNull = 255
 )
 
 // Value can store any value, but for most common cases,
 // it does not allocate. Inspired by slog proposal.
 type Value struct {
-	num uint64
+	x   uint64
 	s   string
 	k   Kind
 	any any

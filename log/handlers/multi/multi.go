@@ -1,4 +1,5 @@
 // Package multi implements a Handler which wraps multiple handlers.
+// This multi handler is only suitable if your handlers do not mutate the event themselves.
 package multi
 
 import (

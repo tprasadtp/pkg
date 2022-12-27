@@ -14,26 +14,26 @@ func TestToValueBool(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<bool>-zero-value",
+			name: "zero-value",
 			expect: Value{
-				k:   KindBool,
-				num: 0,
+				k: KindBool,
+				x: 0,
 			},
 		},
 		{
-			name:  "<bool>-true-value",
+			name:  "true-value",
 			input: true,
 			expect: Value{
-				k:   KindBool,
-				num: 1,
+				k: KindBool,
+				x: 1,
 			},
 		},
 		{
-			name:  "<bool>-false-value",
+			name:  "false-value",
 			input: false,
 			expect: Value{
-				k:   KindBool,
-				num: 0,
+				k: KindBool,
+				x: 0,
 			},
 		},
 	}
@@ -56,33 +56,33 @@ func TestToValueBoolPtr(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<boolptr>-nil-value",
+			name: "nil-value",
 			expect: Value{
 				k: KindNull,
 			},
 		},
 		{
-			name: "<boolptr>-true-value",
+			name: "true-value",
 			input: func() *bool {
 				i := new(bool)
 				*i = true
 				return i
 			}(),
 			expect: Value{
-				k:   KindBool,
-				num: 1,
+				k: KindBool,
+				x: 1,
 			},
 		},
 		{
-			name: "<boolptr>-false-value",
+			name: "false-value",
 			input: func() *bool {
 				i := new(bool)
 				*i = false
 				return i
 			}(),
 			expect: Value{
-				k:   KindBool,
-				num: 0,
+				k: KindBool,
+				x: 0,
 			},
 		},
 	}

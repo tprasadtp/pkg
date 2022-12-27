@@ -1,8 +1,8 @@
 package log
 
 import (
-	"fmt"
 	"math"
+	"net/netip"
 	"strconv"
 	"time"
 )
@@ -21,7 +21,7 @@ func ToValue(v any) Value {
 			store = 1
 		}
 		return Value{
-			num: store,
+			x:   store,
 			k:   KindBool,
 			any: nil,
 		}
@@ -37,7 +37,7 @@ func ToValue(v any) Value {
 			store = 1
 		}
 		return Value{
-			num: store,
+			x:   store,
 			k:   KindBool,
 			any: nil,
 		}
@@ -61,8 +61,8 @@ func ToValue(v any) Value {
 		}
 	case int:
 		return Value{
-			num: uint64(v),
-			k:   KindInt64,
+			x: uint64(v),
+			k: KindInt64,
 		}
 	case *int:
 		if v == nil {
@@ -71,13 +71,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
-			k:   KindInt64,
+			x: uint64(*v),
+			k: KindInt64,
 		}
 	case int8:
 		return Value{
-			num: uint64(v),
-			k:   KindInt64,
+			x: uint64(v),
+			k: KindInt64,
 		}
 	case *int8:
 		if v == nil {
@@ -86,13 +86,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
-			k:   KindInt64,
+			x: uint64(*v),
+			k: KindInt64,
 		}
 	case int16:
 		return Value{
-			num: uint64(v),
-			k:   KindInt64,
+			x: uint64(v),
+			k: KindInt64,
 		}
 	case *int16:
 		if v == nil {
@@ -101,13 +101,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
-			k:   KindInt64,
+			x: uint64(*v),
+			k: KindInt64,
 		}
 	case int32:
 		return Value{
-			num: uint64(v),
-			k:   KindInt64,
+			x: uint64(v),
+			k: KindInt64,
 		}
 	case *int32:
 		if v == nil {
@@ -116,13 +116,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
-			k:   KindInt64,
+			x: uint64(*v),
+			k: KindInt64,
 		}
 	case int64:
 		return Value{
-			num: uint64(v),
-			k:   KindInt64,
+			x: uint64(v),
+			k: KindInt64,
 		}
 	case *int64:
 		if v == nil {
@@ -131,14 +131,14 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
-			k:   KindInt64,
+			x: uint64(*v),
+			k: KindInt64,
 		}
 	// Unsigned integers
 	case uint:
 		return Value{
-			num: uint64(v),
-			k:   KindUint64,
+			x: uint64(v),
+			k: KindUint64,
 		}
 	case *uint:
 		if v == nil {
@@ -147,13 +147,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
-			k:   KindUint64,
+			x: uint64(*v),
+			k: KindUint64,
 		}
 	case uint8:
 		return Value{
-			num: uint64(v),
-			k:   KindUint64,
+			x: uint64(v),
+			k: KindUint64,
 		}
 	case *uint8:
 		if v == nil {
@@ -162,13 +162,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
-			k:   KindUint64,
+			x: uint64(*v),
+			k: KindUint64,
 		}
 	case uint16:
 		return Value{
-			num: uint64(v),
-			k:   KindUint64,
+			x: uint64(v),
+			k: KindUint64,
 		}
 	case *uint16:
 		if v == nil {
@@ -177,13 +177,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
-			k:   KindUint64,
+			x: uint64(*v),
+			k: KindUint64,
 		}
 	case uint32:
 		return Value{
-			num: uint64(v),
-			k:   KindUint64,
+			x: uint64(v),
+			k: KindUint64,
 		}
 	case *uint32:
 		if v == nil {
@@ -192,13 +192,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(*v),
-			k:   KindUint64,
+			x: uint64(*v),
+			k: KindUint64,
 		}
 	case uint64:
 		return Value{
-			num: v,
-			k:   KindUint64,
+			x: v,
+			k: KindUint64,
 		}
 	case *uint64:
 		if v == nil {
@@ -207,14 +207,14 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: *v,
-			k:   KindUint64,
+			x: *v,
+			k: KindUint64,
 		}
 	// Floats
 	case float32:
 		return Value{
-			num: math.Float64bits(float64(v)),
-			k:   KindFloat64,
+			x: math.Float64bits(float64(v)),
+			k: KindFloat64,
 		}
 	case *float32:
 		if v == nil {
@@ -223,13 +223,13 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: math.Float64bits(float64(*v)),
-			k:   KindFloat64,
+			x: math.Float64bits(float64(*v)),
+			k: KindFloat64,
 		}
 	case float64:
 		return Value{
-			num: math.Float64bits(v),
-			k:   KindFloat64,
+			x: math.Float64bits(v),
+			k: KindFloat64,
 		}
 	case *float64:
 		if v == nil {
@@ -238,8 +238,8 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: math.Float64bits(*v),
-			k:   KindFloat64,
+			x: math.Float64bits(*v),
+			k: KindFloat64,
 		}
 	// Complex
 	case complex64:
@@ -290,8 +290,8 @@ func ToValue(v any) Value {
 	// time.Time
 	case time.Duration:
 		return Value{
-			num: uint64(v.Nanoseconds()),
-			k:   KindDuration,
+			x: uint64(v.Nanoseconds()),
+			k: KindDuration,
 		}
 	case *time.Duration:
 		if v == nil {
@@ -300,14 +300,14 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(v.Nanoseconds()),
-			k:   KindDuration,
+			x: uint64(v.Nanoseconds()),
+			k: KindDuration,
 		}
 	case time.Time:
 		return Value{
-			num: uint64(v.UnixNano()),
-			s:   v.Location().String(),
-			k:   KindTime,
+			x: uint64(v.UnixNano()),
+			s: v.Location().String(),
+			k: KindTime,
 		}
 	case *time.Time:
 		if v == nil {
@@ -316,14 +316,30 @@ func ToValue(v any) Value {
 			}
 		}
 		return Value{
-			num: uint64(v.UnixNano()),
-			s:   v.Location().String(),
-			k:   KindTime,
+			x: uint64(v.UnixNano()),
+			s: v.Location().String(),
+			k: KindTime,
 		}
-	case fmt.Stringer:
+	// netip.Addr (alloc free)
+	case netip.Addr:
 		return Value{
 			s: v.String(),
-			k: KindString,
+			k: KindIPAddr,
+		}
+	case *netip.Addr:
+		return Value{
+			s: v.String(),
+			k: KindIPAddr,
+		}
+	case netip.Prefix:
+		return Value{
+			s: v.String(),
+			k: KindIPAddr,
+		}
+	case *netip.Prefix:
+		return Value{
+			s: v.String(),
+			k: KindIPPrefix,
 		}
 	default:
 		return Value{

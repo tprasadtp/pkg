@@ -39,12 +39,11 @@ type EncoderConfig struct {
 	CallerFuncKey string
 	StacktraceKey string
 
-	ErrorKey   string
-	SpanKey    string
-	TraceKey   string
-	LevelKey   string
-	TimeKey    string
-	VersionKey string
+	ErrorKey string
+	SpanKey  string
+	TraceKey string
+	LevelKey string
+	TimeKey  string
 }
 
 func (e Event) Encode(c EncoderConfig) ([]byte, error) {

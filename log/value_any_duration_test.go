@@ -18,40 +18,40 @@ func TestToValueDuration(t *testing.T) {
 		{
 			name: "<time.Duration>-zero-value",
 			expect: Value{
-				k:   KindDuration,
-				num: 0,
+				k: KindDuration,
+				x: 0,
 			},
 		},
 		{
 			name:  "<time.Duration>-positive-value",
 			input: time.Second,
 			expect: Value{
-				k:   KindDuration,
-				num: 1000000000,
+				k: KindDuration,
+				x: 1000000000,
 			},
 		},
 		{
 			name:  "<time.Duration>-negative-value",
 			input: -time.Second,
 			expect: Value{
-				k:   KindDuration,
-				num: 0xffffffffc4653600,
+				k: KindDuration,
+				x: 0xffffffffc4653600,
 			},
 		},
 		{
 			name:  "<time.Duration>-max-value",
 			input: time.Duration(math.MaxInt64),
 			expect: Value{
-				k:   KindDuration,
-				num: math.MaxInt,
+				k: KindDuration,
+				x: math.MaxInt,
 			},
 		},
 		{
 			name:  "<time.Duration>-min-value",
 			input: time.Duration(math.MinInt64),
 			expect: Value{
-				k:   KindDuration,
-				num: 0x8000000000000000,
+				k: KindDuration,
+				x: 0x8000000000000000,
 			},
 		},
 	}
@@ -87,8 +87,8 @@ func TestToValueDurationPtr(t *testing.T) {
 				return i
 			}(),
 			expect: Value{
-				k:   KindDuration,
-				num: 1000000000,
+				k: KindDuration,
+				x: 1000000000,
 			},
 		},
 		{
@@ -99,8 +99,8 @@ func TestToValueDurationPtr(t *testing.T) {
 				return i
 			}(),
 			expect: Value{
-				k:   KindDuration,
-				num: 0xffffffffc4653600,
+				k: KindDuration,
+				x: 0xffffffffc4653600,
 			},
 		},
 		{
@@ -111,8 +111,8 @@ func TestToValueDurationPtr(t *testing.T) {
 				return i
 			}(),
 			expect: Value{
-				k:   KindDuration,
-				num: math.MaxInt,
+				k: KindDuration,
+				x: math.MaxInt,
 			},
 		},
 		{
@@ -123,8 +123,8 @@ func TestToValueDurationPtr(t *testing.T) {
 				return i
 			}(),
 			expect: Value{
-				k:   KindDuration,
-				num: 0x8000000000000000,
+				k: KindDuration,
+				x: 0x8000000000000000,
 			},
 		},
 	}

@@ -67,7 +67,7 @@ func (log Logger) write(level Level, message string) {
 	n := len(log.fields)
 	if n > cap(event.Fields) {
 		buckets := (n / fieldsBucketSize) + 1
-		event.Fields = make([]Field, fieldsBucketSize*buckets)
+		event.Fields = make([]Field, 0, fieldsBucketSize*buckets)
 	}
 	copy(event.Fields, log.fields)
 

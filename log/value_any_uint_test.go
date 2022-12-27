@@ -15,26 +15,26 @@ func TestToValueUint(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uint>-zero-value",
+			name: "zero-value",
 			expect: Value{
-				k:   KindUint64,
-				num: 0,
+				k: KindUint64,
+				x: 0,
 			},
 		},
 		{
-			name:  "<uint>-positive-value",
+			name:  "positive-value",
 			input: 10,
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name:  "<uint>-max-value",
+			name:  "max-value",
 			input: math.MaxUint,
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint,
+				k: KindUint64,
+				x: math.MaxUint,
 			},
 		},
 	}
@@ -57,33 +57,33 @@ func TestToValueUintPtr(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uintptr>-nil-value",
+			name: "nil-value",
 			expect: Value{
 				k: KindNull,
 			},
 		},
 		{
-			name: "<uintptr>-positive-value",
+			name: "positive-value",
 			input: func() *uint {
 				i := new(uint)
 				*i = 10
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name: "<uintptr>-max-value",
+			name: "max-value",
 			input: func() *uint {
 				i := new(uint)
 				*i = math.MaxUint
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint,
+				k: KindUint64,
+				x: math.MaxUint,
 			},
 		},
 	}
@@ -106,26 +106,26 @@ func TestToValueUint8(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uint8>-zero-value",
+			name: "zero-value",
 			expect: Value{
-				k:   KindUint64,
-				num: 0,
+				k: KindUint64,
+				x: 0,
 			},
 		},
 		{
-			name:  "<uint8>-positive-value",
+			name:  "positive-value",
 			input: 10,
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name:  "<uint8>-max-value",
+			name:  "max-value",
 			input: math.MaxUint8,
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint8,
+				k: KindUint64,
+				x: math.MaxUint8,
 			},
 		},
 	}
@@ -148,33 +148,33 @@ func TestToValueUint8Ptr(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uint8ptr>-nil-value",
+			name: "nil-value",
 			expect: Value{
 				k: KindNull,
 			},
 		},
 		{
-			name: "<uint8ptr>-positive-value",
+			name: "positive-value",
 			input: func() *uint8 {
 				i := new(uint8)
 				*i = 10
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name: "<uint8ptr>-max-value",
+			name: "max-value",
 			input: func() *uint8 {
 				i := new(uint8)
 				*i = math.MaxUint8
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint8,
+				k: KindUint64,
+				x: math.MaxUint8,
 			},
 		},
 	}
@@ -197,26 +197,26 @@ func TestToValueUint16(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uint16>-zero-value",
+			name: "zero-value",
 			expect: Value{
-				k:   KindUint64,
-				num: 0,
+				k: KindUint64,
+				x: 0,
 			},
 		},
 		{
-			name:  "<uint16>-positive-value",
+			name:  "positive-value",
 			input: 10,
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name:  "<uint16>-max-value",
+			name:  "max-value",
 			input: math.MaxUint16,
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint16,
+				k: KindUint64,
+				x: math.MaxUint16,
 			},
 		},
 	}
@@ -239,33 +239,33 @@ func TestToValueUint16Ptr(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uint16ptr>-nil-value",
+			name: "nil-value",
 			expect: Value{
 				k: KindNull,
 			},
 		},
 		{
-			name: "<uint16ptr>-positive-value",
+			name: "positive-value",
 			input: func() *uint16 {
 				i := new(uint16)
 				*i = 10
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name: "<uint16ptr>-max-value",
+			name: "max-value",
 			input: func() *uint16 {
 				i := new(uint16)
 				*i = math.MaxUint16
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint16,
+				k: KindUint64,
+				x: math.MaxUint16,
 			},
 		},
 	}
@@ -288,26 +288,26 @@ func TestToValueUint32(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uint32>-zero-value",
+			name: "zero-value",
 			expect: Value{
-				k:   KindUint64,
-				num: 0,
+				k: KindUint64,
+				x: 0,
 			},
 		},
 		{
-			name:  "<uint32>-positive-value",
+			name:  "positive-value",
 			input: 10,
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name:  "<uint32>-max-value",
+			name:  "max-value",
 			input: math.MaxUint32,
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint32,
+				k: KindUint64,
+				x: math.MaxUint32,
 			},
 		},
 	}
@@ -330,33 +330,33 @@ func TestToValueUint32Ptr(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uint32ptr>-nil-value",
+			name: "nil-value",
 			expect: Value{
 				k: KindNull,
 			},
 		},
 		{
-			name: "<uint32ptr>-positive-value",
+			name: "positive-value",
 			input: func() *uint32 {
 				i := new(uint32)
 				*i = 10
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name: "<uint32ptr>-max-value",
+			name: "max-value",
 			input: func() *uint32 {
 				i := new(uint32)
 				*i = math.MaxUint32
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint32,
+				k: KindUint64,
+				x: math.MaxUint32,
 			},
 		},
 	}
@@ -379,26 +379,26 @@ func TestToValueUint64(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uint64>-zero-value",
+			name: "zero-value",
 			expect: Value{
-				k:   KindUint64,
-				num: 0,
+				k: KindUint64,
+				x: 0,
 			},
 		},
 		{
-			name:  "<uint64>-positive-value",
+			name:  "positive-value",
 			input: 10,
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name:  "<uint64>-max-value",
+			name:  "max-value",
 			input: math.MaxUint64,
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint64,
+				k: KindUint64,
+				x: math.MaxUint64,
 			},
 		},
 	}
@@ -421,33 +421,33 @@ func TestToValueUint64Ptr(t *testing.T) {
 
 	tt := []testCase{
 		{
-			name: "<uint64ptr>-nil-value",
+			name: "nil-value",
 			expect: Value{
 				k: KindNull,
 			},
 		},
 		{
-			name: "<uint64ptr>-positive-value",
+			name: "positive-value",
 			input: func() *uint64 {
 				i := new(uint64)
 				*i = 10
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: 10,
+				k: KindUint64,
+				x: 10,
 			},
 		},
 		{
-			name: "<uint64ptr>-max-value",
+			name: "max-value",
 			input: func() *uint64 {
 				i := new(uint64)
 				*i = math.MaxUint64
 				return i
 			}(),
 			expect: Value{
-				k:   KindUint64,
-				num: math.MaxUint64,
+				k: KindUint64,
+				x: math.MaxUint64,
 			},
 		},
 	}

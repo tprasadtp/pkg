@@ -1,5 +1,10 @@
 package log
 
+import "fmt"
+
+// Compile time check for Level to ensure it implementer fmt.Stringer.
+var _ fmt.Stringer = LevelInfo
+
 // Level represents log level.
 // Zero value of Level represents LevelInfo,
 // which is what most people would expect.
