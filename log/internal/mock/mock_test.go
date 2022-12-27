@@ -85,17 +85,14 @@ func TestMockHandler(t *testing.T) {
 				}
 			}
 		}
-		if h.EventsWritten != 12 {
-			t.Errorf("handler incorrect Events. expected=12, got=%d", h.EventsWritten)
-		}
-		if h.WriteCalls != 12 {
-			t.Errorf("handler incorrect WriteCalls. expected=12, got=%d", h.WriteCalls)
+		if len(h.Events) != testdata.I {
+			t.Errorf("handler incorrect Events. expected=12, got=%d", len(h.Events))
 		}
 		// Flush Handler
 		if err := h.Flush(); err != nil {
 			t.Errorf("handler flush error(%e)", err)
 		}
-		if h.EventsWritten != 0 {
+		if len(h.Events) != 0 {
 			t.Errorf("handler did not flush events")
 		}
 
@@ -103,7 +100,7 @@ func TestMockHandler(t *testing.T) {
 		if err := h.Close(); err != nil {
 			t.Errorf("handler close error(%e)", err)
 		}
-		if h.EventsWritten != 0 {
+		if len(h.Events) != 0 {
 			t.Errorf("handler close not flush events")
 		}
 
@@ -118,9 +115,9 @@ func TestMockHandler(t *testing.T) {
 				}
 			}
 		}
-		if h.EventsWritten != 0 {
+		if len(h.Events) != 0 {
 			t.Errorf("handler(closed) incorrect events. expected=0, got=%d",
-				h.EventsWritten)
+				len(h.Events))
 		}
 		// Events are not written but handler is invoked.
 		if h.WriteCalls != 24 {
@@ -164,8 +161,8 @@ func TestMockHandlerHandleAlwaysErr(t *testing.T) {
 		t.Errorf("handler incorrect WriteCalls. expected=2, got=%d", h.WriteCalls)
 	}
 
-	if h.EventsWritten != 0 {
-		t.Errorf("handler incorrect Events. expected=0, got=%d", h.EventsWritten)
+	if len(h.Events) != 0 {
+		t.Errorf("handler incorrect Events. expected=0, got=%d", len(h.Events))
 	}
 
 	if err := h.Flush(); !errors.Is(err, log.ErrHandlerWrite) {

@@ -29,16 +29,16 @@ func TestHandler(t *testing.T) {
 		}
 	}
 
-	if h1.EventsWritten != testdata.I {
+	if len(h1.Events) != testdata.I {
 		t.Errorf("incorrect number of events on h1(@InfoLevel) expected=%d, got=%d",
 			testdata.I,
-			h1.EventsWritten,
+			len(h1.Events),
 		)
 	}
-	if h2.EventsWritten != testdata.E {
+	if len(h2.Events) != testdata.E {
 		t.Errorf("incorrect number of events on h2(@ErrorLevel) expected=%d, got=%d",
 			testdata.E,
-			h2.EventsWritten,
+			len(h2.Events),
 		)
 	}
 
@@ -46,13 +46,13 @@ func TestHandler(t *testing.T) {
 		t.Errorf("handler flush returned error(%e)", err)
 	}
 
-	if h1.EventsWritten != 0 {
+	if len(h1.Events) != 0 {
 		t.Errorf("flush did not clear events on h1(@InfoLevel) expected=0, got=%d",
-			h1.EventsWritten)
+			len(h1.Events))
 	}
-	if h2.EventsWritten != 0 {
+	if len(h2.Events) != 0 {
 		t.Errorf("flush did not clear events on h2(@ErrorLevel) expected=0, got=%d",
-			h2.EventsWritten)
+			len(h2.Events))
 	}
 }
 
@@ -117,15 +117,15 @@ func TestOneAlreadyClosedHandler(t *testing.T) {
 		}
 	}
 
-	if h1.EventsWritten != 0 {
+	if len(h1.Events) != 0 {
 		t.Errorf("incorrect number of events on h1[closed](@InfoLevel) expected=0 got=%d",
-			h1.EventsWritten,
+			len(h1.Events),
 		)
 	}
-	if h2.EventsWritten != testdata.E {
+	if len(h2.Events) != testdata.E {
 		t.Errorf("incorrect number of events on h2(@ErrorLevel) expected=%d, got=%d",
 			testdata.E,
-			h2.EventsWritten,
+			len(h2.Events),
 		)
 	}
 
@@ -133,13 +133,13 @@ func TestOneAlreadyClosedHandler(t *testing.T) {
 		t.Errorf("handler flush returned error(%e)", err)
 	}
 
-	if h1.EventsWritten != 0 {
+	if len(h1.Events) != 0 {
 		t.Errorf("flush did not clear events on h1(@InfoLevel) expected=0, got=%d",
-			h1.EventsWritten)
+			len(h1.Events))
 	}
-	if h2.EventsWritten != 0 {
+	if len(h2.Events) != 0 {
 		t.Errorf("flush did not clear events on h2(@ErrorLevel) expected=0, got=%d",
-			h2.EventsWritten)
+			len(h2.Events))
 	}
 }
 
@@ -172,22 +172,22 @@ func TestMultiHandlerWithError(t *testing.T) {
 		}
 	}
 
-	if h2.EventsWritten != 0 {
+	if len(h2.Events) != 0 {
 		t.Errorf("incorrect number of events on h2(@ErrorLevel) expected=0, got=%d",
-			h2.EventsWritten)
+			len(h2.Events))
 	}
 	if h2.WriteCalls != 5 {
 		t.Errorf("incorrect number of Handle() calls on h2(@ErrorLevel) expected=5, got=%d",
-			h2.EventsWritten)
+			len(h2.Events))
 	}
 
-	if h3.EventsWritten != 0 {
+	if len(h3.Events) != 0 {
 		t.Errorf("incorrect number of events on h1(@ErrorLevel) expected=0, got=%d",
-			h3.EventsWritten)
+			len(h3.Events))
 	}
 	if h3.WriteCalls != 14 {
 		t.Errorf("incorrect number of events on h1(@ErrorLevel) expected=14, got=%d",
-			h3.EventsWritten)
+			len(h3.Events))
 	}
 
 	if err := m.Flush(); !errors.Is(err, log.ErrHandlerWrite) {

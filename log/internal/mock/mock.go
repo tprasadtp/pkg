@@ -17,8 +17,6 @@ type Handler struct {
 	// Number of times handler call invoked Write
 	// This is incremented even when methods return an error.
 	WriteCalls uint
-	// Number of times handler successfully saved an event entry.
-	EventsWritten uint
 	// Events
 	Events []log.Event
 	// Always return an error on Flush and Write methods.
@@ -46,7 +44,7 @@ func (m *Handler) Write(event *log.Event) error {
 	if m.AlwaysErr {
 		return log.ErrHandlerWrite
 	}
-	m.EventsWritten++
+	m.Events = append(m.Events, *event)
 	return nil
 }
 
@@ -60,7 +58,7 @@ func (m *Handler) Flush() error {
 	if m.AlwaysErr {
 		return log.ErrHandlerWrite
 	}
-	m.EventsWritten = 0
+	m.Events = make([]log.Event, 0)
 	return nil
 }
 
@@ -71,6 +69,6 @@ func (m *Handler) Close() error {
 		return fmt.Errorf("mock handler error: %w", log.ErrHandlerClosed)
 	}
 	m.closed = true
-	m.EventsWritten = 0
+	m.Events = make([]log.Event, 0)
 	return nil
 }

@@ -34,7 +34,8 @@ const (
 )
 
 // Value can store any value, but for most common cases,
-// it does not allocate.
+// it does not allocate. Internal representation of a value
+// is not subject to compatibility guarantees.
 type Value struct {
 	x   uint64
 	s   string
