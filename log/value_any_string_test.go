@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestToValueString(t *testing.T) {
+func TestAnyValueString(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  string
@@ -39,7 +39,7 @@ func TestToValueString(t *testing.T) {
 	}
 }
 
-func TestToValueStringStringPtr(t *testing.T) {
+func TestAnyValueStringStringPtr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *string

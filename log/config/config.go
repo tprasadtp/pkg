@@ -33,7 +33,7 @@ type Options struct {
 	MetaLogWriter io.Writer
 }
 
-// Get the logger with best possible handler.
+// Create a new logger with best possible handler.
 //
 // # Semver Compatibility Warning
 //
@@ -45,7 +45,7 @@ type Options struct {
 // Handlers are selected in following order of priority.
 // This function will return nil and
 // [github.com/tprasadtp/pkg/log.ErrLoggerInvalid]
-// if it cannot return a handler.
+// if it cannot return a valid handler.
 //
 // # Exceptions
 //
@@ -66,8 +66,8 @@ type Options struct {
 //  4. On Windows, EventLog if running as a windows service (eventlog)
 //     This requires you to define [Options.WinEventLogName],
 //     or this handler is ignored.
-//  5. If LogFile is specified (it is not by default) with support for
-//     log rotation via plugin (jsonfile, plugins/logrotate)
+//  5. If LogFile is specified with support for log rotation via plugin
+//     (jsonfile, plugins/logrotate)
 //  6. If running in container, logs to stderr.
 //     This has lower priority than journal because some
 //     containers might expose host system's journal.

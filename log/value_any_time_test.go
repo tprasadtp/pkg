@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestToValueTime(t *testing.T) {
+func TestAnyValueTime(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  time.Time
@@ -35,7 +35,7 @@ func TestToValueTime(t *testing.T) {
 	}
 }
 
-func TestToValueTimePtr(t *testing.T) {
+func TestAnyValueTimePtr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *time.Time
@@ -44,6 +44,13 @@ func TestToValueTimePtr(t *testing.T) {
 	tsc, _ := time.Parse(time.RFC3339, time.StampNano)
 
 	tt := []testCase{
+		{
+			name:  "<*time.Time>-Nil",
+			input: nil,
+			expect: Value{
+				k: KindNull,
+			},
+		},
 		{
 			name: "<*time.Time>-UTC",
 			input: func() *time.Time {

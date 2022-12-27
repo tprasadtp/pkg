@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestToValueDuration(t *testing.T) {
+func TestAnyValueDuration(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  time.Duration
@@ -65,7 +65,7 @@ func TestToValueDuration(t *testing.T) {
 	}
 }
 
-func TestToValueDurationPtr(t *testing.T) {
+func TestAnyValueDurationPtr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *time.Duration

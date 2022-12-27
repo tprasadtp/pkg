@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestToValueBool(t *testing.T) {
+func TestAnyValueBool(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  bool
@@ -47,7 +47,7 @@ func TestToValueBool(t *testing.T) {
 	}
 }
 
-func TestToValueBoolPtr(t *testing.T) {
+func TestAnyValueBoolPtr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *bool

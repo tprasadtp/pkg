@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestToValueUint(t *testing.T) {
+func TestAnyValueUint(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  uint
@@ -48,7 +48,7 @@ func TestToValueUint(t *testing.T) {
 	}
 }
 
-func TestToValueUintPtr(t *testing.T) {
+func TestAnyValueUintPtr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *uint
@@ -97,7 +97,7 @@ func TestToValueUintPtr(t *testing.T) {
 	}
 }
 
-func TestToValueUint8(t *testing.T) {
+func TestAnyValueUint8(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  uint8
@@ -139,7 +139,7 @@ func TestToValueUint8(t *testing.T) {
 	}
 }
 
-func TestToValueUint8Ptr(t *testing.T) {
+func TestAnyValueUint8Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *uint8
@@ -188,7 +188,7 @@ func TestToValueUint8Ptr(t *testing.T) {
 	}
 }
 
-func TestToValueUint16(t *testing.T) {
+func TestAnyValueUint16(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  uint16
@@ -230,7 +230,7 @@ func TestToValueUint16(t *testing.T) {
 	}
 }
 
-func TestToValueUint16Ptr(t *testing.T) {
+func TestAnyValueUint16Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *uint16
@@ -279,7 +279,7 @@ func TestToValueUint16Ptr(t *testing.T) {
 	}
 }
 
-func TestToValueUint32(t *testing.T) {
+func TestAnyValueUint32(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  uint32
@@ -321,7 +321,7 @@ func TestToValueUint32(t *testing.T) {
 	}
 }
 
-func TestToValueUint32Ptr(t *testing.T) {
+func TestAnyValueUint32Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *uint32
@@ -370,7 +370,7 @@ func TestToValueUint32Ptr(t *testing.T) {
 	}
 }
 
-func TestToValueUint64(t *testing.T) {
+func TestAnyValueUint64(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  uint64
@@ -412,7 +412,7 @@ func TestToValueUint64(t *testing.T) {
 	}
 }
 
-func TestToValueUint64Ptr(t *testing.T) {
+func TestAnyValueUint64Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *uint64

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/tprasadtp/pkg/log"
-	"github.com/tprasadtp/pkg/log/handlers/internal/mock"
+	"github.com/tprasadtp/pkg/log/internal/mock"
 	"github.com/tprasadtp/pkg/log/internal/testdata"
 )
 

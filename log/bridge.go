@@ -16,7 +16,7 @@ var defaultBridge = bridge{
 	logger: nil,
 }
 
-// Bridge implements bridge interfaces.
+// Bridges stdlib logger.
 type bridge struct {
 	mu     sync.Mutex
 	logger *Logger

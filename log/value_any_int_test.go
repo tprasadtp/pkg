@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestToValueInt(t *testing.T) {
+func TestAnyValueInt(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  int
@@ -64,7 +64,7 @@ func TestToValueInt(t *testing.T) {
 	}
 }
 
-func TestToValueIntPtr(t *testing.T) {
+func TestAnyValueIntPtr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *int
@@ -137,7 +137,7 @@ func TestToValueIntPtr(t *testing.T) {
 	}
 }
 
-func TestToValueInt8(t *testing.T) {
+func TestAnyValueInt8(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  int8
@@ -195,7 +195,7 @@ func TestToValueInt8(t *testing.T) {
 	}
 }
 
-func TestToValueInt8Ptr(t *testing.T) {
+func TestAnyValueInt8Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *int8
@@ -268,7 +268,7 @@ func TestToValueInt8Ptr(t *testing.T) {
 	}
 }
 
-func TestToValueInt16(t *testing.T) {
+func TestAnyValueInt16(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  int16
@@ -326,7 +326,7 @@ func TestToValueInt16(t *testing.T) {
 	}
 }
 
-func TestToValueInt16Ptr(t *testing.T) {
+func TestAnyValueInt16Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *int16
@@ -399,7 +399,7 @@ func TestToValueInt16Ptr(t *testing.T) {
 	}
 }
 
-func TestToValueInt32(t *testing.T) {
+func TestAnyValueInt32(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  int32
@@ -457,7 +457,7 @@ func TestToValueInt32(t *testing.T) {
 	}
 }
 
-func TestToValueInt32Ptr(t *testing.T) {
+func TestAnyValueInt32Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *int32
@@ -530,7 +530,7 @@ func TestToValueInt32Ptr(t *testing.T) {
 	}
 }
 
-func TestToValueInt64(t *testing.T) {
+func TestAnyValueInt64(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  int64
@@ -588,7 +588,7 @@ func TestToValueInt64(t *testing.T) {
 	}
 }
 
-func TestToValueInt64Ptr(t *testing.T) {
+func TestAnyValueInt64Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *int64

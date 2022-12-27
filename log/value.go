@@ -25,6 +25,7 @@ const (
 	KindInt64
 	KindUint64
 	KindFloat64
+	KindComplex128
 	KindDuration
 	KindTime
 	KindIPAddr
@@ -33,7 +34,7 @@ const (
 )
 
 // Value can store any value, but for most common cases,
-// it does not allocate. Inspired by slog proposal.
+// it does not allocate.
 type Value struct {
 	x   uint64
 	s   string

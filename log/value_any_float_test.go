@@ -15,7 +15,7 @@ import (
 // -10.0 float64 bits = 0xc024000000000000
 // +10.0 float64 bits = 0x4024000000000000
 
-func TestToValueFloat32(t *testing.T) {
+func TestAnyValueFloat32(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  float32
@@ -80,7 +80,7 @@ func TestToValueFloat32(t *testing.T) {
 	}
 }
 
-func TestToValueFloat32Ptr(t *testing.T) {
+func TestAnyValueFloat32Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *float32
@@ -167,7 +167,7 @@ func TestToValueFloat32Ptr(t *testing.T) {
 	}
 }
 
-func TestToValueFloat64(t *testing.T) {
+func TestAnyValueFloat64(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  float64
@@ -232,7 +232,7 @@ func TestToValueFloat64(t *testing.T) {
 	}
 }
 
-func TestToValueFloat64Ptr(t *testing.T) {
+func TestAnyValueFloat64Ptr(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  *float64

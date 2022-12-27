@@ -19,6 +19,8 @@ type Handler struct {
 	WriteCalls uint
 	// Number of times handler successfully saved an event entry.
 	EventsWritten uint
+	// Events
+	Events []log.Event
 	// Always return an error on Flush and Write methods.
 	AlwaysErr bool
 	// Handler Level

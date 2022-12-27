@@ -249,7 +249,7 @@ func AnyValue(v any) Value {
 				complex128(v), complexStringFmt,
 				complexPrecision, 64,
 			),
-			k: KindString,
+			k: KindComplex128,
 		}
 	case *complex64:
 		if v == nil {
@@ -263,7 +263,7 @@ func AnyValue(v any) Value {
 				complex128(*v), complexStringFmt,
 				complexPrecision, 64,
 			),
-			k: KindString,
+			k: KindComplex128,
 		}
 	case complex128:
 		//nolint:gomnd // Linter, you are useless here.
@@ -272,7 +272,7 @@ func AnyValue(v any) Value {
 				v, complexStringFmt,
 				complexPrecision, 128,
 			),
-			k: KindString,
+			k: KindComplex128,
 		}
 	case *complex128:
 		if v == nil {
@@ -285,7 +285,7 @@ func AnyValue(v any) Value {
 			s: strconv.FormatComplex(
 				*v, complexStringFmt,
 				complexPrecision, 128),
-			k: KindString,
+			k: KindComplex128,
 		}
 	// time.Time
 	case time.Duration:
@@ -327,6 +327,11 @@ func AnyValue(v any) Value {
 			k: KindIPAddr,
 		}
 	case *netip.Addr:
+		if v == nil {
+			return Value{
+				k: KindNull,
+			}
+		}
 		return Value{
 			s: v.String(),
 			k: KindIPAddr,
@@ -334,9 +339,14 @@ func AnyValue(v any) Value {
 	case netip.Prefix:
 		return Value{
 			s: v.String(),
-			k: KindIPAddr,
+			k: KindIPPrefix,
 		}
 	case *netip.Prefix:
+		if v == nil {
+			return Value{
+				k: KindNull,
+			}
+		}
 		return Value{
 			s: v.String(),
 			k: KindIPPrefix,
