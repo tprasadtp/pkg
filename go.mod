@@ -14,3 +14,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.opentelemetry.io/otel v1.11.2 // indirect
 )
+
+retract [v0.1.0, v0.2.1]
+
+retract [v1.0.0, v1.2.4]

@@ -13,7 +13,7 @@ const complexPrecision = 4
 // Constructor for Value.
 //
 //nolint:funlen,gocognit,gocyclo,cyclop // Avoiding this leads to function sprawl.
-func ToValue(v any) Value {
+func AnyValue(v any) Value {
 	switch v := v.(type) {
 	case bool:
 		store := uint64(0)

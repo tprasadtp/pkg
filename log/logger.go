@@ -80,7 +80,7 @@ func (log Logger) WithoutCaller() Logger {
 // appended to its original Namespace. Segments are joined by periods.
 // This is useful if you want to pass the logger to a library, especially
 // the one which you don't control. This will always return a new logger
-// even when specified namespace is empty.Its is recommended that namespaces
+// even when specified namespace is empty. Its is recommended that namespaces
 // start with a letter and only include alphanumerics in snake case or
 // camel case.
 func (log Logger) WithNamespace(namespace string) Logger {

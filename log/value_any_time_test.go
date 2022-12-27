@@ -27,7 +27,7 @@ func TestToValueTime(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := ToValue(tc.input)
+			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
 				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
@@ -60,7 +60,7 @@ func TestToValueTimePtr(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := ToValue(tc.input)
+			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
 				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
