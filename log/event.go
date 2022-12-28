@@ -11,7 +11,6 @@ func F(key string, value any) Field {
 		Key:   key,
 		Value: AnyValue(value),
 	}
-
 }
 
 // Field is logger fields.

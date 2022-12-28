@@ -2,39 +2,48 @@ package log
 
 import (
 	"context"
-	"math"
+	"net/netip"
 	"testing"
 	"time"
 )
 
-func BenchmarkMini(b *testing.B) {
+var (
+	tUint     uint    = 1
+	tUint8    uint8   = 8
+	tUint16   uint16  = 16
+	tUint32   uint32  = 32
+	tUint64   uint64  = 64
+	tInt      int     = 1
+	tInt8     int8    = -8
+	tInt16    int16   = -16
+	tInt32    int32   = -32
+	tInt64    int64   = -64
+	tFloat32  float32 = 1.32
+	tFloat64  float64 = 1.64
+	tString   string  = "a string with spaces"
+	tTime, _          = time.Parse(time.RFC3339, time.StampNano)
+	tDuration         = time.Second
+	tIP               = netip.MustParseAddr("192.0.2.1")
+	tPrefix           = netip.MustParsePrefix("192.0.2.0/24")
+)
+
+func BenchmarkNumbers(b *testing.B) {
 	logger := New(NewDiscardHandler(LevelTrace))
-	t := time.Duration(1)
-	// stringSlice := []string{"a", "b"}
-	// cpx := complex(1.0, 0.5)
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		l2 := logger.With(
-			F("string", "value"),
-			F("uint", math.MaxUint/2),
-			F("uint8", math.MaxUint8),
-			F("uint16", math.MaxUint16),
-			F("uint32", math.MaxUint32),
-			F("uint64", math.MaxUint64/2),
-
-			F("int", math.MaxInt),
-			F("int8", math.MaxInt8),
-			F("int16", math.MaxInt16),
-			F("int32", math.MaxInt32),
-			F("int64", math.MaxInt64),
-
-			F("bool", false),
-
-			F("float32", math.MaxFloat32),
-			F("float64", math.MaxFloat64),
-			F("time.Time", t),
-		).WithCtx(context.Background()).WithErr(ErrInvalidKind)
+		l2 := logger.WithCtx(context.Background()).WithErr(ErrInvalidKind).With(
+			// F("uint", tUint),
+			// F("uint8", tUint8),
+			// F("uint16", tUint16),
+			// F("uint32", tUint32),
+			// F("uint64", uint64(1)),
+			// F("int", tInt),
+			// F("int8", tInt8),
+			// F("int16", tInt16),
+			// F("int32", tInt32),
+			F("int64", tInt64),
+		)
 		l2.Info("INFO L2")
 	}
 }

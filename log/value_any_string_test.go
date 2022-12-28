@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -34,6 +35,14 @@ func TestAnyValueString(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
 				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+			}
+		})
+		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			allocs := testing.AllocsPerRun(10, func() {
+				_ = F("key", tc.input)
+			})
+			if allocs != 0 {
+				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
 			}
 		})
 	}
@@ -71,6 +80,14 @@ func TestAnyValueStringStringPtr(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
 				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+			}
+		})
+		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			allocs := testing.AllocsPerRun(10, func() {
+				_ = F("key", tc.input)
+			})
+			if allocs != 0 {
+				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
 			}
 		})
 	}
