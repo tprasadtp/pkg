@@ -1,34 +1,42 @@
-package log
+package log_test
 
 import (
 	"context"
 	"io"
+	"os"
 	"testing"
+
+	"github.com/tprasadtp/pkg/log"
 )
 
 func TestLoggerNamespace(t *testing.T) {
 	type testCase struct {
 		name      string
-		input     Logger
+		logger    log.Logger
 		namespace string
 		expect    string
 	}
+	l := log.New(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
-			name: "no-existing-namespace-with-empty-input",
+			name:   "no-existing-namespace-with-empty-input",
+			logger: l,
 		},
 		{
 			name:      "no-existing-namespace-with-some-string",
+			logger:    l,
 			namespace: "some-value",
 			expect:    "some-value",
 		},
 		{
 			name:      "no-existing-namespace-with-dotted-string",
+			logger:    l,
 			namespace: "space.atomic.rockets",
 			expect:    "space.atomic.rockets",
 		},
 		{
 			name:      "no-existing-namespace-with-space-string",
+			logger:    l,
 			namespace: "some value with spaces which is a bad idea",
 			expect:    "some value with spaces which is a bad idea",
 		},
@@ -36,39 +44,31 @@ func TestLoggerNamespace(t *testing.T) {
 		{
 			name:      "with-existing-namespace-with-empty-input",
 			namespace: "",
-			input: Logger{
-				namespace: "service.consul",
-			},
-			expect: "service.consul",
+			logger:    l.WithNamespace("consul.service"),
+			expect:    "consul.service",
 		},
 		{
 			name:      "with-existing-namespace-with-some-string",
 			namespace: "cynthia",
-			input: Logger{
-				namespace: "lan.service",
-			},
-			expect: "lan.service.cynthia",
+			logger:    l.WithNamespace("consul.service"),
+			expect:    "consul.service.cynthia",
 		},
 		{
 			name:      "with-existing-namespace-with-dotted-string",
 			namespace: "cynthia.gateway",
-			input: Logger{
-				namespace: "lan.service",
-			},
-			expect: "lan.service.cynthia.gateway",
+			logger:    l.WithNamespace("consul.service"),
+			expect:    "consul.service.cynthia.gateway",
 		},
 		{
-			name: "with-existing-namespace-with-space-string",
-			input: Logger{
-				namespace: "lan.service",
-			},
+			name:      "with-existing-namespace-with-space-string",
+			logger:    l.WithNamespace("consul.service"),
 			namespace: "foo bar",
-			expect:    "lan.service.foo bar",
+			expect:    "consul.service.foo bar",
 		},
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := tc.input.WithNamespace(tc.namespace).Namespace()
+			actual := tc.logger.WithNamespace(tc.namespace).Namespace()
 			if tc.expect != actual {
 				t.Errorf("(expected-namespace)%s, != (actual-namespace)%s", tc.expect, actual)
 			}
@@ -79,36 +79,35 @@ func TestLoggerNamespace(t *testing.T) {
 func TestLoggerError(t *testing.T) {
 	type testCase struct {
 		name   string
-		logger Logger
+		logger log.Logger
 		input  error
 		expect error
 	}
+	l := log.New(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
 			name:   "no-existing-error-with-nil",
+			logger: l,
 			input:  nil,
 			expect: nil,
 		},
 		{
 			name:   "no-existing-err-with-some-error",
+			logger: l,
 			input:  io.EOF,
 			expect: io.EOF,
 		},
 		{
-			name: "existing-err-with-nil",
-			logger: Logger{
-				err: io.EOF,
-			},
+			name:   "existing-err-with-nil",
+			logger: l.WithErr(io.EOF),
 			input:  nil,
 			expect: nil,
 		},
 		{
-			name: "existing-err-with-some-error",
-			logger: Logger{
-				err: io.EOF,
-			},
-			input:  ErrLoggerInvalid,
-			expect: ErrLoggerInvalid,
+			name:   "existing-err-with-some-error",
+			logger: l.WithErr(io.EOF),
+			input:  os.ErrClosed,
+			expect: os.ErrClosed,
 		},
 	}
 	for _, tc := range tt {
@@ -124,10 +123,11 @@ func TestLoggerError(t *testing.T) {
 func TestLoggerCtx(t *testing.T) {
 	type testCase struct {
 		name   string
-		logger Logger
+		logger log.Logger
 		input  context.Context
 		expect any
 	}
+	l := log.New(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
 			name:   "no-existing-err-ctx",
@@ -135,10 +135,8 @@ func TestLoggerCtx(t *testing.T) {
 			expect: "value-1",
 		},
 		{
-			name: "existing-ctx",
-			logger: Logger{
-				ctx: context.WithValue(context.Background(), "key", "value-1"),
-			},
+			name:   "existing-ctx",
+			logger: l.WithCtx(context.WithValue(context.Background(), "key", "value-1")),
 			input:  context.WithValue(context.Background(), "key", "value-2"),
 			expect: "value-2",
 		},
@@ -157,22 +155,24 @@ func TestLoggerCtx(t *testing.T) {
 func TestLoggerWithCaller(t *testing.T) {
 	type testCase struct {
 		name   string
-		logger Logger
+		logger log.Logger
 		expect bool
 	}
+	l := log.New(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
 			name:   "not-enabled-<zero-value>",
+			logger: l,
 			expect: true,
 		},
 		{
 			name:   "already-enabled",
-			logger: Logger{}.WithCaller(),
+			logger: l.WithCaller(),
 			expect: true,
 		},
 		{
 			name:   "already-disabled",
-			logger: Logger{}.WithoutCaller(),
+			logger: l.WithoutCaller(),
 			expect: true,
 		},
 	}
@@ -180,7 +180,7 @@ func TestLoggerWithCaller(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := tc.logger.WithCaller().Caller()
 			if tc.expect != actual {
-				t.Errorf("(expected-caller)%t, != (actual-caller)%t", tc.expect, actual)
+				t.Errorf("(expected-caller)%#v != (actual-caller)%#v", tc.expect, actual)
 			}
 		})
 	}
@@ -189,17 +189,19 @@ func TestLoggerWithCaller(t *testing.T) {
 func TestLoggerWithoutCaller(t *testing.T) {
 	type testCase struct {
 		name   string
-		logger Logger
+		logger log.Logger
 		expect bool
 	}
+	l := log.New(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
 			name:   "not-already-enabled",
+			logger: l,
 			expect: false,
 		},
 		{
 			name:   "already-enabled",
-			logger: Logger{}.WithCaller(),
+			logger: l.WithCaller(),
 			expect: false,
 		},
 	}
@@ -207,7 +209,38 @@ func TestLoggerWithoutCaller(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := tc.logger.WithoutCaller().Caller()
 			if tc.expect != actual {
-				t.Errorf("(expected-caller)%t, != (actual-caller)%t", tc.expect, actual)
+				t.Errorf("(expected-caller)%#v != (actual-caller)%#v", tc.expect, actual)
+			}
+		})
+	}
+}
+
+func TestLoggerHandler(t *testing.T) {
+	type testCase struct {
+		name   string
+		logger log.Logger
+		expect log.Handler
+	}
+	h := log.NewDiscardHandler(log.LevelTrace)
+	l := log.New(h)
+
+	tt := []testCase{
+		{
+			name:   "nil-value",
+			logger: log.Logger{},
+			expect: nil,
+		},
+		{
+			name:   "already-enabled",
+			logger: l,
+			expect: h,
+		},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			actual := tc.logger.Handler()
+			if tc.expect != actual {
+				t.Errorf("(expected-caller)%#v, != (actual-caller)%#v", tc.expect, actual)
 			}
 		})
 	}

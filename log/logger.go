@@ -31,7 +31,7 @@ type Logger struct {
 }
 
 // Handler exposes logger's underlying handler.
-func (log Logger) Handler(level Level) Handler {
+func (log Logger) Handler() Handler {
 	return log.handler
 }
 
