@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -42,6 +43,15 @@ func TestAnyValueBool(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
 				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+			}
+		})
+		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
+			allocs := testing.AllocsPerRun(10, func() {
+				logger.With(F(t.Name(), tc.input)).Info("info")
+			})
+			if allocs != 0 {
+				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
 			}
 		})
 	}
@@ -91,6 +101,15 @@ func TestAnyValueBoolPtr(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
 				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+			}
+		})
+		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
+			allocs := testing.AllocsPerRun(10, func() {
+				logger.With(F(t.Name(), tc.input)).Info("info")
+			})
+			if allocs != 0 {
+				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
 			}
 		})
 	}

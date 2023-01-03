@@ -1,7 +1,0 @@
-version: '3'
-
-tasks:
-  default:
-    desc: "Show a list of available tasks"
-    cmds:
-      - task --list

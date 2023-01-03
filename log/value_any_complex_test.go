@@ -13,6 +13,8 @@ import (
 // +inf  float64 bits = 0x7ff0000000000000
 // -10.0 float64 bits = 0xc024000000000000
 // +10.0 float64 bits = 0x4024000000000000
+// +10.123 float64 bits = 0x40243ef9db22d0e5
+// -10.123 float64 bits = 0xc0243ef9db22d0e5
 
 func TestAnyValueComplex64(t *testing.T) {
 	type testCase struct {
@@ -26,17 +28,17 @@ func TestAnyValueComplex64(t *testing.T) {
 			name: "zero-value",
 			expect: Value{
 				k: KindComplex128,
-				s: "(0+0i)",
 			},
 		},
 		{
 			name: "some-value",
 			input: func() complex64 {
-				return complex64(complex(1.1, 1.2))
+				return complex64(complex(10.123, -10.123))
 			}(),
 			expect: Value{
 				k: KindComplex128,
-				s: "(1.1+1.2i)",
+				x: 0x40243ef9db22d0e5, // real
+				y: 0xc0243ef9db22d0e5, // imaginary
 			},
 		},
 	}
@@ -72,7 +74,6 @@ func TestAnyValueComplex64Ptr(t *testing.T) {
 			}(),
 			expect: Value{
 				k: KindComplex128,
-				s: "(0+0i)",
 			},
 		},
 		{
@@ -84,7 +85,8 @@ func TestAnyValueComplex64Ptr(t *testing.T) {
 			}(),
 			expect: Value{
 				k: KindComplex128,
-				s: "(1.1+1.2i)",
+				x: 0x40243ef9db22d0e5, // real
+				y: 0xc0243ef9db22d0e5, // imaginary
 			},
 		},
 	}
@@ -92,7 +94,7 @@ func TestAnyValueComplex64Ptr(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
-				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+				t.Errorf("\n%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
 			}
 		})
 	}
@@ -110,17 +112,17 @@ func TestAnyValueComplex128(t *testing.T) {
 			name: "zero-value",
 			expect: Value{
 				k: KindComplex128,
-				s: "(0+0i)",
 			},
 		},
 		{
 			name: "some-value",
 			input: func() complex128 {
-				return complex(1.1, 1.2)
+				return complex(float64(10.123), float64(-10.123))
 			}(),
 			expect: Value{
 				k: KindComplex128,
-				s: "(1.1+1.2i)",
+				x: 0x40243ef9db22d0e5, // real
+				y: 0xc0243ef9db22d0e5, // imaginary
 			},
 		},
 	}
@@ -128,7 +130,7 @@ func TestAnyValueComplex128(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
-				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+				t.Errorf("\n(expected) => %#v \n(got) => %#v", tc.expect, actual)
 			}
 		})
 	}

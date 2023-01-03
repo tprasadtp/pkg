@@ -1,7 +1,6 @@
 package log
 
 import (
-	"context"
 	"net/netip"
 	"testing"
 	"time"
@@ -28,11 +27,11 @@ var (
 )
 
 func BenchmarkNumbers(b *testing.B) {
-	logger := New(NewDiscardHandler(LevelTrace))
+	logger := New(NewDiscardHandler(LevelTrace)).WithoutCaller()
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		l2 := logger.WithCtx(context.Background()).WithErr(ErrInvalidKind).With(
+		l2 := logger.With(
 			// F("uint", tUint),
 			// F("uint8", tUint8),
 			// F("uint16", tUint16),
@@ -42,7 +41,7 @@ func BenchmarkNumbers(b *testing.B) {
 			// F("int8", tInt8),
 			// F("int16", tInt16),
 			// F("int32", tInt32),
-			F("int64", tInt64),
+			F("int64", 0),
 		)
 		l2.Info("INFO L2")
 	}

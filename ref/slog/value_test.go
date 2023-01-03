@@ -195,3 +195,12 @@ func BenchmarkUnsafeStrings(b *testing.B) {
 	}
 	_ = d
 }
+
+func TestAllocs(t *testing.T) {
+	allocs := testing.AllocsPerRun(10, func() {
+
+	})
+	if allocs != 0 {
+		t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
+	}
+}

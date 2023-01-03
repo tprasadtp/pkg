@@ -14,8 +14,6 @@ package log
 //     may not seem optimal, but most logging solutions convert
 //     all field values to json or string anyway so it does not affect much
 //     in applications.
-//
-//go:generate stringer -type=Kind -output value_kind_string.go -trimprefix=Kind
 type Kind uint8
 
 const (
@@ -38,6 +36,7 @@ const (
 // is not subject to compatibility guarantees.
 type Value struct {
 	x   uint64
+	y   uint64
 	s   string
 	k   Kind
 	any any

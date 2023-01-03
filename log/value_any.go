@@ -3,7 +3,6 @@ package log
 import (
 	"math"
 	"net/netip"
-	"strconv"
 	"time"
 )
 
@@ -243,12 +242,9 @@ func AnyValue(v any) Value {
 		}
 	// Complex
 	case complex64:
-		//nolint:gomnd // Linter, you are useless here.
 		return Value{
-			s: strconv.FormatComplex(
-				complex128(v), complexStringFmt,
-				complexPrecision, 64,
-			),
+			x: math.Float64bits(real(complex128(v))),
+			y: math.Float64bits(imag(complex128(v))),
 			k: KindComplex128,
 		}
 	case *complex64:
@@ -257,21 +253,15 @@ func AnyValue(v any) Value {
 				k: KindNull,
 			}
 		}
-		//nolint:gomnd // Linter, you are useless here.
 		return Value{
-			s: strconv.FormatComplex(
-				complex128(*v), complexStringFmt,
-				complexPrecision, 64,
-			),
+			x: math.Float64bits(real(complex128(*v))),
+			y: math.Float64bits(imag(complex128(*v))),
 			k: KindComplex128,
 		}
 	case complex128:
-		//nolint:gomnd // Linter, you are useless here.
 		return Value{
-			s: strconv.FormatComplex(
-				v, complexStringFmt,
-				complexPrecision, 128,
-			),
+			x: math.Float64bits(real(v)),
+			y: math.Float64bits(imag(v)),
 			k: KindComplex128,
 		}
 	case *complex128:
@@ -280,11 +270,9 @@ func AnyValue(v any) Value {
 				k: KindNull,
 			}
 		}
-		//nolint:gomnd // Linter, you are useless here.
 		return Value{
-			s: strconv.FormatComplex(
-				*v, complexStringFmt,
-				complexPrecision, 128),
+			x: math.Float64bits(real(*v)),
+			y: math.Float64bits(imag(*v)),
 			k: KindComplex128,
 		}
 	// time.Time
