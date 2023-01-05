@@ -47,8 +47,9 @@ func TestAnyValueUint(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -104,8 +105,9 @@ func TestAnyValueUintPtr(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -154,8 +156,9 @@ func TestAnyValueUint8(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -211,8 +214,9 @@ func TestAnyValueUint8Ptr(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -261,8 +265,9 @@ func TestAnyValueUint16(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -318,8 +323,9 @@ func TestAnyValueUint16Ptr(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -368,8 +374,9 @@ func TestAnyValueUint32(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -425,8 +432,9 @@ func TestAnyValueUint32Ptr(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -475,8 +483,9 @@ func TestAnyValueUint64(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -532,8 +541,9 @@ func TestAnyValueUint64Ptr(t *testing.T) {
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			logger := New(NewDiscardHandler(LevelTrace))
 			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+				logger.With(F(t.Name(), tc.input)).Info("info")
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)

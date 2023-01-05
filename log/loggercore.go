@@ -36,9 +36,8 @@ func getCallerInfo(depth int) CallerInfo {
 // This must be called directly by the method logging an event and not some
 // wrapper as caller info might be wrong if done so.
 func (log Logger) write(level Level, message string) {
-	// log handler must not be nil.
 	if log.handler == nil {
-		panic(ErrLoggerInvalid)
+		return
 	}
 
 	// return if handler is not enabled
