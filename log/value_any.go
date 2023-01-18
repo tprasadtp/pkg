@@ -240,41 +240,6 @@ func AnyValue(v any) Value {
 			x: math.Float64bits(*v),
 			k: KindFloat64,
 		}
-	// Complex
-	case complex64:
-		return Value{
-			x: math.Float64bits(real(complex128(v))),
-			y: math.Float64bits(imag(complex128(v))),
-			k: KindComplex128,
-		}
-	case *complex64:
-		if v == nil {
-			return Value{
-				k: KindNull,
-			}
-		}
-		return Value{
-			x: math.Float64bits(real(complex128(*v))),
-			y: math.Float64bits(imag(complex128(*v))),
-			k: KindComplex128,
-		}
-	case complex128:
-		return Value{
-			x: math.Float64bits(real(v)),
-			y: math.Float64bits(imag(v)),
-			k: KindComplex128,
-		}
-	case *complex128:
-		if v == nil {
-			return Value{
-				k: KindNull,
-			}
-		}
-		return Value{
-			x: math.Float64bits(real(*v)),
-			y: math.Float64bits(imag(*v)),
-			k: KindComplex128,
-		}
 	// time.Time
 	case time.Duration:
 		return Value{

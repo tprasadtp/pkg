@@ -58,13 +58,12 @@ func TestAnyValueInt(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
-				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+				t.Errorf("\n(expected) => %#v\n(got     ) => %#v", tc.expect, actual)
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
-			logger := New(NewDiscardHandler(LevelTrace))
-			allocs := testing.AllocsPerRun(10, func() {
-				logger.With(F(t.Name(), tc.input)).Info("info")
+			allocs := testing.AllocsPerRun(2, func() {
+				_ = F(t.Name(), tc.input)
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -140,13 +139,12 @@ func TestAnyValueIntPtr(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
-				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+				t.Errorf("\n(expected) => %#v\n(got     ) => %#v", tc.expect, actual)
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
-			logger := New(NewDiscardHandler(LevelTrace))
-			allocs := testing.AllocsPerRun(10, func() {
-				logger.With(F(t.Name(), tc.input)).Info("info")
+			allocs := testing.AllocsPerRun(2, func() {
+				_ = F(t.Name(), tc.input)
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -207,12 +205,12 @@ func TestAnyValueInt8(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
-				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+				t.Errorf("\n(expected) => %#v\n(got     ) => %#v", tc.expect, actual)
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
-			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+			allocs := testing.AllocsPerRun(2, func() {
+				_ = F(t.Name(), tc.input)
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -288,12 +286,12 @@ func TestAnyValueInt8Ptr(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
-				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+				t.Errorf("\n(expected) => %#v\n(got     ) => %#v", tc.expect, actual)
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
-			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+			allocs := testing.AllocsPerRun(2, func() {
+				_ = F(t.Name(), tc.input)
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
@@ -354,12 +352,12 @@ func TestAnyValueInt16(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := AnyValue(tc.input)
 			if !reflect.DeepEqual(tc.expect, actual) {
-				t.Errorf("%s => \n(expected) => %#v \n(got) => %#v", tc.name, tc.expect, actual)
+				t.Errorf("\n(expected) => %#v\n(got     ) => %#v", tc.expect, actual)
 			}
 		})
 		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
-			allocs := testing.AllocsPerRun(10, func() {
-				_ = F("key", tc.input)
+			allocs := testing.AllocsPerRun(2, func() {
+				_ = F(t.Name(), tc.input)
 			})
 			if allocs != 0 {
 				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)

@@ -36,8 +36,16 @@ const (
 // is not subject to compatibility guarantees.
 type Value struct {
 	x   uint64
-	y   uint64
 	s   string
 	k   Kind
 	any any
+}
+
+// Int64 returns int64 value if [Kind] is [KindInt64].
+// Panics otherwise.
+func (v Value) Int64() int64 {
+	if v.k != KindInt64 {
+		panic("Value is not of Kind KindInt64")
+	}
+	return int64(v.x)
 }

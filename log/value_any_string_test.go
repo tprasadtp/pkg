@@ -18,7 +18,6 @@ func TestAnyValueString(t *testing.T) {
 			name: "zero-value",
 			expect: Value{
 				k: KindString,
-				x: 0,
 			},
 		},
 		{
