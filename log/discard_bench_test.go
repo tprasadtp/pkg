@@ -32,16 +32,16 @@ func BenchmarkNumbers(b *testing.B) {
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		l2 := logger.With(
-			// F("uint", tUint),
-			// F("uint8", tUint8),
-			// F("uint16", tUint16),
-			// F("uint32", tUint32),
-			// F("uint64", uint64(1)),
-			// F("int", tInt),
-			// F("int8", tInt8),
-			// F("int16", tInt16),
-			// F("int32", tInt32),
-			F("int64", 0),
+			F("uint", tUint),
+			F("uint8", tUint8),
+			F("uint16", tUint16),
+			F("uint32", tUint32),
+			F("uint64", uint64(1)),
+			F("int", tInt),
+			F("int8", tInt8),
+			F("int16", tInt16),
+			F("int32", tInt32),
+			F("int64", tInt16),
 		)
 		l2.Info("INFO L2")
 	}

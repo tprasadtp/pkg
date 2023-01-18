@@ -55,7 +55,7 @@ func (log Logger) Caller() bool {
 	return log.caller
 }
 
-// Fields returns Loggers embedded context.
+// Fields returns Logger's embedded context.
 func (log Logger) Ctx() context.Context {
 	return log.ctx
 }
