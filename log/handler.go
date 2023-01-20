@@ -31,7 +31,7 @@ type Handler interface {
 	// Closes the underlying file or network connection or socket after
 	// writing pending entries in the buffer to file/network.
 	//  - Logger will not invoke Flush method on the handler,
-	//    it is up to the handler to flush its buffers before closing stream.
+	//    it is up to the handler to flush its buffers before closing the stream.
 	//  - It is up to the handler to implement timeouts.
 	//  - Any calls to Handle() or Flush() after calling this MUST result in error.
 	//  - Multiple calls to Close() MUST return an error.

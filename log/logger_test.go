@@ -2,6 +2,7 @@ package log_test
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"testing"
@@ -73,6 +74,14 @@ func TestLoggerNamespace(t *testing.T) {
 				t.Errorf("(expected-namespace)%s, != (actual-namespace)%s", tc.expect, actual)
 			}
 		})
+		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			allocs := testing.AllocsPerRun(10, func() {
+				_ = tc.logger.WithNamespace(tc.namespace)
+			})
+			if allocs != 0 {
+				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
+			}
+		})
 	}
 }
 
@@ -117,6 +126,14 @@ func TestLoggerError(t *testing.T) {
 				t.Errorf("(expected-err)%s, != (actual-err)%s", tc.expect, actual)
 			}
 		})
+		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			allocs := testing.AllocsPerRun(10, func() {
+				_ = tc.logger.WithErr(tc.input)
+			})
+			if allocs != 0 {
+				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
+			}
+		})
 	}
 }
 
@@ -147,6 +164,14 @@ func TestLoggerCtx(t *testing.T) {
 			actual := ctx.Value("key")
 			if tc.expect != actual {
 				t.Errorf("(expected-context-value)%s, != (actual-context-value)%s", tc.expect, actual)
+			}
+		})
+		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			allocs := testing.AllocsPerRun(10, func() {
+				_ = tc.logger.WithCtx(tc.input)
+			})
+			if allocs != 0 {
+				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
 			}
 		})
 	}
@@ -183,6 +208,14 @@ func TestLoggerWithCaller(t *testing.T) {
 				t.Errorf("(expected-caller)%#v != (actual-caller)%#v", tc.expect, actual)
 			}
 		})
+		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			allocs := testing.AllocsPerRun(10, func() {
+				_ = tc.logger.WithCaller()
+			})
+			if allocs != 0 {
+				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
+			}
+		})
 	}
 }
 
@@ -210,6 +243,14 @@ func TestLoggerWithoutCaller(t *testing.T) {
 			actual := tc.logger.WithoutCaller().Caller()
 			if tc.expect != actual {
 				t.Errorf("(expected-caller)%#v != (actual-caller)%#v", tc.expect, actual)
+			}
+		})
+		t.Run(fmt.Sprintf("%s-<allocs>", tc.name), func(t *testing.T) {
+			allocs := testing.AllocsPerRun(10, func() {
+				_ = tc.logger.WithoutCaller()
+			})
+			if allocs != 0 {
+				t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
 			}
 		})
 	}

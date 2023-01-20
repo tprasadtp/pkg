@@ -33,7 +33,9 @@ func (h *DiscardHandler) Write(event *Event) error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	span := trace.SpanContextFromContext(event.Ctx)
+	var span trace.SpanContext
+	span = trace.SpanContextFromContext(event.Ctx)
+
 	_ = span
 
 	if h.closed {

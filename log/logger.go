@@ -3,7 +3,6 @@ package log
 import (
 	"context"
 	"os"
-	"strings"
 )
 
 // fieldsBucketSize represents step size when growing capacity of
@@ -88,7 +87,7 @@ func (log Logger) WithNamespace(namespace string) Logger {
 		if log.namespace == "" {
 			log.namespace = namespace
 		} else {
-			log.namespace = strings.Join([]string{log.namespace, namespace}, ".")
+			log.namespace = log.namespace + "." + namespace
 		}
 	}
 	return log
@@ -99,7 +98,7 @@ func (log Logger) WithNamespace(namespace string) Logger {
 // message or scoped to the context of the error.
 // If logger already contains an error, it is replaced.
 //
-//	logger.WithError(err).Error("package metadata database connection lost")
+//	logger.WithError(err).Error("Failed to update metadata cache file.")
 func (log Logger) WithErr(err error) Logger {
 	log.err = err
 	return log
@@ -110,7 +109,8 @@ func (log Logger) WithErr(err error) Logger {
 // and enrich log entries. Cancelling this context has no effect
 // whatsoever on the log entry. Context might include
 // request scoped information and tracing data.
-// If logger already contains an context, it is replaced.
+// If logger already contains a context,
+// it is replaced as context is considered immutable.
 func (log Logger) WithCtx(ctx context.Context) Logger {
 	log.ctx = ctx
 	return log

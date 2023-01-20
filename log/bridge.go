@@ -10,7 +10,8 @@ import (
 // This ensures that bridge implements [io.Writer] interface.
 var _ io.Writer = &bridge{}
 
-// default bridge.
+// default bridge is an instance of bridge
+// used throughout the package.
 var defaultBridge = bridge{
 	level:  LevelInfo,
 	logger: nil,
