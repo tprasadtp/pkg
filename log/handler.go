@@ -2,7 +2,7 @@ package log
 
 // A Handler describes the logging backend.
 // To log to multiple backends simply wrap all the handlers in
-// another handler.
+// an another handler.
 type Handler interface {
 	// Checks if handler is enabled at the specified Level.
 	//  - This does not necessarily mean logs above this level are logged.
