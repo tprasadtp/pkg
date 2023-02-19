@@ -1,6 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: github-actions
+    directory: /
     labels:
       - "dependabot"
       - "dependencies"
@@ -20,6 +21,7 @@ updates:
       separator: "-"
 
   - package-ecosystem: gomod
+    directory: /
     labels:
       - "dependabot"
       - "dependencies"
