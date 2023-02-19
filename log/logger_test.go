@@ -123,7 +123,7 @@ func TestLoggerWithErr(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := tc.logger.WithErr(tc.input).Err()
-			if errors.Is(actual, tc.expect) {
+			if !errors.Is(actual, tc.expect) {
 				t.Errorf("(expected-err)%s, != (actual-err)%s", tc.expect, actual)
 			}
 		})

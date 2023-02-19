@@ -35,13 +35,13 @@ func getCallerInfo(depth int) CallerInfo {
 // All other named levels and methods use this in some form or other.
 // This must be called directly by the method logging an event and not some
 // wrapper as caller info might be wrong if done so.
-func (log Logger) write(level Level, message string) {
-	if log.handler == nil {
+func (l Logger) write(level Level, message string) {
+	if l.handler == nil {
 		return
 	}
 
 	// return if handler is not enabled
-	if !log.handler.Enabled(level) {
+	if !l.handler.Enabled(level) {
 		return
 	}
 
@@ -58,27 +58,28 @@ func (log Logger) write(level Level, message string) {
 	}()
 
 	// Build an event
-	event.Namespace = log.namespace
-	event.Ctx = log.ctx
-	event.Error = log.err
+	event.Namespace = l.namespace
+	event.Ctx = l.ctx
+	event.Error = l.err
+
 	// Check if pool backed slice has enough capacity if not reallocate
 	// in fieldsBucketSize increments.
-	n := len(log.fields)
+	n := len(l.fields)
 	if n > cap(event.Fields) {
 		buckets := (n / fieldsBucketSize) + 1
 		event.Fields = make([]Field, 0, fieldsBucketSize*buckets)
 	}
-	copy(event.Fields, log.fields)
+	copy(event.Fields, l.fields)
 
 	event.Time = time.Now()
 	event.Level = level
 	event.Message = message
 
-	if log.caller {
+	if l.caller {
 		event.Caller = getCallerInfo(1)
 	}
 
-	if err := log.handler.Write(event); err != nil {
+	if err := l.handler.Write(event); err != nil {
 		panic(err)
 	}
 }

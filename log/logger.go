@@ -117,8 +117,8 @@ func (log Logger) WithCtx(ctx context.Context) Logger {
 }
 
 // With returns a new Logger with given fields.
-// This will allocate if logger's underlying fields slice capacity is
-// smaller than required.
+// This will allocate if logger's underlying fields
+// slice capacity is smaller than required.
 func (log Logger) With(fields ...Field) Logger {
 	m := len(log.fields)
 	n := m + len(fields)
