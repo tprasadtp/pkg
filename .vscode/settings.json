@@ -1,0 +1,11 @@
+{
+    "go.coverOnSingleTest": true,
+    "go.diagnostic.vulncheck": "Imports",
+    "go.coverOnSingleTestFile": true,
+    "go.inlayHints.constantValues": true,
+    "go.survey.prompt": false,
+    "go.lintTool": "golangci-lint",
+    "go.lintFlags": [
+        "--fast"
+    ]
+}

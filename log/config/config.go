@@ -61,8 +61,7 @@ type Options struct {
 //     This uses google-cloud-sdk for authentication.
 //  2. AWS CloudWatch (cloudwatch) This uses aws-sdk for authentication.
 //  3. On Linux, Journald if running as a systemd unit or user unit. (journald)
-//     This will use default journald socket and is not configurable,
-//     use journald handler directly, if you need more customization options.
+//     This will use default journald socket.
 //  4. On Windows, EventLog if running as a windows service (eventlog)
 //     This requires you to define [Options.WinEventLogName],
 //     or this handler is ignored.

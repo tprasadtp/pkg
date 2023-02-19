@@ -10,9 +10,9 @@ import (
 // of this number.
 const fieldsBucketSize = 25
 
-// New creates a new Logger with the given Handler.
+// NewLogger creates a new Logger with the given Handler.
 // This pre allocates some storage for storing fields.
-func New(handler Handler) Logger {
+func NewLogger(handler Handler) Logger {
 	return Logger{
 		handler: handler,
 		fields:  make([]Field, 0, fieldsBucketSize),
@@ -98,7 +98,7 @@ func (log Logger) WithNamespace(namespace string) Logger {
 // message or scoped to the context of the error.
 // If logger already contains an error, it is replaced.
 //
-//	logger.WithError(err).Error("Failed to update metadata cache file.")
+//	logger.WithErr(err).Error("Failed to update metadata cache file.")
 func (log Logger) WithErr(err error) Logger {
 	log.err = err
 	return log

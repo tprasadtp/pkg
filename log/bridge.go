@@ -10,14 +10,17 @@ import (
 // This ensures that bridge implements [io.Writer] interface.
 var _ io.Writer = &bridge{}
 
-// default bridge is an instance of bridge
-// used throughout the package.
+// default bridge is an global bridge instance.
 var defaultBridge = bridge{
 	level:  LevelInfo,
 	logger: nil,
 }
 
 // Bridges stdlib logger.
+// this implements an io.Writer interface
+// which transforms the bytes written by
+// stdlib logger to an [Event] and let configured
+// handler handle it.
 type bridge struct {
 	mu     sync.Mutex
 	logger *Logger

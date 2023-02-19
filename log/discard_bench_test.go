@@ -27,7 +27,7 @@ var (
 )
 
 func BenchmarkNumbers(b *testing.B) {
-	logger := New(NewDiscardHandler(LevelTrace)).WithoutCaller()
+	logger := NewLogger(NewDiscardHandler(LevelTrace)).WithoutCaller()
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {

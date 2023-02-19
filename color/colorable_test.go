@@ -225,7 +225,7 @@ func TestEnvVariables(t *testing.T) {
 			tty:            false,
 			expect:         true,
 		},
-		//NO_COLOR (not defined or empty)
+		// NO_COLOR (not defined or empty)
 		{
 			NO_COLOR: "",
 			tty:      false,
@@ -236,7 +236,7 @@ func TestEnvVariables(t *testing.T) {
 			tty:      true,
 			expect:   true,
 		},
-		//NO_COLOR (defined whitespace only)
+		// NO_COLOR (defined whitespace only)
 		{
 			NO_COLOR: "  ",
 			tty:      false,

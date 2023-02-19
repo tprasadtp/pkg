@@ -35,7 +35,7 @@ type Info struct {
 	// Because we use go modules, it MUST include a prefix "v".
 	// See [golang/go/issues/30146] as to why.
 	//
-	//[golang/go/issues/30146]: https://github.com/golang/go/issues/30146
+	// [golang/go/issues/30146]: https://github.com/golang/go/issues/30146
 	Version string `json:"version" yaml:"version"`
 	// GitCommit indicates which git sha1 commit hash.
 	GitCommit string `json:"gitCommit" yaml:"gitCommit"`
@@ -48,8 +48,8 @@ type Info struct {
 	Os string `json:"os" yaml:"os"`
 	// Platform this is system platform
 	Platform string `json:"platform" yaml:"platform"`
-	// Compiler Go compiler. This is useful in determining if binary
-	// was built using CGO.
+	// Compiler Go compiler.
+	// This is useful in determining if binary was built using CGO.
 	Compiler string `json:"compiler" yaml:"compiler"`
 }
 

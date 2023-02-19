@@ -2,6 +2,7 @@ package log_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -17,7 +18,7 @@ func TestLoggerNamespace(t *testing.T) {
 		namespace string
 		expect    string
 	}
-	l := log.New(log.NewDiscardHandler(log.LevelTrace))
+	l := log.NewLogger(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
 			name:   "no-existing-namespace-with-empty-input",
@@ -85,14 +86,14 @@ func TestLoggerNamespace(t *testing.T) {
 	}
 }
 
-func TestLoggerError(t *testing.T) {
+func TestLoggerWithErr(t *testing.T) {
 	type testCase struct {
 		name   string
 		logger log.Logger
 		input  error
 		expect error
 	}
-	l := log.New(log.NewDiscardHandler(log.LevelTrace))
+	l := log.NewLogger(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
 			name:   "no-existing-error-with-nil",
@@ -122,7 +123,7 @@ func TestLoggerError(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := tc.logger.WithErr(tc.input).Err()
-			if tc.expect != actual {
+			if errors.Is(actual, tc.expect) {
 				t.Errorf("(expected-err)%s, != (actual-err)%s", tc.expect, actual)
 			}
 		})
@@ -144,7 +145,7 @@ func TestLoggerCtx(t *testing.T) {
 		input  context.Context
 		expect any
 	}
-	l := log.New(log.NewDiscardHandler(log.LevelTrace))
+	l := log.NewLogger(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
 			name:   "no-existing-err-ctx",
@@ -183,7 +184,7 @@ func TestLoggerWithCaller(t *testing.T) {
 		logger log.Logger
 		expect bool
 	}
-	l := log.New(log.NewDiscardHandler(log.LevelTrace))
+	l := log.NewLogger(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
 			name:   "not-enabled-<zero-value>",
@@ -225,7 +226,7 @@ func TestLoggerWithoutCaller(t *testing.T) {
 		logger log.Logger
 		expect bool
 	}
-	l := log.New(log.NewDiscardHandler(log.LevelTrace))
+	l := log.NewLogger(log.NewDiscardHandler(log.LevelTrace))
 	tt := []testCase{
 		{
 			name:   "not-already-enabled",
@@ -263,7 +264,7 @@ func TestLoggerHandler(t *testing.T) {
 		expect log.Handler
 	}
 	h := log.NewDiscardHandler(log.LevelTrace)
-	l := log.New(h)
+	l := log.NewLogger(h)
 
 	tt := []testCase{
 		{
