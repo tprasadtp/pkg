@@ -6,6 +6,7 @@ package slog
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 	"time"
 	"unsafe"
@@ -34,13 +35,6 @@ func TestValueEqual(t *testing.T) {
 				t.Errorf("%v.Equal(%v): got %t, want %t", v1, v2, got, want)
 			}
 		}
-	}
-}
-
-func TestNilValue(t *testing.T) {
-	n := AnyValue(nil)
-	if g := n.Any(); g != nil {
-		t.Errorf("got %#v, want nil", g)
 	}
 }
 
@@ -110,41 +104,55 @@ func TestAnyLevelAlloc(t *testing.T) {
 	// Because typical Levels are small integers,
 	// they are zero-alloc.
 	var a Value
-	x := DebugLevel + 100
+	x := LevelDebug + 100
 	wantAllocs(t, 0, func() { a = AnyValue(x) })
 	_ = a
 }
 
-func TestAnyLevel(t *testing.T) {
-	x := DebugLevel + 100
-	v := AnyValue(x)
-	vv := v.Any()
-	if _, ok := vv.(Level); !ok {
-		t.Errorf("wanted Level, got %T", vv)
+func TestAnyValue(t *testing.T) {
+	for _, test := range []struct {
+		in   any
+		want Value
+	}{
+		{1, IntValue(1)},
+		{1.5, Float64Value(1.5)},
+		{"s", StringValue("s")},
+		{uint(2), Uint64Value(2)},
+		{true, BoolValue(true)},
+		{testTime, TimeValue(testTime)},
+		{time.Hour, DurationValue(time.Hour)},
+		{[]Attr{Int("i", 3)}, GroupValue(Int("i", 3))},
+		{IntValue(4), IntValue(4)},
+	} {
+		got := AnyValue(test.in)
+		if !got.Equal(test.want) {
+			t.Errorf("%v (%[1]T): got %v (kind %s), want %v (kind %s)",
+				test.in, got, got.Kind(), test.want, test.want.Kind())
+		}
 	}
 }
 
-func TestSpecialValueTypes(t *testing.T) {
-	t.Run("time.Location", func(t *testing.T) {
-		want := time.UTC
-		got := AnyValue(want).Any()
-		if got != want {
+func TestValueAny(t *testing.T) {
+	for _, want := range []any{
+		nil,
+		LevelDebug + 100,
+		time.UTC, // time.Locations treated specially...
+		KindBool, // ...as are Kinds
+		[]Attr{Int("a", 1)},
+	} {
+		v := AnyValue(want)
+		got := v.Any()
+		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %v, want %v", got, want)
 		}
-	})
-	t.Run("Kind", func(t *testing.T) {
-		want := BoolKind
-		got := AnyValue(want).Any()
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
-	})
+	}
 }
+
 func TestLogValue(t *testing.T) {
 	want := "replaced"
 	r := &replace{StringValue(want)}
 	v := AnyValue(r)
-	if g, w := v.Kind(), LogValuerKind; g != w {
+	if g, w := v.Kind(), KindLogValuer; g != w {
 		t.Errorf("got %s, want %s", g, w)
 	}
 	got := v.LogValuer().LogValue().Any()
@@ -163,6 +171,27 @@ func TestLogValue(t *testing.T) {
 	got = AnyValue(r).Resolve().Any()
 	if _, ok := got.(error); !ok {
 		t.Errorf("expected error, got %T", got)
+	}
+
+	// Test Resolve group.
+	r = &replace{GroupValue(
+		Int("a", 1),
+		Group("b", Any("c", &replace{StringValue("d")})),
+	)}
+	v = AnyValue(r)
+	got2 := v.Resolve().Any().([]Attr)
+	want2 := []Attr{Int("a", 1), Group("b", String("c", "d"))}
+	if !attrsEqual(got2, want2) {
+		t.Errorf("got %v, want %v", got2, want2)
+	}
+
+}
+
+func TestZeroTime(t *testing.T) {
+	z := time.Time{}
+	got := TimeValue(z).Time()
+	if !got.IsZero() {
+		t.Errorf("got %s (%#[1]v), not zero time (%#v)", got, z)
 	}
 }
 
@@ -194,13 +223,4 @@ func BenchmarkUnsafeStrings(b *testing.B) {
 		}
 	}
 	_ = d
-}
-
-func TestAllocs(t *testing.T) {
-	allocs := testing.AllocsPerRun(10, func() {
-
-	})
-	if allocs != 0 {
-		t.Errorf("(expected-allocs)0 != (actual-allocs)%f", allocs)
-	}
 }

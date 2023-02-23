@@ -8,18 +8,21 @@ import (
 	"github.com/tprasadtp/pkg/ref/slog"
 )
 
-type NameGroup struct {
+type Name struct {
 	First, Last string
 }
 
-func (n NameGroup) LogValue() slog.Value {
+// LogValue implements slog.LogValuer.
+// It returns a group containing the fields of
+// the Name, so that they appear together in the log output.
+func (n Name) LogValue() slog.Value {
 	return slog.GroupValue(
 		slog.String("first", n.First),
 		slog.String("last", n.Last))
 }
 
-func ExampleLogValuer() {
-	n := NameGroup{"Perry", "Platypus"}
+func ExampleLogValuer_group() {
+	n := Name{"Perry", "Platypus"}
 	slog.Info("mission accomplished", "agent", n)
 
 	// JSON Output would look in part like:

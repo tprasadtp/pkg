@@ -5,6 +5,7 @@
 package slog_test
 
 import (
+	"context"
 	"os"
 
 	"github.com/tprasadtp/pkg/ref/slog"
@@ -29,7 +30,7 @@ func NewLevelHandler(level slog.Leveler, h slog.Handler) *LevelHandler {
 
 // Enabled implements Handler.Enabled by reporting whether
 // level is at least as large as h's level.
-func (h *LevelHandler) Enabled(level slog.Level) bool {
+func (h *LevelHandler) Enabled(_ context.Context, level slog.Level) bool {
 	return level >= h.level.Level()
 }
 
@@ -53,10 +54,18 @@ func (h *LevelHandler) Handler() slog.Handler {
 	return h.handler
 }
 
+// This example shows how to Use a LevelHandler to change the level of an
+// existing Handler while preserving its other behavior.
+//
+// This example demonstrates increasing the log level to reduce a logger's
+// output.
+//
+// Another typical use would be to decrease the log level (to LevelDebug, say)
+// during a part of the program that was suspected of containing a bug.
 func ExampleHandler_levelHandler() {
 	th := slog.HandlerOptions{
 		// Remove time from the output.
-		ReplaceAttr: func(a slog.Attr) slog.Attr {
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 			if a.Key == slog.TimeKey {
 				return slog.Attr{}
 			}
@@ -64,7 +73,7 @@ func ExampleHandler_levelHandler() {
 		},
 	}.NewTextHandler(os.Stdout)
 
-	logger := slog.New(NewLevelHandler(slog.WarnLevel, th))
+	logger := slog.New(NewLevelHandler(slog.LevelWarn, th))
 	logger.Info("not printed")
 	logger.Warn("printed")
 

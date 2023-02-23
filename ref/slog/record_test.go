@@ -5,6 +5,7 @@
 package slog
 
 import (
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -34,10 +35,15 @@ func TestRecordSourceLine(t *testing.T) {
 	}{
 		{0, "", false},
 		{-16, "", false},
-		{1, "record.go", true},
+		{1, "record_test.go", true}, // 1: caller of NewRecord
+		{2, "testing.go", true},
 	} {
-		r := NewRecord(time.Time{}, 0, "", test.depth, nil)
-		gotFile, gotLine := r.SourceLine()
+		var pc uintptr
+		if test.depth > 0 {
+			pc = callerPC(test.depth + 1)
+		}
+		r := NewRecord(time.Time{}, 0, "", pc, nil)
+		gotFile, gotLine := sourceLine(r)
 		if i := strings.LastIndexByte(gotFile, '/'); i >= 0 {
 			gotFile = gotFile[i+1:]
 		}
@@ -90,7 +96,7 @@ func TestAliasingAndClone(t *testing.T) {
 }
 
 func newRecordWithAttrs(as []Attr) Record {
-	r := NewRecord(time.Now(), InfoLevel, "", 0, nil)
+	r := NewRecord(time.Now(), LevelInfo, "", 0, nil)
 	r.AddAttrs(as...)
 	return r
 }
@@ -108,26 +114,30 @@ func attrsEqual(as1, as2 []Attr) bool {
 // Currently, pc(2) takes over 400ns, which is too expensive
 // to call it for every log message.
 func BenchmarkPC(b *testing.B) {
-	b.ReportAllocs()
-	var x uintptr
-	for i := 0; i < b.N; i++ {
-		x = pc(3)
+	for depth := 0; depth < 5; depth++ {
+		b.Run(strconv.Itoa(depth), func(b *testing.B) {
+			b.ReportAllocs()
+			var x uintptr
+			for i := 0; i < b.N; i++ {
+				x = callerPC(depth)
+			}
+			_ = x
+		})
 	}
-	_ = x
 }
 
 func BenchmarkSourceLine(b *testing.B) {
-	r := NewRecord(time.Now(), InfoLevel, "", 5, nil)
+	r := NewRecord(time.Now(), LevelInfo, "", 5, nil)
 	b.Run("alone", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			file, line := r.SourceLine()
+			file, line := sourceLine(r)
 			_ = file
 			_ = line
 		}
 	})
 	b.Run("stringifying", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			file, line := r.SourceLine()
+			file, line := sourceLine(r)
 			buf := buffer.New()
 			buf.WriteString(file)
 			buf.WriteByte(':')
@@ -144,7 +154,7 @@ func BenchmarkRecord(b *testing.B) {
 	var a Attr
 
 	for i := 0; i < b.N; i++ {
-		r := NewRecord(time.Time{}, InfoLevel, "", 0, nil)
+		r := NewRecord(time.Time{}, LevelInfo, "", 0, nil)
 		for j := 0; j < nAttrs; j++ {
 			r.AddAttrs(Int("k", j))
 		}

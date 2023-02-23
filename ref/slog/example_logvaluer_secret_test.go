@@ -5,17 +5,24 @@
 package slog_test
 
 import (
-	"net/http"
 	"os"
-	"time"
 
 	"github.com/tprasadtp/pkg/ref/slog"
 )
 
-func ExampleGroup() {
-	r, _ := http.NewRequest("GET", "localhost", nil)
-	// ...
+// A token is a secret value that grants permissions.
+type Token string
 
+// LogValue implements slog.LogValuer.
+// It avoids revealing the token.
+func (Token) LogValue() slog.Value {
+	return slog.StringValue("REDACTED_TOKEN")
+}
+
+// This example demonstrates a Value that replaces itself
+// with an alternative representation to avoid revealing secrets.
+func ExampleLogValuer_secret() {
+	t := Token("shhhh!")
 	// Remove the time attribute to make Output deterministic.
 	removeTime := func(groups []string, a slog.Attr) slog.Attr {
 		if a.Key == slog.TimeKey && len(groups) == 0 {
@@ -24,15 +31,8 @@ func ExampleGroup() {
 		return a
 	}
 	logger := slog.New(slog.HandlerOptions{ReplaceAttr: removeTime}.NewTextHandler(os.Stdout))
-	slog.SetDefault(logger)
-
-	slog.Info("finished",
-		slog.Group("req",
-			slog.String("method", r.Method),
-			slog.String("url", r.URL.String())),
-		slog.Int("status", http.StatusOK),
-		slog.Duration("duration", time.Second))
+	logger.Info("permission granted", "user", "Perry", "token", t)
 
 	// Output:
-	// level=INFO msg=finished req.method=GET req.url=localhost status=200 duration=1s
+	// level=INFO msg="permission granted" user=Perry token=REDACTED_TOKEN
 }

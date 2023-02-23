@@ -39,7 +39,7 @@ func TestJSONHandler(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			var buf bytes.Buffer
 			h := test.opts.NewJSONHandler(&buf)
-			r := NewRecord(testTime, InfoLevel, "m", 0, nil)
+			r := NewRecord(testTime, LevelInfo, "m", 0, nil)
 			r.AddAttrs(Int("a", 1), Any("m", map[string]int{"b": 2}))
 			if err := h.Handle(r); err != nil {
 				t.Fatal(err)
@@ -83,15 +83,24 @@ func TestAppendJSONValue(t *testing.T) {
 		jsonMarshaler{"xyz"},
 	} {
 		got := jsonValueString(t, AnyValue(value))
-		b, err := json.Marshal(value)
+		want, err := marshalJSON(value)
 		if err != nil {
 			t.Fatal(err)
 		}
-		want := string(b)
 		if got != want {
 			t.Errorf("%v: got %s, want %s", value, got, want)
 		}
 	}
+}
+
+func marshalJSON(x any) (string, error) {
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(false)
+	if err := enc.Encode(x); err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(buf.String()), nil
 }
 
 func TestJSONAppendAttrValueSpecial(t *testing.T) {
@@ -103,7 +112,7 @@ func TestJSONAppendAttrValueSpecial(t *testing.T) {
 		{math.NaN(), `"NaN"`},
 		{math.Inf(+1), `"+Inf"`},
 		{math.Inf(-1), `"-Inf"`},
-		{WarnLevel, `"WARN"`},
+		{LevelWarn, `"WARN"`},
 	} {
 		got := jsonValueString(t, AnyValue(test.value))
 		if got != test.want {
@@ -129,9 +138,9 @@ func BenchmarkJSONHandler(b *testing.B) {
 	}{
 		{"defaults", HandlerOptions{}},
 		{"time format", HandlerOptions{
-			ReplaceAttr: func(a Attr) Attr {
+			ReplaceAttr: func(_ []string, a Attr) Attr {
 				v := a.Value
-				if v.Kind() == TimeKind {
+				if v.Kind() == KindTime {
 					return String(a.Key, v.Time().Format(rfc3339Millis))
 				}
 				if a.Key == "level" {
@@ -141,9 +150,9 @@ func BenchmarkJSONHandler(b *testing.B) {
 			},
 		}},
 		{"time unix", HandlerOptions{
-			ReplaceAttr: func(a Attr) Attr {
+			ReplaceAttr: func(_ []string, a Attr) Attr {
 				v := a.Value
-				if v.Kind() == TimeKind {
+				if v.Kind() == KindTime {
 					return Int64(a.Key, v.Time().UnixNano())
 				}
 				if a.Key == "level" {
@@ -162,7 +171,7 @@ func BenchmarkJSONHandler(b *testing.B) {
 			b.ReportAllocs()
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				l.LogAttrs(InfoLevel, "this is a typical log message",
+				l.LogAttrs(LevelInfo, "this is a typical log message",
 					String("module", "github.com/google/go-cmp"),
 					String("version", "v1.23.4"),
 					Int("count", 23),
@@ -223,7 +232,7 @@ func BenchmarkPreformatting(b *testing.B) {
 			b.ReportAllocs()
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				l.LogAttrs(InfoLevel, "this is a typical log message",
+				l.LogAttrs(LevelInfo, "this is a typical log message",
 					String("module", "github.com/google/go-cmp"),
 					String("version", "v1.23.4"),
 					Int("count", 23),

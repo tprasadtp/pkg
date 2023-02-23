@@ -8,11 +8,14 @@ package slog
 
 import (
 	"bytes"
+	"encoding/json"
+	"io"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/tprasadtp/pkg/ref/slog/internal/buffer"
+	"golang.org/x/exp/slices"
 )
 
 func TestDefaultHandle(t *testing.T) {
@@ -88,7 +91,7 @@ func TestDefaultHandle(t *testing.T) {
 			if test.with != nil {
 				h = test.with(h)
 			}
-			r := NewRecord(time.Time{}, InfoLevel, "message", 0, nil)
+			r := NewRecord(time.Time{}, LevelInfo, "message", 0, nil)
 			r.AddAttrs(test.attrs...)
 			if err := h.Handle(r); err != nil {
 				t.Fatal(err)
@@ -106,14 +109,14 @@ func TestJSONAndTextHandlers(t *testing.T) {
 	// ReplaceAttr functions
 
 	// remove all Attrs
-	removeAll := func(a Attr) Attr { return Attr{} }
+	removeAll := func(_ []string, a Attr) Attr { return Attr{} }
 
 	attrs := []Attr{String("a", "one"), Int("b", 2), Any("", "ignore me")}
 	preAttrs := []Attr{Int("pre", 3), String("x", "y")}
 
 	for _, test := range []struct {
 		name     string
-		replace  func(Attr) Attr
+		replace  func([]string, Attr) Attr
 		with     func(Handler) Handler
 		preAttrs []Attr
 		attrs    []Attr
@@ -200,7 +203,7 @@ func TestJSONAndTextHandlers(t *testing.T) {
 			replace:  removeKeys(TimeKey, LevelKey),
 			attrs:    []Attr{Group("g"), Group("h", Int("a", 1))},
 			wantText: "msg=message h.a=1",
-			wantJSON: `{"msg":"message","g":{},"h":{"a":1}}`,
+			wantJSON: `{"msg":"message","h":{"a":1}}`,
 		},
 		{
 			name:    "escapes",
@@ -258,8 +261,40 @@ func TestJSONAndTextHandlers(t *testing.T) {
 			wantText: "msg=message p1=1 s1.s2.a=one s1.s2.b=2",
 			wantJSON: `{"msg":"message","p1":1,"s1":{"s2":{"a":"one","b":2}}}`,
 		},
+		{
+			name:     "GroupValue as Attr value",
+			replace:  removeKeys(TimeKey, LevelKey),
+			attrs:    []Attr{{"v", AnyValue(IntValue(3))}},
+			wantText: "msg=message v=3",
+			wantJSON: `{"msg":"message","v":3}`,
+		},
+		{
+			name:     "byte slice",
+			replace:  removeKeys(TimeKey, LevelKey),
+			attrs:    []Attr{Any("bs", []byte{1, 2, 3, 4})},
+			wantText: `msg=message bs="\x01\x02\x03\x04"`,
+			wantJSON: `{"msg":"message","bs":"AQIDBA=="}`,
+		},
+		{
+			name:     "json.RawMessage",
+			replace:  removeKeys(TimeKey, LevelKey),
+			attrs:    []Attr{Any("bs", json.RawMessage([]byte("1234")))},
+			wantText: `msg=message bs="1234"`,
+			wantJSON: `{"msg":"message","bs":1234}`,
+		},
+		{
+			name:    "inline group",
+			replace: removeKeys(TimeKey, LevelKey),
+			attrs: []Attr{
+				Int("a", 1),
+				Group("", Int("b", 2), Int("c", 3)),
+				Int("d", 4),
+			},
+			wantText: `msg=message a=1 b=2 c=3 d=4`,
+			wantJSON: `{"msg":"message","a":1,"b":2,"c":3,"d":4}`,
+		},
 	} {
-		r := NewRecord(testTime, InfoLevel, "message", 1, nil)
+		r := NewRecord(testTime, LevelInfo, "message", 1, nil)
 		r.AddAttrs(test.attrs...)
 		var buf bytes.Buffer
 		opts := HandlerOptions{ReplaceAttr: test.replace}
@@ -293,8 +328,8 @@ func TestJSONAndTextHandlers(t *testing.T) {
 
 // removeKeys returns a function suitable for HandlerOptions.ReplaceAttr
 // that removes all Attrs with the given keys.
-func removeKeys(keys ...string) func(a Attr) Attr {
-	return func(a Attr) Attr {
+func removeKeys(keys ...string) func([]string, Attr) Attr {
+	return func(_ []string, a Attr) Attr {
 		for _, k := range keys {
 			if a.Key == k {
 				return Attr{}
@@ -304,7 +339,7 @@ func removeKeys(keys ...string) func(a Attr) Attr {
 	}
 }
 
-func upperCaseKey(a Attr) Attr {
+func upperCaseKey(_ []string, a Attr) Attr {
 	a.Key = strings.ToUpper(a.Key)
 	return a
 }
@@ -331,14 +366,14 @@ func TestHandlerEnabled(t *testing.T) {
 		want    bool
 	}{
 		{nil, true},
-		{WarnLevel, false},
+		{LevelWarn, false},
 		{&LevelVar{}, true}, // defaults to Info
-		{levelVar(WarnLevel), false},
-		{DebugLevel, true},
-		{levelVar(DebugLevel), true},
+		{levelVar(LevelWarn), false},
+		{LevelDebug, true},
+		{levelVar(LevelDebug), true},
 	} {
 		h := &commonHandler{opts: HandlerOptions{Level: test.leveler}}
-		got := h.enabled(InfoLevel)
+		got := h.enabled(LevelInfo)
 		if got != test.want {
 			t.Errorf("%v: got %t, want %t", test.leveler, got, test.want)
 		}
@@ -389,6 +424,56 @@ func TestSecondWith(t *testing.T) {
 	want := `level=INFO msg=foo app=playground role=tester data_version=2 type=log`
 	if got != want {
 		t.Errorf("\ngot  %s\nwant %s", got, want)
+	}
+}
+
+func TestReplaceAttrGroups(t *testing.T) {
+	// Verify that ReplaceAttr is called with the correct groups.
+	type ga struct {
+		groups string
+		key    string
+		val    string
+	}
+
+	var got []ga
+
+	h := HandlerOptions{ReplaceAttr: func(gs []string, a Attr) Attr {
+		v := a.Value.String()
+		if a.Key == TimeKey {
+			v = "<now>"
+		}
+		got = append(got, ga{strings.Join(gs, ","), a.Key, v})
+		return a
+	}}.NewTextHandler(io.Discard)
+	New(h).
+		With(Int("a", 1)).
+		WithGroup("g1").
+		With(Int("b", 2)).
+		WithGroup("g2").
+		With(
+			Int("c", 3),
+			Group("g3", Int("d", 4)),
+			Int("e", 5)).
+		Info("m",
+			Int("f", 6),
+			Group("g4", Int("h", 7)),
+			Int("i", 8))
+
+	want := []ga{
+		{"", "a", "1"},
+		{"g1", "b", "2"},
+		{"g1,g2", "c", "3"},
+		{"g1,g2,g3", "d", "4"},
+		{"g1,g2", "e", "5"},
+		{"", "time", "<now>"},
+		{"", "level", "INFO"},
+		{"", "msg", "m"},
+		{"g1,g2", "f", "6"},
+		{"g1,g2,g4", "h", "7"},
+		{"g1,g2", "i", "8"},
+	}
+	if !slices.Equal(got, want) {
+		t.Errorf("\ngot  %v\nwant %v", got, want)
 	}
 }
 
