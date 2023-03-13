@@ -1,0 +1,3 @@
+[submodule "upstream/exp"]
+	path = upstream/exp
+	url = https://github.com/golang/exp
