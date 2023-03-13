@@ -33,33 +33,41 @@ func (o *versionCmdOpts) RunE(cmd *cobra.Command, args []string) error {
 
 // NewVersionCmd returns a version command with options to
 // output in json and templated string format.
-func NewVersionCmd(programName string) *cobra.Command {
+func NewVersionCmd() *cobra.Command {
 	o := &versionCmdOpts{}
 	cmd := &cobra.Command{
-		Use:     "version",
-		Args:    cobra.NoArgs,
-		Short:   "Show version information",
-		RunE:    o.RunE,
-		Example: fmt.Sprintf("%s version", programName),
+		Use:   "version",
+		Args:  cobra.NoArgs,
+		Short: "Show version and build information",
+		RunE:  o.RunE,
 	}
-	cmd.Long = fmt.Sprintf(`Show version of %[1]s
+	cmd.Long = `Show version and build info.
 
 When using the --template flag the following properties are
 available to use in the template:
 
-- .Version contains the semantic version of %[1]s
-- .GitCommit is the git commit sha1
+- .Version contains the semantic version
+- .GitCommit is the git commit SHA1 hash.
 - .BuildDate is build date
-- .GitTreeState is the state of the git tree when %[1]s was built
-- .GoVersion contains the version of Go that %[1]s was compiled with
+- .GoVersion contains the version of Go that binary was compiled with
 - .Os is operating system (GOOS)
 - .Arch is system architecture (GOARCH)
 - .Compiler is the Go compiler used to build the binary.
-
-`, programName)
+`
 
 	cmd.Flags().StringVarP(&o.template, "template", "t", "", "output as template")
 	cmd.Flags().StringVar(&o.format, "format", "text", "output as format")
 	cmd.MarkFlagsMutuallyExclusive("template", "format")
+	//nolint: errcheck // ignore
+	cmd.RegisterFlagCompletionFunc(
+		"format",
+		func(cmd *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+			return []string{
+					"text\tTextual format",
+					"json\tOutput as JSON",
+				},
+				cobra.ShellCompDirectiveNoFileComp
+		},
+	)
 	return cmd
 }

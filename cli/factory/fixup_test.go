@@ -4,8 +4,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/spf13/cobra"
 	"github.com/tprasadtp/pkg/cli/factory"
+	"github.com/tprasadtp/pkg/cli/internal/testcli"
 )
 
 func Test_FixupCommands(t *testing.T) {
@@ -18,41 +18,36 @@ func Test_FixupCommands(t *testing.T) {
 		{
 			Name: "root command no args",
 		},
-		// completion command has subcommands, so it must error
+		// command1 has subcommands, so it must error
 		// when a subcommand is not provided.
 		{
-			Name:   "command-only-when-it-has-subcommands",
+			Name:   "command1-only-when-it-has-subcommands",
 			RError: true,
-			Args:   []string{"completion"},
+			Args:   []string{"command1"},
 		},
 		{
-			Name:   "command-when-it-has-subcommands-help-flag",
+			Name:   "command1-when-it-has-subcommands-help-flag",
 			RError: false,
-			Args:   []string{"completion", "--help"},
+			Args:   []string{"command1", "--help"},
 		},
 		{
 			Name:   "command-when-it-has-valid-subcommand",
 			RError: false,
-			Args:   []string{"completion", "bash", "-"},
+			Args:   []string{"command1", "subcommand1"},
 		},
-		// completion command has subcommands, so it must error
+		// command1 has subcommands, so it must error
 		// when a invalid sub-command is provided.
 		{
-			Name:   "command-invalid-subcommand",
+			Name:   "command1-invalid-subcommand",
 			RError: true,
-			Args:   []string{"completion", "invalid-shell"},
+			Args:   []string{"command1", "invalid-subcommand"},
 		},
 	}
 	for _, tc := range tt {
 		t.Run(tc.Name, func(t *testing.T) {
-			root := &cobra.Command{
-				Use:   "blackhole-entropy",
-				Short: "Black Hole Entropy CLI",
-				Long:  "CLI to seed system's PRNG with entropy from M87 Black Hole",
-			}
+			root := testcli.GetTestCLI()
 			root.SetOut(io.Discard)
 			root.SetErr(io.Discard)
-			root.AddCommand(factory.NewCompletionCmd(root.Name()))
 			factory.FixCobraBehavior(root)
 			root.SetArgs(tc.Args)
 			err := root.Execute()

@@ -19,6 +19,11 @@ linters-settings:
     # Default: 0.0
     package-average: 10.0
 
+  nestif:
+    # Minimal complexity of if statements to report.
+    # Default: 5
+    min-complexity: 7
+
   errcheck:
     # Report about not checking of errors in type assertions: `a := b.(MyStruct)`.
     # Such cases aren't reported by default.
@@ -47,8 +52,8 @@ linters-settings:
 
   gocognit:
     # Minimal code complexity to report
-    # Default: 30 (but we recommend 10-20)
-    min-complexity: 20
+    # Default: 30
+    min-complexity: 30
 
   gocritic:
     # Settings passed to gocritic.

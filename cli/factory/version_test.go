@@ -11,6 +11,7 @@ import (
 	"github.com/tprasadtp/pkg/version"
 )
 
+//nolint:gocognit // ignore
 func Test_VersionCmd_Template(t *testing.T) {
 	var stdout = new(bytes.Buffer)
 	var stderr = new(bytes.Buffer)
@@ -126,7 +127,7 @@ func Test_VersionCmd_Template(t *testing.T) {
 			}
 			root.SetOut(stdout)
 			root.SetErr(stderr)
-			root.AddCommand(factory.NewVersionCmd(root.Name()))
+			root.AddCommand(factory.NewVersionCmd())
 			factory.FixCobraBehavior(root)
 			root.SetArgs(tc.Args)
 			err := root.Execute()

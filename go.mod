@@ -4,14 +4,10 @@ go 1.20
 
 require (
 	github.com/spf13/cobra v1.6.1
+	github.com/spf13/pflag v1.0.5
 	golang.org/x/sys v0.6.0
 )
 
-require (
-	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
-)
+require github.com/inconshreveable/mousetrap v1.1.0 // indirect
 
-retract [v0.1.0, v0.2.1]
-
-retract [v1.0.0, v1.2.4]
+retract [v0.1.0, v1.2.4] // this module provides no compatibility gurantees.

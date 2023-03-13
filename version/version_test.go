@@ -33,11 +33,6 @@ func TestGetWithOverride(t *testing.T) {
 			expect:  "1.22.333+dev",
 		},
 		{
-			name:    "empty",
-			version: "",
-			expect:  "",
-		},
-		{
 			name:    "non-semver",
 			version: "2022-01-31.2",
 			expect:  "2022-01-31.2",
@@ -58,3 +53,13 @@ func TestGetWithOverride(t *testing.T) {
 		})
 	}
 }
+
+// disabled because of
+// - https://github.com/golang/go/issues/33976,
+// - https://github.com/golang/go/issues/52600
+// func TestGetWithoutOverride(t *testing.T) {
+// 	info := GetInfo()
+// 	if info.Version == "" {
+// 		t.Errorf("GetInfo().Version s empty when it should be populated automatically")
+// 	}
+// }

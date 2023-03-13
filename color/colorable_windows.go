@@ -9,7 +9,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-// nolint: gochecknoglobals
+//nolint:gochecknoglobals // This is required to be global to mock in tests.
 var osVersion = windows.RtlGetVersion()
 
 func isColorable(flag string, istty bool) bool {

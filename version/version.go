@@ -1,10 +1,13 @@
 // Package version is a helper for processing
 // VCS, build, and runtime information of the binary.
 // You can inject them at build time via ld flags.
+// If not already injected, this uses debug.ReadBuildInfo,
+// to get version information if any.
 package version
 
 import (
 	"runtime"
+	"runtime/debug"
 )
 
 // Can override these at compile time.
@@ -26,6 +29,25 @@ var (
 	// 		-X github.com/pkg/version.buildDate = "build-date-in-format"
 	buildDate = "1970-01-01T00:00+00:00"
 )
+
+//nolint:gochecknoinits // Reads embedded build info.
+func init() {
+	v, ok := debug.ReadBuildInfo()
+	if ok {
+		for _, item := range v.Settings {
+			switch item.Key {
+			case "vcs.revision":
+				if commit == "" {
+					commit = item.Value
+				}
+			case "vcs.time":
+				if buildDate == "1970-01-01T00:00+00:00" {
+					buildDate = item.Value
+				}
+			}
+		}
+	}
+}
 
 // Info describes the build, revision and runtime information.
 type Info struct {

@@ -23,13 +23,12 @@ import (
 func FixCobraBehavior(cmd *cobra.Command) {
 	// Disable completion command
 	cmd.Root().CompletionOptions.DisableDefaultCmd = true
-	cmd.DisableAutoGenTag = true
 	// Iterate over all child commands
-	for _, childCmd := range cmd.Commands() {
+	for _, cmd := range cmd.Commands() {
 		// Only apply fix if child command does not define Run or RunE.
-		if childCmd.HasSubCommands() {
-			if childCmd.Run == nil && childCmd.RunE == nil {
-				childCmd.RunE = func(c *cobra.Command, args []string) error {
+		if cmd.HasSubCommands() {
+			if cmd.Run == nil && cmd.RunE == nil {
+				cmd.RunE = func(c *cobra.Command, args []string) error {
 					if len(args) == 0 {
 						return fmt.Errorf("please provide a valid sub-command for %s", c.Name())
 					}
@@ -37,9 +36,7 @@ func FixCobraBehavior(cmd *cobra.Command) {
 				}
 			}
 		}
-		// Disable auto-generated-by tag in generated docs.
-		childCmd.DisableAutoGenTag = false
 		// Recursively run this function.
-		FixCobraBehavior(childCmd)
+		FixCobraBehavior(cmd)
 	}
 }

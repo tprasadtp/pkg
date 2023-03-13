@@ -26,14 +26,14 @@ func Test_CompletionCmd_ToStdOut_Success(t *testing.T) {
 			StdOutString: "# bash completion V2",
 			ArgsVariants: [][]string{
 				{"completion", "bash"},
-				{"completion", "bash", "-"},
+				{"completion", "bash", "--output=-"},
 			},
 		},
 		{
 			Name: "command-zsh",
 			ArgsVariants: [][]string{
 				{"completion", "zsh"},
-				{"completion", "zsh", "-"},
+				{"completion", "zsh", "--output=-"},
 			},
 			StdOutString: "# zsh completion",
 		},
@@ -41,7 +41,7 @@ func Test_CompletionCmd_ToStdOut_Success(t *testing.T) {
 			Name: "command-fish",
 			ArgsVariants: [][]string{
 				{"completion", "fish"},
-				{"completion", "fish", "-"},
+				{"completion", "fish", "--output=-"},
 			},
 			StdOutString: "# fish completion",
 		},
@@ -50,8 +50,8 @@ func Test_CompletionCmd_ToStdOut_Success(t *testing.T) {
 			ArgsVariants: [][]string{
 				{"completion", "powershell"},
 				{"completion", "pwsh"},
-				{"completion", "powershell", "-"},
-				{"completion", "pwsh", "-"},
+				{"completion", "powershell", "--output=-"},
+				{"completion", "pwsh", "--output=-"},
 			},
 			StdOutString: "# powershell completion",
 		},
@@ -69,8 +69,7 @@ func Test_CompletionCmd_ToStdOut_Success(t *testing.T) {
 				}
 				root.SetOut(stdout)
 				root.SetErr(stderr)
-				root.AddCommand(factory.NewCompletionCmd(root.Name()))
-				factory.FixCobraBehavior(root)
+				root.AddCommand(factory.NewCompletionCmd())
 				root.SetArgs(cmdArgs)
 				err := root.Execute()
 				if stdout.String() == "" {
@@ -78,7 +77,8 @@ func Test_CompletionCmd_ToStdOut_Success(t *testing.T) {
 				}
 
 				if !strings.Contains(stdout.String(), tc.StdOutString) {
-					t.Errorf("%s: does not contain expected bash completion header", stdout.String())
+					t.Errorf("with %s does not contain expected completion header %s, got \n %s",
+						cmdArgs[1], tc.StdOutString, stdout.String())
 				}
 
 				if stderr.String() != "" {
@@ -119,8 +119,7 @@ func Test_CompletionCmd_InvalidSubCommands(t *testing.T) {
 			}
 			root.SetOut(stdout)
 			root.SetErr(stderr)
-			root.AddCommand(factory.NewCompletionCmd(root.Name()))
-			factory.FixCobraBehavior(root)
+			root.AddCommand(factory.NewCompletionCmd())
 			root.SetArgs(tc.Args)
 			err := root.Execute()
 			if err == nil {
@@ -140,28 +139,48 @@ func Test_CompletionCmd_ToFile(t *testing.T) {
 	}
 	tt := []testCase{
 		{
-			Name:       "bash",
-			Args:       []string{"completion", "bash", "testdata/completions-test.bash"},
+			Name: "bash",
+			Args: []string{
+				"completion",
+				"bash",
+				"--output", "testdata/completions-test.bash",
+			},
 			FindString: "# bash completion V2",
 		},
 		{
-			Name:       "zsh",
-			Args:       []string{"completion", "zsh", "testdata/completions-test.zsh"},
+			Name: "zsh",
+			Args: []string{
+				"completion",
+				"zsh",
+				"--output", "testdata/completions-test.zsh",
+			},
 			FindString: "# zsh completion",
 		},
 		{
-			Name:       "fish",
-			Args:       []string{"completion", "fish", "testdata/completions-test.fish"},
+			Name: "fish",
+			Args: []string{
+				"completion",
+				"fish",
+				"--output", "testdata/completions-test.fish",
+			},
 			FindString: "# fish completion",
 		},
 		{
-			Name:       "powershell",
-			Args:       []string{"completion", "powershell", "testdata/completions-test.powershell"},
+			Name: "powershell",
+			Args: []string{
+				"completion",
+				"powershell",
+				"--output", "testdata/completions-test.powershell",
+			},
 			FindString: "# powershell completion",
 		},
 		{
-			Name:       "pwsh",
-			Args:       []string{"completion", "pwsh", "testdata/completions-test.pwsh"},
+			Name: "pwsh",
+			Args: []string{
+				"completion",
+				"pwsh",
+				"--output", "testdata/completions-test.pwsh",
+			},
 			FindString: "# powershell completion",
 		},
 	}
@@ -174,8 +193,7 @@ func Test_CompletionCmd_ToFile(t *testing.T) {
 			}
 			root.SetOut(stdout)
 			root.SetErr(stderr)
-			root.AddCommand(factory.NewCompletionCmd(root.Name()))
-			factory.FixCobraBehavior(root)
+			root.AddCommand(factory.NewCompletionCmd())
 			root.SetArgs(tc.Args)
 			err := root.Execute()
 
@@ -193,7 +211,7 @@ func Test_CompletionCmd_ToFile(t *testing.T) {
 			}
 
 			// Open file and check if it is correct completion
-			outputFile, outputReadErr := os.Open(tc.Args[2])
+			outputFile, outputReadErr := os.Open(tc.Args[3])
 			if outputReadErr != nil {
 				t.Fatalf("failed to open file for verification: %s", outputReadErr)
 			}
@@ -243,7 +261,7 @@ func Test_NewCompletionCmd_HiddenAttrs(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.Name, func(t *testing.T) {
-			cmd := factory.NewCompletionCmd("blackhole-entropy", tc.Args...)
+			cmd := factory.NewCompletionCmd(tc.Args...)
 			if cmd.Hidden != tc.ExpectHiddenStatus {
 				t.Errorf("Expected Hidden status=%t, got=%t", tc.ExpectHiddenStatus, cmd.Hidden)
 			}
