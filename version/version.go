@@ -71,7 +71,7 @@ type Info struct {
 	// Arch this is system Arch
 	Arch string `json:"platform" yaml:"arch"`
 	// Compiler Go compiler.
-	// This is useful in determining if binary was built using CGO.
+	// This is useful in determining if binary was built using gccgo.
 	Compiler string `json:"compiler" yaml:"compiler"`
 }
 
