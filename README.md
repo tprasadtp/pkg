@@ -7,7 +7,6 @@
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/tprasadtp/pkg?color=7f50a6&label=release&logo=semver&sort=semver)
 
 - This repository makes no compatibility guarantees.
-- There are no tagged releases for this repo. If you find tagged releases they may be retracted.
 - Pin deps to commits hashes!
 - Packages in this repository may be promoted/moved to `alpha` level
 under `github.com/tprasadtp/x/<module>` Unlike this repository, __some__
