@@ -10,5 +10,7 @@ require (
 
 require github.com/inconshreveable/mousetrap v1.1.0 // indirect
 
-retract	[v1.0.0, v1.2.4] // this module provides no compatibility gurantees.
-retract [v0.1.0, v0.2.1] // this module provides no compatibility gurantees.
+retract (
+    [v1.0.0, v1.2.5] // See http://go/tpraadtp-pkg
+    [v0.1.0, v0.2.1] // See http://go/tpraadtp-pkg
+)
