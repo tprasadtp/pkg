@@ -1,4 +1,4 @@
-package factory
+package cli
 
 import (
 	_ "embed"

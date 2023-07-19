@@ -59,8 +59,8 @@ type Info struct {
 	//
 	// [golang/go/issues/30146]: https://github.com/golang/go/issues/30146
 	Version string `json:"version" yaml:"version"`
-	// GitCommit indicates which git sha1 commit hash.
-	GitCommit string `json:"gitCommit" yaml:"gitCommit"`
+	// Commit indicates which git sha1 commit hash.
+	Commit string `json:"gitCommit" yaml:"commit"`
 	// BuildDate date of the build.
 	// You can set this to CommitDate to get truly reproducible and verifiable builds.
 	BuildDate string `json:"buildDate" yaml:"buildDate"`
@@ -80,7 +80,7 @@ type Info struct {
 func GetInfo() Info {
 	return Info{
 		Version:   version,
-		GitCommit: commit,
+		Commit: commit,
 		BuildDate: buildDate,
 		GoVersion: runtime.Version(),
 		Os:        runtime.GOOS,

@@ -1,4 +1,4 @@
-package factory_test
+package cli_test
 
 import (
 	"bytes"
@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/spf13/cobra"
-	"github.com/tprasadtp/pkg/cli/factory"
+	"github.com/tprasadtp/pkg/cli"
 )
 
 func Test_CompletionCmd_ToStdOut_Success(t *testing.T) {
@@ -69,7 +69,7 @@ func Test_CompletionCmd_ToStdOut_Success(t *testing.T) {
 				}
 				root.SetOut(stdout)
 				root.SetErr(stderr)
-				root.AddCommand(factory.NewCompletionCmd())
+				root.AddCommand(cli.NewCompletionCmd())
 				root.SetArgs(cmdArgs)
 				err := root.Execute()
 				if stdout.String() == "" {
@@ -119,7 +119,7 @@ func Test_CompletionCmd_InvalidSubCommands(t *testing.T) {
 			}
 			root.SetOut(stdout)
 			root.SetErr(stderr)
-			root.AddCommand(factory.NewCompletionCmd())
+			root.AddCommand(cli.NewCompletionCmd())
 			root.SetArgs(tc.Args)
 			err := root.Execute()
 			if err == nil {
@@ -193,7 +193,7 @@ func Test_CompletionCmd_ToFile(t *testing.T) {
 			}
 			root.SetOut(stdout)
 			root.SetErr(stderr)
-			root.AddCommand(factory.NewCompletionCmd())
+			root.AddCommand(cli.NewCompletionCmd())
 			root.SetArgs(tc.Args)
 			err := root.Execute()
 
@@ -261,7 +261,7 @@ func Test_NewCompletionCmd_HiddenAttrs(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.Name, func(t *testing.T) {
-			cmd := factory.NewCompletionCmd(tc.Args...)
+			cmd := cli.NewCompletionCmd(tc.Args...)
 			if cmd.Hidden != tc.ExpectHiddenStatus {
 				t.Errorf("Expected Hidden status=%t, got=%t", tc.ExpectHiddenStatus, cmd.Hidden)
 			}

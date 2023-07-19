@@ -1,4 +1,4 @@
-package factory_test
+package cli_test
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/spf13/cobra"
-	"github.com/tprasadtp/pkg/cli/factory"
+	"github.com/tprasadtp/pkg/cli"
 	"github.com/tprasadtp/pkg/version"
 )
 
@@ -127,8 +127,8 @@ func Test_VersionCmd_Template(t *testing.T) {
 			}
 			root.SetOut(stdout)
 			root.SetErr(stderr)
-			root.AddCommand(factory.NewVersionCmd())
-			factory.FixCobraBehavior(root)
+			root.AddCommand(cli.NewVersionCmd())
+			cli.FixCobraBehavior(root)
 			root.SetArgs(tc.Args)
 			err := root.Execute()
 

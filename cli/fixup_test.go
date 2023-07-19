@@ -1,10 +1,10 @@
-package factory_test
+package cli_test
 
 import (
 	"io"
 	"testing"
 
-	"github.com/tprasadtp/pkg/cli/factory"
+	"github.com/tprasadtp/pkg/cli"
 	"github.com/tprasadtp/pkg/cli/internal/testcli"
 )
 
@@ -48,7 +48,7 @@ func Test_FixupCommands(t *testing.T) {
 			root := testcli.GetTestCLI()
 			root.SetOut(io.Discard)
 			root.SetErr(io.Discard)
-			factory.FixCobraBehavior(root)
+			cli.FixCobraBehavior(root)
 			root.SetArgs(tc.Args)
 			err := root.Execute()
 			if tc.RError {
