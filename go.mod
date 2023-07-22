@@ -1,6 +1,6 @@
 module github.com/tprasadtp/pkg
 
-go 1.21rc2
+go 1.21
 
 require (
 	github.com/spf13/cobra v1.7.0
@@ -11,6 +11,6 @@ require (
 require github.com/inconshreveable/mousetrap v1.1.0 // indirect
 
 retract (
-    [v1.0.0, v1.2.5] // See http://go/tprsadtp-pkg
-    [v0.1.0, v0.2.1] // See http://go/tprsadtp-pkg
+    [v1.0.0, v1.2.9] // See http://go/pkg-unstable
+    [v0.1.0, v0.2.1] // See http://go/pkg-unstable
 )
