@@ -8,6 +8,7 @@ package version
 import (
 	"runtime"
 	"runtime/debug"
+	"sync"
 )
 
 // Can override these at compile time.
@@ -16,7 +17,7 @@ var (
 	//
 	// You can override at build time using
 	// 		-X github.com/pkg/version.version = "your-desired-version"
-	version = "v0.0.0+undefined"
+	version = ""
 	// commit is git commit sha1 hash
 	//
 	// You can override at build time using
@@ -27,27 +28,11 @@ var (
 	//
 	// You can override at build time using
 	// 		-X github.com/pkg/version.buildDate = "build-date-in-format"
-	buildDate = "1970-01-01T00:00+00:00"
-)
+	buildDate = ""
 
-//nolint:gochecknoinits // Reads embedded build info.
-func init() {
-	v, ok := debug.ReadBuildInfo()
-	if ok {
-		for _, item := range v.Settings {
-			switch item.Key {
-			case "vcs.revision":
-				if commit == "" {
-					commit = item.Value
-				}
-			case "vcs.time":
-				if buildDate == "1970-01-01T00:00+00:00" {
-					buildDate = item.Value
-				}
-			}
-		}
-	}
-}
+	// once is sync.Once for getting build info from ReadBuildInfo.
+	once sync.Once
+)
 
 // Info describes the build, revision and runtime information.
 type Info struct {
@@ -60,7 +45,7 @@ type Info struct {
 	// [golang/go/issues/30146]: https://github.com/golang/go/issues/30146
 	Version string `json:"version" yaml:"version"`
 	// Commit indicates which git sha1 commit hash.
-	Commit string `json:"gitCommit" yaml:"commit"`
+	Commit string `json:"commit" yaml:"commit"`
 	// BuildDate date of the build.
 	// You can set this to CommitDate to get truly reproducible and verifiable builds.
 	BuildDate string `json:"buildDate" yaml:"buildDate"`
@@ -70,7 +55,7 @@ type Info struct {
 	Os string `json:"os" yaml:"os"`
 	// Arch this is system Arch
 	Arch string `json:"platform" yaml:"arch"`
-	// Compiler Go compiler.
+	// Compiler is Go compiler.
 	// This is useful in determining if binary was built using gccgo.
 	Compiler string `json:"compiler" yaml:"compiler"`
 }
@@ -78,9 +63,31 @@ type Info struct {
 // GetInfo returns version information. This usually relies on
 // build tools injecting version info via ld flags.
 func GetInfo() Info {
+	// Read from debug.ReadBuildInfo() if required.
+	once.Do(func() {
+		// only if commit or build date are not defined.
+		if commit == "" || buildDate == "" {
+			v, ok := debug.ReadBuildInfo()
+			if ok {
+				for _, item := range v.Settings {
+					switch item.Key {
+					case "vcs.revision":
+						if commit == "" {
+							commit = item.Value
+						}
+					case "vcs.time":
+						if buildDate == "" {
+							buildDate = item.Value
+						}
+					}
+				}
+			}
+		}
+	})
+
 	return Info{
 		Version:   version,
-		Commit: commit,
+		Commit:    commit,
 		BuildDate: buildDate,
 		GoVersion: runtime.Version(),
 		Os:        runtime.GOOS,
