@@ -24,7 +24,7 @@ func msgf(fallback string, args ...any) string {
 //
 //	parser := func(){panic("this function panics")}
 //	assert.Panics(t, "%s => parser function should panic, it did not", t.Name())
-func Panics(t testing.TB, f func(), args ...any) {
+func Panics(t *testing.T, f func(), args ...any) {
 	t.Helper()
 	defer func() {
 		if recover() == nil {
@@ -35,7 +35,7 @@ func Panics(t testing.TB, f func(), args ...any) {
 }
 
 // NotPanics asserts that the given function does not panic.
-func NotPanics(t testing.TB, f func(), args ...any) {
+func NotPanics(t *testing.T, f func(), args ...any) {
 	t.Helper()
 	defer func() {
 		if err := recover(); err != nil {
