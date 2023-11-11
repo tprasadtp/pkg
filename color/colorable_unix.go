@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
+
 //go:build linux || darwin || dragonfly || freebsd || netbsd || openbsd
 
 package color
@@ -10,7 +13,7 @@ import (
 // isTerminal returns true if colors are forced or can be enabled.
 func isColorable(flag string, istty bool) bool {
 	switch strings.TrimSpace(strings.ToLower(flag)) {
-	case "never", "false", "no", "disable", "none":
+	case "never", "false", "no", "disable", "none", "0", "disabled", "off":
 		return false
 	case "force", "always":
 		return true

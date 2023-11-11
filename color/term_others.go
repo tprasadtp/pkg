@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: BSD-3-Clause
-// SPDX-FileCopyrightText: 2021 The Go Authors
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
 
 //go:build !darwin && !dragonfly && !freebsd && !linux && !netbsd && !openbsd && !windows
 

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
+
 package color
 
 import (
@@ -17,7 +20,7 @@ func TestWinBuild(t *testing.T) {
 		expect       bool
 	}
 
-	var tt = []testCase{
+	tt := []testCase{
 		{
 			name:         "Windows-Server-2022",
 			majorVersion: 10,
@@ -141,7 +144,6 @@ func TestWinBuild(t *testing.T) {
 	for _, tc := range tt {
 		tn := fmt.Sprintf("%s/terminal=%t", tc.name, tc.tty)
 		t.Run(tn, func(t *testing.T) {
-
 			// Simply call windows api again to reset everything.
 			t.Cleanup(func() {
 				osVersion = windows.RtlGetVersion()
@@ -175,7 +177,7 @@ func TestWinBuildEnvOverride(t *testing.T) {
 		expect       bool
 	}
 
-	var tt = []testCase{
+	tt := []testCase{
 		// Windows 10 RS3
 		{
 			name:         "Windows-10-1709",

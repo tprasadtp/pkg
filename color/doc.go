@@ -1,4 +1,5 @@
-// This package only supports terminals which support true colors (24 bit).
-// In case terminal does not support true color, input bytes/strings are
-// left unmodified and returns a no-op equivalents.
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
+
+// Package color provides ANSI color formatters and utilities.
 package color

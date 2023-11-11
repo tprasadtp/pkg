@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: BSD-3-Clause
-// SPDX-FileCopyrightText: 2013 The Go Authors
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
 
 //go:build darwin || dragonfly || freebsd || netbsd || openbsd
 
@@ -7,4 +7,7 @@ package color
 
 import "golang.org/x/sys/unix"
 
-const ioctlReadTermios = unix.TIOCGETA
+func isTerminal(fd uintptr) bool {
+	_, err := unix.IoctlGetTermios(int(fd), unix.TIOCGETA)
+	return err == nil
+}

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
+
 package color
 
 import (
@@ -12,7 +15,7 @@ func TestFlag(t *testing.T) {
 		expect bool
 	}
 
-	var tt = []testCase{
+	tt := []testCase{
 		{
 			flag:   "always",
 			tty:    false,
@@ -142,6 +145,16 @@ func TestFlag(t *testing.T) {
 			tty:    false,
 			expect: false,
 		},
+		{
+			flag:   "off",
+			tty:    true,
+			expect: false,
+		},
+		{
+			flag:   "disabled",
+			tty:    true,
+			expect: false,
+		},
 	}
 
 	for _, tc := range tt {
@@ -156,129 +169,127 @@ func TestFlag(t *testing.T) {
 }
 
 func TestEnvVariables(t *testing.T) {
-	// This test MUST not be parallel
+	//nolint:revive,stylecheck // ignore
 	type testCase struct {
-		//nolint:revive,stylecheck // This is an env variable.
-		envCLICOLOR_FORCE string
-		//nolint:revive,stylecheck // This is an env variable.
-		envNO_COLOR string
-		envCLICOLOR string
-		envCI       string
-		tty         bool
-		expect      bool
+		CLICOLOR_FORCE string
+		NO_COLOR       string
+		CLICOLOR       string
+		CI             string
+		tty            bool
+		expect         bool
 	}
 
-	var tt = []testCase{
+	tt := []testCase{
 		// CLICOLOR_FORCE (not defined or empty or zero)
 		{
-			envCLICOLOR_FORCE: "",
-			tty:               false,
-			expect:            false,
+			CLICOLOR_FORCE: "",
+			tty:            false,
+			expect:         false,
 		},
 		{
-			envCLICOLOR_FORCE: "",
-			tty:               true,
-			expect:            true,
+			CLICOLOR_FORCE: "",
+			tty:            true,
+			expect:         true,
 		},
 		// CLICOLOR_FORCE (defined=0)
 		{
-			envCLICOLOR_FORCE: "0",
-			tty:               false,
-			expect:            false,
+			CLICOLOR_FORCE: "0",
+			tty:            false,
+			expect:         false,
 		},
 		{
-			envCLICOLOR_FORCE: "0",
-			tty:               true,
-			expect:            true,
+			CLICOLOR_FORCE: "0",
+			tty:            true,
+			expect:         true,
 		},
 		// CLICOLOR_FORCE (defined!=0)
 		{
-			envCLICOLOR_FORCE: "1",
-			tty:               true,
-			expect:            true,
+			CLICOLOR_FORCE: "1",
+			tty:            true,
+			expect:         true,
 		},
 		{
-			envCLICOLOR_FORCE: "1",
-			tty:               false,
-			expect:            true,
+			CLICOLOR_FORCE: "1",
+			tty:            false,
+			expect:         true,
 		},
 		{
-			envCLICOLOR_FORCE: "non-zero",
-			tty:               true,
-			expect:            true,
+			CLICOLOR_FORCE: "non-zero",
+			tty:            true,
+			expect:         true,
 		},
 		{
-			envCLICOLOR_FORCE: "non-zero",
-			tty:               false,
-			expect:            true,
+			CLICOLOR_FORCE: "non-zero",
+			tty:            false,
+			expect:         true,
 		},
 		{
-			envCLICOLOR_FORCE: "  ",
-			tty:               false,
-			expect:            true,
+			CLICOLOR_FORCE: "  ",
+			tty:            false,
+			expect:         true,
 		},
 		{
-			envCLICOLOR_FORCE: "non-zero",
-			tty:               false,
-			expect:            true,
+			CLICOLOR_FORCE: "non-zero",
+			tty:            false,
+			expect:         true,
 		},
 		{
-			envCLICOLOR_FORCE: "  ",
-			tty:               false,
-			expect:            true,
+			CLICOLOR_FORCE: "  ",
+			tty:            false,
+			expect:         true,
 		},
 		// NO_COLOR (not defined or empty)
 		{
-			envNO_COLOR: "",
-			tty:         false,
-			expect:      false,
+			NO_COLOR: "",
+			tty:      false,
+			expect:   false,
 		},
 		{
-			envNO_COLOR: "",
-			tty:         true,
-			expect:      true,
+			NO_COLOR: "",
+			tty:      true,
+			expect:   true,
 		},
 		// NO_COLOR (defined whitespace only)
 		{
-			envNO_COLOR: "  ",
-			tty:         false,
-			expect:      false,
+			NO_COLOR: "  ",
+			tty:      false,
+			expect:   false,
 		},
 		{
-			envNO_COLOR: "  ",
-			tty:         true,
-			expect:      false,
+			NO_COLOR: "  ",
+			tty:      true,
+			expect:   false,
 		},
 		// NO_COLOR defined and not empty
 		{
-			envNO_COLOR: "defined",
-			tty:         false,
-			expect:      false,
+			NO_COLOR: "defined",
+			tty:      false,
+			expect:   false,
 		},
 		{
-			envNO_COLOR: "defined",
-			tty:         true,
-			expect:      false,
+			NO_COLOR: "defined",
+			tty:      true,
+			expect:   false,
 		},
 		// CI=true, enables colors even when TTY is not attached
 		{
-			envCI:  "true",
+			CI:     "true",
 			tty:    true,
 			expect: true,
 		},
 		{
-			envCI:  "true",
+			CI:     "true",
 			tty:    false,
 			expect: true,
 		},
 		// CI != true
 		{
-			envCI:  "none",
+			CI:     "none",
 			tty:    true,
 			expect: true,
 		},
 		{
-			envCI:  "none",
+			CI:     "none",
 			tty:    false,
 			expect: false,
 		},
@@ -291,30 +302,30 @@ func TestEnvVariables(t *testing.T) {
 	for _, tc := range tt {
 		tn := fmt.Sprintf(
 			"CI=%s,CLICOLOR_FORCE=%s,NO_COLOR=%s,CLICOLOR=%s,tty=%t",
-			tc.envCI,
-			tc.envCLICOLOR_FORCE,
-			tc.envNO_COLOR,
-			tc.envCLICOLOR,
+			tc.CI,
+			tc.CLICOLOR_FORCE,
+			tc.NO_COLOR,
+			tc.CLICOLOR,
 			tc.tty,
 		)
 		t.Run(tn, func(t *testing.T) {
-			if tc.envCLICOLOR_FORCE != "" {
-				t.Setenv("CLICOLOR_FORCE", tc.envCLICOLOR_FORCE)
+			if tc.CLICOLOR_FORCE != "" {
+				t.Setenv("CLICOLOR_FORCE", tc.CLICOLOR_FORCE)
 			} else {
 				t.Setenv("CLICOLOR_FORCE", "")
 			}
-			if tc.envCLICOLOR != "undefined" {
-				t.Setenv("CLICOLOR", tc.envCLICOLOR)
+			if tc.CLICOLOR != "undefined" {
+				t.Setenv("CLICOLOR", tc.CLICOLOR)
 			} else {
 				t.Setenv("CLICOLOR", "")
 			}
-			if tc.envNO_COLOR != "" {
-				t.Setenv("NO_COLOR", tc.envNO_COLOR)
+			if tc.NO_COLOR != "" {
+				t.Setenv("NO_COLOR", tc.NO_COLOR)
 			} else {
 				t.Setenv("NO_COLOR", "")
 			}
-			if tc.envCI != "" {
-				t.Setenv("CI", tc.envCI)
+			if tc.CI != "" {
+				t.Setenv("CI", tc.CI)
 			} else {
 				t.Setenv("CI", "")
 			}

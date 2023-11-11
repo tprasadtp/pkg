@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
+
 //go:build linux || darwin
 
 package color
@@ -8,78 +11,77 @@ import (
 )
 
 func TestUnixTERM(t *testing.T) {
-	// We never want to call t.Parallel() as they use t.Setenv
+	//nolint:revive,stylecheck // ignore
 	type testCase struct {
-		envTERM string
-		//nolint:revive,stylecheck // This is an env variable you useless linter.
-		envTERM_PROGRAM string
-		tty             bool
-		expect          bool
+		TERM         string
+		TERM_PROGRAM string
+		tty          bool
+		expect       bool
 	}
 
-	var tt = []testCase{
+	tt := []testCase{
 		{
-			envTERM: "",
-			tty:     false,
-			expect:  false,
+			TERM:   "",
+			tty:    false,
+			expect: false,
 		},
 		{
-			envTERM: "",
-			tty:     true,
-			expect:  true,
+			TERM:   "",
+			tty:    true,
+			expect: true,
 		},
 		{
-			envTERM: "linux",
-			tty:     false,
-			expect:  false,
+			TERM:   "linux",
+			tty:    false,
+			expect: false,
 		},
 		{
-			envTERM: "linux",
-			tty:     true,
-			expect:  false,
+			TERM:   "linux",
+			tty:    true,
+			expect: false,
 		},
 		// dumb
 		{
-			envTERM: "dumb",
-			tty:     false,
-			expect:  false,
+			TERM:   "dumb",
+			tty:    false,
+			expect: false,
 		},
 		{
-			envTERM: "dumb",
-			tty:     true,
-			expect:  false,
+			TERM:   "dumb",
+			tty:    true,
+			expect: false,
 		},
 		// screen
 		{
-			envTERM: "screen",
-			tty:     false,
-			expect:  false,
+			TERM:   "screen",
+			tty:    false,
+			expect: false,
 		},
 		{
-			envTERM: "screen",
-			tty:     true,
-			expect:  false,
+			TERM:   "screen",
+			tty:    true,
+			expect: false,
 		},
 		// tmux
 		{
-			envTERM:         "screen",
-			envTERM_PROGRAM: "tmux",
-			tty:             false,
-			expect:          false,
+			TERM:         "screen",
+			TERM_PROGRAM: "tmux",
+			tty:          false,
+			expect:       false,
 		},
 		{
-			envTERM:         "screen",
-			envTERM_PROGRAM: "tmux",
-			tty:             true,
-			expect:          true,
+			TERM:         "screen",
+			TERM_PROGRAM: "tmux",
+			tty:          true,
+			expect:       true,
 		},
 	}
 
 	for _, tc := range tt {
 		tn := fmt.Sprintf(
 			"TERM=%s,TERM_PROGRAM=%s,tty=%t",
-			tc.envTERM,
-			tc.envTERM_PROGRAM,
+			tc.TERM,
+			tc.TERM_PROGRAM,
 			tc.tty,
 		)
 		// t.Run blocks till func returns, or calls t.Parallel()
@@ -91,14 +93,14 @@ func TestUnixTERM(t *testing.T) {
 			t.Setenv("NO_COLOR", "")
 			t.Setenv("CI", "")
 
-			if tc.envTERM != "" {
-				t.Setenv("TERM", tc.envTERM)
+			if tc.TERM != "" {
+				t.Setenv("TERM", tc.TERM)
 			} else {
 				t.Setenv("TERM", "")
 			}
 
-			if tc.envTERM_PROGRAM != "" {
-				t.Setenv("TERM_PROGRAM", tc.envTERM_PROGRAM)
+			if tc.TERM_PROGRAM != "" {
+				t.Setenv("TERM_PROGRAM", tc.TERM_PROGRAM)
 			} else {
 				t.Setenv("TERM_PROGRAM", "")
 			}

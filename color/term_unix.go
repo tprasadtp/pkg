@@ -1,13 +1,15 @@
-// SPDX-License-Identifier: BSD-3-Clause
-// SPDX-FileCopyrightText: 2019 The Go Authors
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
 
-//go:build darwin || dragonfly || freebsd || linux || netbsd || openbsd
+//go:build linux || android
 
 package color
 
-import "golang.org/x/sys/unix"
+import (
+	"golang.org/x/sys/unix"
+)
 
 func isTerminal(fd uintptr) bool {
-	_, err := unix.IoctlGetTermios(int(fd), ioctlReadTermios)
+	_, err := unix.IoctlGetTermios(int(fd), unix.TCGETS)
 	return err == nil
 }

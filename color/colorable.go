@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
+
 package color
 
 import "os"
@@ -8,8 +11,8 @@ import "os"
 // This supports both [CLICOLOR] and [NO_COLOR] standards, while ignoring
 //
 //   - Argument 'flag' ALWAYS takes priority and is NOT case sensitive.
-//   - If flag is 'never', 'disable', no, 'none' or 'false', returns false
-//   - If flag is 'always' or 'force', returns 'true'
+//   - If flag is 'never', 'disable', 'no', 'none' or 'false', returns false.
+//   - If flag is 'always' or 'force', returns 'true'.
 //   - You should probably map this variable to your cli's --color flag.
 //   - If you specify flag string to other than above specified, it is ignored.
 //
@@ -54,8 +57,8 @@ func IsStderrColorable(flag string) bool {
 // This supports both [CLICOLOR] and [NO_COLOR] standards. ([Sigh!]...)
 //
 //   - Argument 'flag' ALWAYS takes priority and is NOT case sensitive.
-//   - If flag is 'never', 'disable' or 'none' or 'false', returns false
-//   - If flag is 'always' or 'force', returns 'true'
+//   - If flag is 'never', 'off', 'disable', 'none' or 'false', returns false.
+//   - If flag is 'always' or 'force', returns 'true'.
 //   - You should probably map this variable to your cli's --color flag.
 //   - If you specify flag string to other than above specified, it is ignored.
 //

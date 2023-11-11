@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2023 Prasad Tengse
+// SPDX-License-Identifier: MIT
+
 //go:build windows
 
 package color
@@ -9,12 +12,11 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-//nolint:gochecknoglobals // This is required to be global to mock in tests.
 var osVersion = windows.RtlGetVersion()
 
 func isColorable(flag string, istty bool) bool {
 	switch strings.TrimSpace(strings.ToLower(flag)) {
-	case "never", "false", "no", "disable", "none":
+	case "never", "false", "no", "disable", "none", "0", "disabled", "off":
 		return false
 	case "force", "always":
 		return true
@@ -28,10 +30,12 @@ func isColorable(flag string, istty bool) bool {
 	if len(os.Getenv("CLICOLOR_FORCE")) > 0 && os.Getenv("CLICOLOR_FORCE") != "0" {
 		return true
 	}
+
 	// CLICOLOR == 0 or NO_COLOR is set and not empty
 	if len(os.Getenv("NO_COLOR")) > 0 || os.Getenv("CLICOLOR") == "0" {
 		return false
 	}
+
 	// CI
 	if strings.ToLower(os.Getenv("CI")) == "true" {
 		return true
