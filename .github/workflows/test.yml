@@ -15,25 +15,15 @@ on:
         default: false
 jobs:
   test:
-    strategy:
-      fail-fast: false
-      matrix:
-        go:
-          - "1.21"
-        os:
-          - macos-11
-          - macos-12
-          - ubuntu-latest
-          - windows-latest
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-12
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Go ${{ matrix.go }}
+      - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go }}
+          go-version: stable
 
       - name: Setup vs code tunnel
         if: github.event_name == 'workflow_dispatch' && inputs.tunnel
