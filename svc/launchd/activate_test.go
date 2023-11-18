@@ -101,7 +101,7 @@ func NotifyTestServer(t *testing.T, event TestEvent) {
 // TestRemote runs tests and pushes the results to GO_TEST_SERVER_ADDR.
 func TestRemote(t *testing.T) {
 	if _, ok := os.LookupEnv("GO_TEST_SERVER_ADDR"); !ok {
-		t.Skip("GO_TEST_SERVER_ADDR is not set")
+		t.SkipNow()
 	}
 
 	t.Run("NoSuchSocket", func(t *testing.T) {

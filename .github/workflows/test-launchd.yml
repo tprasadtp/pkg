@@ -1,11 +1,9 @@
-name: test
+name: test-launchd
 on:
   push:
     branches:
       - "**"
   pull_request:
-    branches:
-      - osx-socket
   workflow_dispatch:
     inputs:
       tunnel:
