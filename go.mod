@@ -1,16 +1,14 @@
-module github.com/tprasadtp/pkg
+module github.com/tprasadtp/knit
 
-go 1.21
+go 1.22
 
 require (
-	github.com/spf13/cobra v1.7.0
+	github.com/Masterminds/semver/v3 v3.2.1
+	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
-	golang.org/x/sys v0.12.0
+	github.com/tprasadtp/go-autotune v0.0.0-20240416215432-5a9494a44b9f
+	golang.org/x/sys v0.19.0
+	golang.org/x/text v0.14.0
 )
 
 require github.com/inconshreveable/mousetrap v1.1.0 // indirect
-
-retract (
-	[v1.0.0, v1.2.9] // See http://go/pkg-unstable
-	[v0.1.0, v0.2.1] // See http://go/pkg-unstable
-)
