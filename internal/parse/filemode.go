@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright 2024 Prasad Tengse
-// SPDX-License-Identifier: GPLv3-only
+// SPDX-License-Identifier: MIT
 
 package parse
 

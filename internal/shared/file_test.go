@@ -1,10 +1,11 @@
 // SPDX-FileCopyrightText: Copyright 2024 Prasad Tengse
-// SPDX-License-Identifier: GPLv3-only
+// SPDX-License-Identifier: MIT
 
 package shared
 
 import (
 	"fmt"
+	"io/fs"
 	"math/rand/v2"
 	"os"
 	"path/filepath"
@@ -13,6 +14,25 @@ import (
 
 	"github.com/tprasadtp/knit/internal/testutils"
 )
+
+func TestFileModeAddExecutableBit(t *testing.T) {
+	tt := []struct {
+		input  fs.FileMode
+		expect fs.FileMode
+	}{
+		{0, 0},
+		{0o400, 0o500},
+		{0440, 0o550},
+	}
+	for _, tc := range tt {
+		t.Run(fmt.Sprintf("%o", tc.input), func(t *testing.T) {
+			v := FileModeAddExecutableBit(tc.input)
+			if v != tc.expect {
+				t.Errorf("expected=%s(%o), got=%s(%o)", tc.expect, tc.expect, v, v)
+			}
+		})
+	}
+}
 
 func TestReadSmallFile(t *testing.T) {
 	tt := []struct {
