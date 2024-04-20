@@ -5,13 +5,18 @@ package command
 
 import (
 	"fmt"
+	"log/slog"
+	"testing"
 
 	"github.com/spf13/cobra"
 	"github.com/tprasadtp/knit/internal/command/semver"
 	"github.com/tprasadtp/knit/internal/command/version"
+	"github.com/tprasadtp/knit/internal/log"
 )
 
-func RootCommand() *cobra.Command {
+func RootCommand(logger *slog.Logger) *cobra.Command {
+	var verbose bool
+
 	cmd := &cobra.Command{
 		Use:               "knit",
 		Short:             "A Toolkit for building docker images",
@@ -20,7 +25,20 @@ func RootCommand() *cobra.Command {
 		CompletionOptions: cobra.CompletionOptions{
 			DisableDefaultCmd: true,
 		},
+		// Set logger based on slog for all go-containerregistry operations.
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			logger := slog.Default()
+			ctx := cmd.Context()
+
+			if testing.Testing() {
+
+			}
+
+			cmd.SetContext(log.WithContext(cmd.Context(), slog.Default()))
+			return nil
+		},
 	}
+	cmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "enable verbose logs")
 	cmd.AddCommand(semver.NewCommand())
 	cmd.AddCommand(version.NewVersionCmd())
 	FixCobraBehavior(cmd)

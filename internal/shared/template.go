@@ -32,7 +32,7 @@ func RenderTemplateToFile(path, tpl string, funcs template.FuncMap, append, lf b
 		return err
 	}
 
-	return WriteContentsToFile(path, buf.Bytes(), append, lf, mode)
+	return WriteToFile(path, buf.Bytes(), append, lf, mode)
 }
 
 func RenderTemplate(w io.Writer, tpl string, funcs template.FuncMap, data any) error {

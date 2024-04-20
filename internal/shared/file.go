@@ -50,7 +50,7 @@ func ReadSmallFile(path string, max int64) ([]byte, error) {
 	return contents, nil
 }
 
-// WriteContentsToFile writes given contents to the file specified.
+// WriteToFile writes given contents to the file specified.
 //
 //   - If append is true, then output will be appended to the file.
 //     Otherwise it will be overwritten.
@@ -58,7 +58,7 @@ func ReadSmallFile(path string, max int64) ([]byte, error) {
 //     will have permission based on file permissions specified.
 //   - In append mode, output is always written on a
 //     new line unless lf is set to false.
-func WriteContentsToFile[T ~[]byte](path string, contents T, append, lf bool, mode fs.FileMode) error {
+func WriteToFile[T ~[]byte](path string, contents T, append, lf bool, mode fs.FileMode) error {
 	if path == "" {
 		return fmt.Errorf("shared(template): path is empty")
 	}

@@ -26,7 +26,7 @@ func AddTemplateFlags(cmd *cobra.Command, template, templateFile *string) {
 func AddOutputFlagsWithAppend(cmd *cobra.Command, output *string, append, lf *bool) {
 	cmd.Flags().StringVarP(output, "output", "o", "", "output file path")
 	cmd.Flags().BoolVarP(append, "append", "a", false, "append to output file")
-	cmd.Flags().BoolVar(lf, "append-at-newline", true, "write output on a newline")
+	cmd.Flags().BoolVar(lf, "append-at-newline", true, "append output on a newline")
 	cmd.Flags().SetNormalizeFunc(func(_ *pflag.FlagSet, name string) pflag.NormalizedName {
 		if name == "append-at-lf" {
 			name = "append-at-newline"

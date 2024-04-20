@@ -6,8 +6,6 @@ package sprout
 import (
 	"strings"
 	"text/template"
-
-	"golang.org/x/text/cases"
 )
 
 func FuncMap() template.FuncMap {
@@ -16,8 +14,8 @@ func FuncMap() template.FuncMap {
 		"trim":   strings.TrimSpace,
 		"upper":  strings.ToUpper,
 		"lower":  strings.ToLower,
-		"title":  cases.Title,
-		// Switch order so that "foobar" | contains "foo"
+		"title":  strings.Title,
+		// Switch order so that "foobar" | contains "foo" works.
 		"contains":  func(substr string, s string) bool { return strings.Contains(s, substr) },
 		"hasPrefix": func(substr string, s string) bool { return strings.HasPrefix(s, substr) },
 		"hasSuffix": func(substr string, s string) bool { return strings.HasSuffix(s, substr) },

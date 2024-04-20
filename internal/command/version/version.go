@@ -26,7 +26,7 @@ func (o *options) Run(_ context.Context, _ []string) error {
 }
 
 // RunE for version command.
-func (o *options) RunE(cmd *cobra.Command, args []string) error {
+func (o *options) RunE(cmd *cobra.Command, _ []string) error {
 	if o.template != "" {
 		o.format = "template"
 	}
