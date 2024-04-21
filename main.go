@@ -16,7 +16,7 @@ import (
 
 func main() {
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt)
-	err := command.RootCommand().ExecuteContext(ctx)
+	err := command.Entrypoint(ctx)
 	if err != nil {
 		os.Exit(1)
 	}

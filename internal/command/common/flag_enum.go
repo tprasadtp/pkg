@@ -10,25 +10,31 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var _ pflag.Value = (*stringEnumFlag)(nil)
+var _ pflag.Value = (*stringSetFlag)(nil)
 
-// stringEnumFlag is a custom flag which restricts flag values to ones specified.
-type stringEnumFlag struct {
+func NewStringSetFlagValue(allowed []string) pflag.Value {
+	return &stringSetFlag{
+		allowed: allowed,
+	}
+}
+
+// stringSetFlag is a custom flag which restricts flag values to ones specified.
+type stringSetFlag struct {
 	allowed []string
 	value   string
 }
 
-func (e *stringEnumFlag) String() string {
+func (e *stringSetFlag) String() string {
 	return e.value
 }
 
-func (e *stringEnumFlag) Type() string {
+func (e *stringSetFlag) Type() string {
 	return "string"
 }
 
-func (e *stringEnumFlag) Set(p string) error {
+func (e *stringSetFlag) Set(p string) error {
 	if !slices.Contains(e.allowed, p) {
-		return fmt.Errorf("")
+		return fmt.Errorf("value %q must belong to set %v", p, e.allowed)
 	}
 	e.value = p
 	return nil

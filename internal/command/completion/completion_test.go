@@ -1,4 +1,4 @@
-package cli
+package completion
 
 import (
 	"bytes"
@@ -231,7 +231,7 @@ func Test_CompletionCmd_ToFile(t *testing.T) {
 	}
 }
 
-func Test_NewCompletionCmd_HiddenAttrs(t *testing.T) {
+func TestNewHiddenCompletionCmd(t *testing.T) {
 	type testCase struct {
 		Name               string
 		Args               []bool
@@ -239,28 +239,13 @@ func Test_NewCompletionCmd_HiddenAttrs(t *testing.T) {
 	}
 	tt := []testCase{
 		{
-			Name:               "no-flag-specified",
-			ExpectHiddenStatus: false,
-		},
-		{
-			Name:               "single-bool",
-			Args:               []bool{true},
+			Name:               "hidden",
 			ExpectHiddenStatus: true,
-		},
-		{
-			Name:               "multiple-bool-only-use-first-1",
-			Args:               []bool{true, false},
-			ExpectHiddenStatus: true,
-		},
-		{
-			Name:               "multiple-bool-only-use-first-1",
-			Args:               []bool{false, true},
-			ExpectHiddenStatus: false,
 		},
 	}
 	for _, tc := range tt {
 		t.Run(tc.Name, func(t *testing.T) {
-			cmd := NewCompletionCmd(tc.Args...)
+			cmd := NewHiddenCompletionCmd()
 			if cmd.Hidden != tc.ExpectHiddenStatus {
 				t.Errorf("Expected Hidden status=%t, got=%t", tc.ExpectHiddenStatus, cmd.Hidden)
 			}

@@ -57,12 +57,12 @@ func TestGetWithOverride(t *testing.T) {
 	}
 }
 
-// disabled because of
-// - https://github.com/golang/go/issues/33976,
-// - https://github.com/golang/go/issues/52600
+// // This test is disabled because of https://github.com/golang/go/issues/33976.
 // func TestGetWithoutOverride(t *testing.T) {
-// 	info := GetInfo()
-// 	if info.Version == "" {
-// 		t.Errorf("GetInfo().Version s empty when it should be populated automatically")
+// 	if testing.Testing() {
+// 		info := GetInfo()
+// 		if info.Version == "" {
+// 			t.Errorf("GetInfo().Version s empty when it should be populated automatically")
+// 		}
 // 	}
 // }

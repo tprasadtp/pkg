@@ -1,4 +1,4 @@
-package cli
+package completion
 
 import (
 	"context"
@@ -51,13 +51,8 @@ func (opts *options) Run(ctx context.Context, args []string, cmd *cobra.Command)
 	}
 }
 
-// NewCompletionCmd returns a cobra command named completion
-// with all supported shells as subcommands.
-func NewCompletionCmd(hidden ...bool) *cobra.Command {
+func newCompletionCmd(hidden bool) *cobra.Command {
 	var o = &options{}
-	if len(hidden) == 0 {
-		hidden = make([]bool, 1)
-	}
 	cmd := &cobra.Command{
 		Use:     "completion [--output=FILE] SHELL",
 		Short:   "Generate shell autocompletion for specified shell",
@@ -72,7 +67,7 @@ func NewCompletionCmd(hidden ...bool) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.Run(cmd.Context(), args, cmd.Root())
 		},
-		Hidden: hidden[0],
+		Hidden: hidden,
 		Long: `Generate shell autocompletion for specified shell.
 It may require additional tasks within your shell to setup
 loading shell completions by default.`,
@@ -83,4 +78,12 @@ loading shell completions by default.`,
 		"Output file. If not specified or if equals '-', writes to stdout",
 	)
 	return cmd
+}
+
+func NewCompletionCmd() *cobra.Command {
+	return newCompletionCmd(false)
+}
+
+func NewHiddenCompletionCmd() *cobra.Command {
+	return newCompletionCmd(true)
 }
