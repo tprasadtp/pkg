@@ -10,14 +10,26 @@ max_line_length = 80
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# Makefiles and Make Templates
-[{Makefile,GNUMakefile,*.mk}]
-indent_style = tab
-indent_size = 4
-
 # YAML
 [{*.yml,*.yaml}]
 indent_size = 2
 
+# Markdown
+[{*.md,*.MD}]
+indent_size = 2
+
+# JSON
 [*.json]
 indent_size = 2
+
+# Checksums
+[{*.sha256,*.SHA256SUMS,*.SHA256,*.sha256sums.txt,*.SHA256SUMS.txt,SHA256SUMS,SHA256SUMS.txt,SHA256.txt}]
+insert_final_newline = false
+
+[{*.sha512,*.SHA512SUMS,*.SHA512,*.sha512sums.txt,*.SHA512SUMS.txt,SHA512SUMS,SHA512SUMS.txt,SHA512.txt}]
+insert_final_newline = false
+
+[{*.digest,*.DIGEST}]
+
+[{*.IMAGE,*.image.txt,*.IMAGE.txt}]
+insert_final_newline = false

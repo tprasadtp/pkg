@@ -1,0 +1,14 @@
+[
+  {
+    "LibraryName": "CoreFoundation",
+    "LibraryFunction": "CFRelease",
+    "TrampolinePrefix": "cf",
+    "TrampolineName": "release"
+  },
+  {
+    "LibraryName": "CoreFoundation",
+    "LibraryFunction": "CFArrayGetCount",
+    "TrampolinePrefix": "cf",
+    "TrampolineName": "array_get_count"
+  }
+]

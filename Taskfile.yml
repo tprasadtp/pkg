@@ -1,0 +1,434 @@
+# SPDX-FileCopyrightText: Copyright 2024 Prasad Tengse
+# SPDX-License-Identifier: MIT
+#
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+vars:
+  # Go coverage data directory is root Taskfile's directory + '.gocover'.
+  GO_COVER_DIR: '{{ joinPath .ROOT_DIR ".gocover" }}'
+
+tasks:
+  # -----------------------------------------------------------------
+  # Default Task. Shows List of available tasks.
+  #
+  # This intentionally lacks a desc field to hide it from help output.
+  # -----------------------------------------------------------------
+  default:
+    cmds:
+      - cmd: task --list
+        silent: true
+  # -----------------------------------------------------------------
+  # Creates a directory if not present.
+  # -----------------------------------------------------------------
+  internal:mkdir:
+    internal: true
+    requires:
+      vars:
+        - DIRECTORY
+    status:
+      - "{{ if .DIRECTORY }}test -d {{ .DIRECTORY|quote }}{{ end }}"
+    cmds:
+      # Do not use a long form flag --parents as it is not supported on macOS.
+      - cmd: mkdir -p {{.DIRECTORY|quote}}
+        platforms:
+          - linux
+          - darwin
+          - freebsd
+          - netbsd
+          - dragonfly
+          - openbsd
+      - cmd: powershell.exe -NonInteractive -NoProfile -NoLogo -Command 'New-Item -ItemType Directory -Force -Path "{{.DIRECTORY}}"'
+        platforms:
+          - windows
+  # -----------------------------------------------------------------
+  # Removes files with PATTERN in the given DIRECTORY.
+  # -----------------------------------------------------------------
+  internal:rm-file-glob:
+    internal: true
+    requires:
+      vars:
+        - DIRECTORY
+        - PATTERN
+    status:
+      - "{{ if .DIRECTORY }}! test -d {{ .DIRECTORY|quote }}{{ end }}"
+    cmds:
+      - cmd: rm -f {{ joinPath (.DIRECTORY | quote) .PATTERN }}
+        platforms:
+          - linux
+          - darwin
+          - freebsd
+          - netbsd
+          - dragonfly
+          - openbsd
+      - cmd: powershell.exe -NonInteractive -NoProfile -NoLogo -Command '(Remove-Item -Force -ErrorAction SilentlyContinue -Path "{{ joinPath .DIRECTORY .PATTERN  }}")'
+        platforms:
+          - windows
+  # -----------------------------------------------------------------
+  # Removes an empty DIRECTORY.
+  # -----------------------------------------------------------------
+  internal:rmdir:
+    internal: true
+    requires:
+      vars:
+        - DIRECTORY
+    status:
+      - "{{ if .DIRECTORY }}! test -d {{ .DIRECTORY|quote }}{{ end }}"
+    cmds:
+      - cmd: rmdir {{ .DIRECTORY | quote }}
+        platforms:
+          - linux
+          - darwin
+          - freebsd
+          - netbsd
+          - dragonfly
+          - openbsd
+      - cmd: powershell.exe -NonInteractive -NoProfile -NoLogo -Command 'Remove-Item -Force -Path "{{ .DIRECTORY }}"'
+        platforms:
+          - windows
+  # -----------------------------------------------------------------
+  # Create .gocover directory to store coverage data
+  # -----------------------------------------------------------------
+  internal:go:create-coverage-dir:
+    internal: true
+    status:
+      - "{{ if .GO_COVER_DIR }}test -d {{ .GO_COVER_DIR|quote }}{{ end }}"
+    cmds:
+      - task: internal:mkdir
+        vars:
+          DIRECTORY: "{{ .GO_COVER_DIR }}"
+  # -----------------------------------------------------------------
+  # Cleanup coverage files before building/testing.
+  #
+  # This is required to avoid covtool errors when sources change.
+  # Thus, this task fingerprints the sources, and only executed
+  # when relevant source files change.
+  # Unlike clean-coverage task, this will not remove coverage directory.
+  #
+  # Test tasks should use internal:go:clean-coverage-files:pre-build
+  # as it avoids duplicate work by nesting two tasks. Otherwise,
+  # internal:rm-file-glob tasks will be executed multiple times on
+  # change to go sources or Taskfile.
+  # -----------------------------------------------------------------
+  internal:go:clean-coverage-files:
+    internal: true
+    status:
+      - "{{ if .GO_COVER_DIR }}! test -d {{ .GO_COVER_DIR|quote }}{{ end }}"
+    cmds:
+      - task: internal:rm-file-glob
+        vars:
+          DIRECTORY: "{{ .GO_COVER_DIR }}"
+          PATTERN: "{{ .ITEM }}"
+        for:
+          - "covcounters.*"
+          - "covmeta.*"
+          - "coverage.*"
+  internal:go:clean-coverage-files:pre-build:
+    internal: true
+    method: checksum
+    sources:
+      - "**/*.go"
+      - "Taskfile.yml"
+    cmds:
+      - task: internal:go:clean-coverage-files
+  # -----------------------------------------------------------------
+  # Run go test on package(s) specified by GO_TEST_PKG.
+  # -----------------------------------------------------------------
+  internal:go:test:
+    internal: true
+    requires:
+      vars:
+        - GO_TEST_PKG
+    preconditions:
+      - sh: >-
+          {{- if .GO_COVER_DIR }}
+            {{- if not (osIsAbs .GO_COVER_DIR) }}
+              false
+            {{- end }}
+          {{- end }}
+        msg: "GO_COVER_DIR({{.GO_COVER_DIR}}) must be an absolute path."
+    cmds:
+      # Cleanup coverage files if sources have changed.
+      - task: internal:go:clean-coverage-files:pre-build
+      # Create .gocover directory to store coverage data.
+      - task: internal:go:create-coverage-dir
+      # Run go test, optionally with coverage directory specified.
+      - cmd: go test {{ .GO_TEST_FLAG_VERBOSE }} -cover -timeout {{ default "3m" .GO_TEST_TIMEOUT }} {{ .GO_TEST_PKG }} {{ .GO_TEST_FLAG_COVERDIR }} {{.CLI_ARGS}}
+    vars:
+      # GO_TEST_FLAG_COVERDIR will be set if GO_COVER_DIR is already set and is
+      # an absolute path. This is enforced as --test.coverdir does not deal with relative
+      # paths when testing multiple packages or when running trampolines.
+      # See - https://github.com/golang/go/issues/51430#issuecomment-1344711300
+      GO_TEST_FLAG_COVERDIR: >-
+        {{- if .GO_COVER_DIR }}
+          {{- if osIsAbs .GO_COVER_DIR }}
+            {{- printf `--test.gocoverdir "%s"` .GO_COVER_DIR }}
+          {{- end }}
+        {{- end }}
+      # If user already specified -v/-v=true flag, skip checking variables for debug flags.
+      # Otherwise, check if RUNNER_DEBUG or DEBUG is set to truthy value and set GO_TEST_FLAG_VERBOSE
+      # to -v.
+      #
+      # Output of this variable MUST be a single line. i.e no newlines.
+      GO_TEST_FLAG_VERBOSE: >-
+        {{- if not (mustRegexMatch "--?v=?(true|false)?" .CLI_ARGS) }}
+          {{- if eq .RUNNER_DEBUG "1" }}
+            {{- printf "-v" }}
+          {{- else if .DEBUG }}
+            {{- if or (eq .DEBUG "1") (eq (lower .DEBUG) "yes") (eq (lower .DEBUG) "true") }}
+                {{- printf "-v" }}
+              {{- end }}
+          {{- end }}
+        {{- end }}
+  # -----------------------------------------------------------------
+  # Run all configured linters.
+  # -----------------------------------------------------------------
+  lint:
+    desc: "Run all configured linters"
+    summary: |
+      Run all configured linters on the project.
+    prefix: "lint"
+    preconditions:
+      - sh: command -v golangci-lint
+        msg: Missing tool 'golangci-lint'.
+    aliases:
+      - "go:lint"
+      - "golangci-lint"
+    cmd: golangci-lint run {{.CLI_ARGS}}
+  # -----------------------------------------------------------------
+  # Test all packages with coverage.
+  # -----------------------------------------------------------------
+  test:
+    desc: "Test all packages"
+    summary: |-
+      Runs Go test on all supported packages.
+
+      This by default will create .gocover directory in Root Taskfile's
+      directory to store coverage data which may be written by the test
+      itself or via test trampolines.
+      Runtime Info:
+
+        OS             : {{ default "NA" OS }}
+        GO_COVER_DIR   : {{ default "NA" .GO_COVER_DIR }}
+    aliases:
+      - "go:test"
+    cmds:
+      - task: internal:go:test
+        vars:
+          GO_TEST_PKG: "./..."
+  # -----------------------------------------------------------------
+  # Cleanup generated data, cache and build artifacts
+  # -----------------------------------------------------------------
+  clean:
+    desc: "Clean cache, build artifacts etc."
+    aliases:
+      - "go:clean"
+    cmds:
+      - task: internal:go:clean-coverage-files
+      - task: internal:rmdir
+        vars:
+          DIRECTORY: "{{ .GO_COVER_DIR }}"
+      - task: internal:rm-file-glob
+        vars:
+          DIRECTORY: '{{ joinPath .ROOT_DIR "dist" }}'
+          PATTERN: "*.json"
+      - task: internal:rm-file-glob
+        vars:
+          DIRECTORY: '{{ joinPath .ROOT_DIR "dist" }}'
+          PATTERN: "*.yml"
+      - task: internal:rm-file-glob
+        vars:
+          DIRECTORY: '{{ joinPath .ROOT_DIR "dist" }}'
+          PATTERN: "*.yaml"
+      - task: internal:rmdir
+        vars:
+          DIRECTORY: '{{ joinPath .ROOT_DIR "dist" }}'
+      - task: internal:rm-file-glob
+        vars:
+          DIRECTORY: '{{ joinPath .ROOT_DIR "example" }}'
+          PATTERN: "example"
+      - task: internal:rm-file-glob
+        vars:
+          DIRECTORY: '{{ joinPath .ROOT_DIR "bin" }}'
+          PATTERN: "example"
+      - task: internal:rm-file-glob
+        vars:
+          DIRECTORY: '{{ joinPath .ROOT_DIR "example" }}'
+          PATTERN: "*.tar.gz"
+      - task: internal:rm-file-glob
+        vars:
+          DIRECTORY: '{{ joinPath .ROOT_DIR "example" }}'
+          PATTERN: "*.tar"
+      - task: internal:rmdir
+        vars:
+          DIRECTORY: "{{ .ITEM }}"
+        for:
+          - "{{ .GO_COVER_DIR }}"
+          - '{{ joinPath .ROOT_DIR "bin" }}'
+  # -----------------------------------------------------------------
+  # Build example image which can be run easily.
+  # -----------------------------------------------------------------
+  internal:build-example-image-tarball:
+    internal: true
+    dir: example
+    prefix: "{{.TASK_GROUP_NAME}}"
+    requires:
+      vars:
+        - "TASK_GROUP_NAME"
+        - "KO_BASE_IMAGE"
+        - "KO_PLATFORM"
+        - "KO_TARBALL_OUTPUT"
+    env:
+      KO_DEFAULTBASEIMAGE: "{{.KO_BASE_IMAGE}}"
+      KO_DOCKER_REPO: '{{ default "ghcr.io/tprasadtp/go-keychain" .EXAMPLE_IMAGE }}'
+      KO_CONFIG_PATH: ".ko.yml"
+      KOCACHE: ".cache"
+    vars:
+      GIT_COMMIT:
+        sh: git -c log.showSignature=false show --format=%H --quiet HEAD
+      GIT_COMMIT_TS:
+        sh: git -c log.showSignature=false show --format=%cI --quiet HEAD
+      KO_BASE_IMAGE_DIGEST:
+        sh: crane digest {{.KO_BASE_IMAGE}} --platform {{.KO_PLATFORM}}
+      IMAGE_LABEL_FLAGS: >-
+        {{- printf "%s %s" " --image-label" `org.opencontainers.image.title=go-keychain` }}
+        {{- printf "%s %s" " --image-label" `"org.opencontainers.image.description=Example image for go-keychain"` }}
+        {{- printf "%s %s" " --image-label" `"org.opencontainers.image.source=https://github.com/tprasadtp/go-autoune"` }}
+        {{- printf "%s %s" " --image-label" `"org.opencontainers.image.vendor=Prasad Tengse <tprasadtp@users.noreply.github.com>"` }}
+        {{- printf "%s %s" " --image-label" `"org.opencontainers.image.documentation=https://pkg.go.dev/github.com/tprasadtp/go-keychain/example"` }}
+        {{- printf "%s %s" " --image-label" `"io.artifacthub.package.readme-url=https://raw.githubusercontent.com/tprasadtp/go-keychain/master/README.md"` }}
+        {{- if .GIT_COMMIT }}
+          {{- printf "%s %s=%s" " --image-label" "org.opencontainers.image.revision" .GIT_COMMIT }}
+        {{- end }}
+        {{- if .GIT_COMMIT_TS }}
+          {{- printf "%s %s=%s" " --image-label" "org.opencontainers.image.created" .GIT_COMMIT_TS }}
+        {{- end }}
+        {{- if and .KO_BASE_IMAGE .KO_BASE_IMAGE_DIGEST }}
+          {{- printf "%s %s=%s" " --image-label" "org.opencontainers.image.base.name" .KO_BASE_IMAGE }}
+          {{- printf "%s %s=%s" " --image-label" "org.opencontainers.image.base.digest" .KO_BASE_IMAGE_DIGEST }}
+        {{- end }}
+    cmds:
+      - cmd: >-
+          ko build
+          --platform={{.KO_PLATFORM}}
+          --push=false
+          --bare
+          --sbom=none
+          --tarball {{.KO_TARBALL_OUTPUT}}
+          {{.IMAGE_LABEL_FLAGS}}
+  internal:build-example-image-tarball:linux-amd64:
+    internal: true
+    cmds:
+      - task: internal:build-example-image-tarball
+        vars:
+          TASK_GROUP_NAME: "Linux-AMD64"
+          KO_PLATFORM: "linux/amd64"
+          KO_BASE_IMAGE: "cgr.dev/chainguard/static:latest"
+          KO_TARBALL_OUTPUT: "linux-amd64.tar.gz"
+  internal:build-example-image-tarball:linux-arm64:
+    internal: true
+    cmds:
+      - task: internal:build-example-image-tarball
+        vars:
+          TASK_GROUP_NAME: "Linux-ARM64"
+          KO_PLATFORM: "linux/arm64"
+          KO_BASE_IMAGE: "cgr.dev/chainguard/static:latest"
+          KO_TARBALL_OUTPUT: "linux-arm64.tar.gz"
+  internal:build-example-image-tarball:linux-armv7:
+    internal: true
+    cmds:
+      - task: internal:build-example-image-tarball
+        vars:
+          TASK_GROUP_NAME: "Linux-ARMv7"
+          KO_PLATFORM: "linux/arm/v7"
+          KO_BASE_IMAGE: "cgr.dev/chainguard/static:latest"
+          KO_TARBALL_OUTPUT: "linux-armv7.tar.gz"
+  internal:build-example-image-tarball:windows-amd64-2019:
+    internal: true
+    cmds:
+      - task: internal:build-example-image-tarball
+        vars:
+          TASK_GROUP_NAME: "Windows-Server-2019"
+          KO_PLATFORM: "windows/amd64"
+          KO_BASE_IMAGE: "mcr.microsoft.com/windows/nanoserver:ltsc2019"
+          KO_TARBALL_OUTPUT: "windows-2019-amd64.tar.gz"
+  internal:build-example-image-tarball:windows-amd64-2022:
+    internal: true
+    cmds:
+      - task: internal:build-example-image-tarball
+        vars:
+          TASK_GROUP_NAME: "Windows-Server-2022"
+          KO_PLATFORM: "windows/amd64"
+          KO_BASE_IMAGE: "mcr.microsoft.com/windows/nanoserver:ltsc2022"
+          KO_TARBALL_OUTPUT: "windows-2022-amd64.tar.gz"
+  internal:build-example-image-tarball:windows-amd64-2025:
+    internal: true
+    cmds:
+      - task: internal:build-example-image-tarball
+        vars:
+          TASK_GROUP_NAME: "Windows-Server-2025"
+          KO_PLATFORM: "windows/amd64"
+          KO_BASE_IMAGE: "mcr.microsoft.com/windows/nanoserver/insider:10.0.26080.1"
+          KO_TARBALL_OUTPUT: "windows-2025-amd64.tar.gz"
+  example-images-build:
+    desc: "Build example docker images"
+    aliases:
+      - "build-example-images"
+    deps:
+      - internal:build-example-image-tarball:linux-amd64
+      - internal:build-example-image-tarball:linux-arm64
+      - internal:build-example-image-tarball:linux-armv7
+      - internal:build-example-image-tarball:windows-amd64-2019
+      - internal:build-example-image-tarball:windows-amd64-2022
+      - internal:build-example-image-tarball:windows-amd64-2025
+  example-images-push:
+    desc: "Push example images. Must run example-images-build first."
+    dir: example
+    aliases:
+      - "push-example-images"
+    vars:
+      IMAGE: '{{ default "ghcr.io/tprasadtp/go-keychain" .EXAMPLE_IMAGE }}'
+      GIT_COMMIT:
+        sh: git -c log.showSignature=false show --format=%H --quiet HEAD
+      GIT_COMMIT_SHORT:
+        sh: git -c log.showSignature=false show --format=%h --quiet HEAD
+      GIT_TREE_STATE:
+        sh: git -c log.showSignature=false status --porcelain
+      LINUX_AMD64_DIGEST:
+        sh: crane digest --tarball linux-amd64.tar.gz
+      LINUX_ARM64_DIGEST:
+        sh: crane digest --tarball linux-arm64.tar.gz
+      LINUX_ARMV7_DIGEST:
+        sh: crane digest --tarball linux-armv7.tar.gz
+      WINDOWS_2019_AMD64_DIGEST:
+        sh: crane digest --tarball windows-2019-amd64.tar.gz
+      WINDOWS_2022_AMD64_DIGEST:
+        sh: crane digest --tarball windows-2022-amd64.tar.gz
+      WINDOWS_2025_AMD64_DIGEST:
+        sh: crane digest --tarball windows-2025-amd64.tar.gz
+      IMG_TAG_SUFFIX: >-
+        {{- if .GIT_TREE_STATE }}
+          {{- printf "-dirty" }}
+        {{- end }}
+      MANIFEST_FLAGS: >-
+        {{- printf "--manifest=%s@%s" .IMAGE .LINUX_AMD64_DIGEST }}
+        {{- printf " --manifest=%s@%s" .IMAGE .LINUX_ARM64_DIGEST }}
+        {{- printf " --manifest=%s@%s" .IMAGE .LINUX_ARMV7_DIGEST }}
+        {{- printf " --manifest=%s@%s" .IMAGE .WINDOWS_2019_AMD64_DIGEST }}
+        {{- printf " --manifest=%s@%s" .IMAGE .WINDOWS_2022_AMD64_DIGEST }}
+        {{- printf " --manifest=%s@%s" .IMAGE .WINDOWS_2025_AMD64_DIGEST }}
+    cmds:
+      - cmd: crane push linux-amd64.tar.gz {{.IMAGE}}@{{.LINUX_AMD64_DIGEST}}
+      - cmd: crane push linux-arm64.tar.gz {{.IMAGE}}@{{.LINUX_ARM64_DIGEST}}
+      - cmd: crane push linux-armv7.tar.gz {{.IMAGE}}@{{.LINUX_ARMV7_DIGEST}}
+      - cmd: crane push windows-2019-amd64.tar.gz {{.IMAGE}}@{{.WINDOWS_2019_AMD64_DIGEST}}
+      - cmd: crane push windows-2022-amd64.tar.gz {{.IMAGE}}@{{.WINDOWS_2022_AMD64_DIGEST}}
+      - cmd: crane push windows-2025-amd64.tar.gz {{.IMAGE}}@{{.WINDOWS_2025_AMD64_DIGEST}}
+      - cmd: crane index append --tag={{.IMAGE}}:{{.GIT_COMMIT_SHORT}}{{.IMG_TAG_SUFFIX}} {{.MANIFEST_FLAGS}}
+      - cmd: crane index append --tag={{.IMAGE}}:{{.GIT_COMMIT}}{{.IMG_TAG_SUFFIX}} {{.MANIFEST_FLAGS}}
+      - cmd: >-
+          {{- if eq .TAG_LATEST "true" }}
+            {{- printf `crane index append --tag=%s:latest%s %s` .IMAGE .IMG_TAG_SUFFIX .MANIFEST_FLAGS }}
+          {{- else }}
+            {{- printf `printf "skipped: applying latest tag\n"` }}
+          {{- end }}
