@@ -6,15 +6,33 @@
 package macos
 
 import (
+	"runtime"
 	"syscall"
 	_ "unsafe"
 )
 
 // CFRef is an opaque reference to a Core Foundation object.
-type CFRef uintptr
+type CFRef struct {
+	pointer uintptr
+	pinner  runtime.Pinner
+}
 
-// CFString is CoreFoundation string.
-type CFString CFRef
+func NewCFRef(pointer uintptr) *CFRef {
+	rv := &CFRef{
+		pointer: pointer,
+	}
+	rv.pinner.Pin(pointer)
+	return rv
+}
+
+func (r *CFRef) Pointer() uintptr {
+	return r.pointer
+}
+
+func (r *CFRef) Free() {
+	r.pinner.Unpin()
+	syscall_syscall(cf_trampoline_release_addr, uintptr(r.pointer), 0, 0)
+}
 
 // Defined in package [runtime] as [runtime.syscall_syscall],
 // which is pushed to [syscall] as [syscall.syscall_syscall].
@@ -25,8 +43,3 @@ type CFString CFRef
 //go:linkname syscall_syscall syscall.syscall
 //nolint:revive,nonamedreturns // ignore
 func syscall_syscall(fn, a1, a2, a3 uintptr) (r1, r2 uintptr, err syscall.Errno)
-
-// CFRelease releases the pointer ref.
-func CFRelease(ref CFRef) {
-	syscall_syscall(cf_trampoline_release_addr, uintptr(ref), 0, 0)
-}

@@ -10,5 +10,17 @@
     "LibraryFunction": "CFArrayGetCount",
     "TrampolinePrefix": "cf",
     "TrampolineName": "array_get_count"
+  },
+  {
+    "LibraryName": "CoreFoundation",
+    "LibraryFunction": "CFArrayGetValueAtIndex",
+    "TrampolinePrefix": "cf",
+    "TrampolineName": "array_get_value_at_index"
+  },
+  {
+    "LibraryName": "CoreFoundation",
+    "LibraryFunction": "CFDataCreate",
+    "TrampolinePrefix": "cf",
+    "TrampolineName": "data_create"
   }
 ]

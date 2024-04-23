@@ -15,3 +15,11 @@ var cf_trampoline_release_addr uintptr
 //nolint:revive,stylecheck // ignore
 var cf_trampoline_array_get_count_addr uintptr
 
+//go:cgo_import_dynamic CoreFoundation_CFArrayGetValueAtIndex CFArrayGetValueAtIndex "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+//nolint:revive,stylecheck // ignore
+var cf_trampoline_array_get_value_at_index_addr uintptr
+
+//go:cgo_import_dynamic CoreFoundation_CFDataCreate CFDataCreate "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+//nolint:revive,stylecheck // ignore
+var cf_trampoline_data_create_addr uintptr
+
