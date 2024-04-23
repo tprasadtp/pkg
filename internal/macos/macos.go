@@ -26,11 +26,7 @@ type CFString CFRef
 //nolint:revive,nonamedreturns // ignore
 func syscall_syscall(fn, a1, a2, a3 uintptr) (r1, r2 uintptr, err syscall.Errno)
 
-//go:cgo_import_dynamic CoreFoundation_CFRelease CFRelease "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
-//nolint:revive,stylecheck // ignore
-var cf_trampoline_free_addr uintptr
-
 // CFRelease releases the pointer ref.
 func CFRelease(ref CFRef) {
-	syscall_syscall(cf_trampoline_free_addr, uintptr(ref), 0, 0)
+	syscall_syscall(cf_trampoline_release_addr, uintptr(ref), 0, 0)
 }
