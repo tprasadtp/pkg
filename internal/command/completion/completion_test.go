@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Test_CompletionCmd_ToStdOut_Success(t *testing.T) {
+func TestCompletionCmd_ToStdOut_Success(t *testing.T) {
 	var stdout = new(bytes.Buffer)
 	var stderr = new(bytes.Buffer)
 	type testCase struct {

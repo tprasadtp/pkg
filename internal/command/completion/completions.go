@@ -10,8 +10,10 @@ import (
 
 // Options for shell completion.
 type options struct {
+	root   *cobra.Command
 	output string
 	stdout io.Writer
+	stderr io.Writer
 }
 
 // Runner for complete command.

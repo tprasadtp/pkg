@@ -15,7 +15,7 @@ import (
 	"github.com/tprasadtp/knit/internal/testutils"
 )
 
-func TestFileModeAddExecutableBit(t *testing.T) {
+func TestDirPermissionFrom(t *testing.T) {
 	tt := []struct {
 		input  fs.FileMode
 		expect fs.FileMode
@@ -26,7 +26,7 @@ func TestFileModeAddExecutableBit(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(fmt.Sprintf("%o", tc.input), func(t *testing.T) {
-			v := FileModeAddExecutableBit(tc.input)
+			v := DirPermissionFrom(tc.input)
 			if v != tc.expect {
 				t.Errorf("expected=%s(%o), got=%s(%o)", tc.expect, tc.expect, v, v)
 			}

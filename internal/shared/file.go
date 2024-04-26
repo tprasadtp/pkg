@@ -9,11 +9,13 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
-// FileModeAddExecutableBit adds executable bits to the input if file is readable.
-// Any executable bits already set are not modified.
-func FileModeAddExecutableBit(mode fs.FileMode) fs.FileMode {
+// DirPermissionFrom derives directory permission from the given
+// file permissions. Directory is set to be traversable by a user
+// only if file permissions allow read operations.
+func DirPermissionFrom(mode fs.FileMode) fs.FileMode {
 	if mode&0o400 == 0o400 {
 		mode |= 0o100
 	}
@@ -58,15 +60,16 @@ func ReadSmallFile(path string, max int64) ([]byte, error) {
 //     will have permission based on file permissions specified.
 //   - In append mode, output is always written on a
 //     new line unless lf is set to false.
-func WriteToFile[T ~[]byte](path string, contents T, append, lf bool, mode fs.FileMode) error {
+//
+//nolint:gocognit // ignore
+func WriteToFile[T ~[]byte](path string, contents T, appendFile, appendOnNewLine bool, mode fs.FileMode) error {
 	if path == "" {
 		return fmt.Errorf("shared(template): path is empty")
 	}
 
 	var flag int
-	// Truncate the file if append is not specified.
-	if append {
-		if lf {
+	if appendFile {
+		if appendOnNewLine {
 			flag = os.O_CREATE | os.O_RDWR | os.O_APPEND
 		} else {
 			flag = os.O_CREATE | os.O_WRONLY | os.O_APPEND
@@ -83,7 +86,7 @@ func WriteToFile[T ~[]byte](path string, contents T, append, lf bool, mode fs.Fi
 	// Create base directory if required. Permission on the directory
 	// is derived from the permission on the file.
 	dir := filepath.Dir(path)
-	err := os.MkdirAll(dir, FileModeAddExecutableBit(mode))
+	err := os.MkdirAll(dir, DirPermissionFrom(mode))
 	if err != nil {
 		return fmt.Errorf("shared(file): failed to create dir file(%q): %w", dir, err)
 	}
@@ -96,20 +99,50 @@ func WriteToFile[T ~[]byte](path string, contents T, append, lf bool, mode fs.Fi
 	defer file.Close()
 
 	// Ensure to write on a new line unless disabled.
-	if append && lf {
+	//nolint:nestif // ignore
+	if appendFile && appendOnNewLine {
 		stat, err := file.Stat()
 		if err != nil {
 			return fmt.Errorf("shared(file): failed to stat file(%q): %w", path, err)
 		}
 		if stat.Size() > 0 {
-			b := make([]byte, 1)
-			_, err = file.ReadAt(b, stat.Size()-1)
-			if err != nil {
-				return fmt.Errorf("shared(file): failed to check for new-line in file(%q): %w", path, err)
+			prefix := make([]byte, 0, 2)
+			if runtime.GOOS == "windows" {
+				if stat.Size() > 2 {
+					b := make([]byte, 2)
+					_, err = file.ReadAt(b, stat.Size()-2)
+					if err != nil {
+						return fmt.Errorf("shared(file): failed to check for new-line in file(%q): %w", path, err)
+					}
+					if b[0] != '\r' || b[1] != '\n' {
+						prefix = append(prefix, '\r')
+						prefix = append(prefix, '\n')
+					}
+				} else {
+					b := make([]byte, 1)
+					_, err = file.ReadAt(b, stat.Size()-1)
+					if err != nil {
+						return fmt.Errorf("shared(file): failed to check for new-line in file(%q): %w", path, err)
+					}
+					if b[0] != '\n' {
+						prefix = append(prefix, '\r')
+						prefix = append(prefix, '\n')
+					}
+				}
+			} else {
+				b := make([]byte, 1)
+				_, err = file.ReadAt(b, stat.Size()-1)
+				if err != nil {
+					return fmt.Errorf("shared(file): failed to check for new-line in file(%q): %w", path, err)
+				}
+				if b[0] != '\n' {
+					prefix = append(prefix, '\n')
+				}
 			}
-			if b[0] != '\n' {
-				b[0] = '\n'
-				_, err = file.Write(b)
+
+			// Prefix is set to newline char to write to ensure output is written on a newline.
+			if len(prefix) > 0 {
+				_, err = file.Write(prefix)
 				if err != nil {
 					return fmt.Errorf("shared(file): failed to append new-line to file(%q): %w", path, err)
 				}
